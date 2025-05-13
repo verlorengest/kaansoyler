@@ -635,54 +635,362 @@
     }
 
 
-    function uniqueId(prefix = '') { return prefix + Date.now().toString(36) + Math.random().toString(36).substring(2, 7); }
-    function formatNumber(num, decimals = 0) { if (num === undefined || num === null) return '0'; return Number(num).toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
-    function showNotification(message, type = 'info', duration = 3000) { DOMElements.notificationMessage.textContent = message; DOMElements.notification.className = ''; DOMElements.notification.classList.add(type, 'show'); setTimeout(() => { DOMElements.notification.classList.remove('show'); }, duration); }
-    function addMessage(text, isImportant = false) { const el = document.createElement('div'); el.classList.add('message'); if (isImportant) el.style.fontWeight = 'bold'; el.textContent = text; DOMElements.messagesContainer.appendChild(el); DOMElements.messagesContainer.scrollTop = DOMElements.messagesContainer.scrollHeight; while (DOMElements.messagesContainer.children.length > 20) DOMElements.messagesContainer.firstChild.remove(); }
-    function showModal(modalElement) { modalElement.classList.add('visible'); }
-    function hideModal(modalElement) { modalElement.classList.remove('visible'); }
-    let tooltipTimeout; function displayTooltip(event) { const target = event.target.closest('[data-tooltip]'); if (!target) return; const tooltipText = target.dataset.tooltip; if (!tooltipText) return; clearTimeout(tooltipTimeout); DOMElements.tooltipElement.innerHTML = tooltipText; DOMElements.tooltipElement.classList.add('visible'); const updatePosition = (e) => { let x = e.clientX + 15; let y = e.clientY + 15; const rect = DOMElements.tooltipElement.getBoundingClientRect(); const vpW = window.innerWidth; const vpH = window.innerHeight; if (x + rect.width > vpW) x = e.clientX - rect.width - 15; if (y + rect.height > vpH) y = e.clientY - rect.height - 15; DOMElements.tooltipElement.style.left = `${x}px`; DOMElements.tooltipElement.style.top = `${y}px`; }; updatePosition(event); document.addEventListener('mousemove', updatePositionTooltipHandler); target.addEventListener('mouseout', hideTooltip, { once: true }); }
-    function updatePositionTooltipHandler(e) { if (DOMElements.tooltipElement.classList.contains('visible')) { let x = e.clientX + 15; let y = e.clientY + 15; const rect = DOMElements.tooltipElement.getBoundingClientRect(); const vpW = window.innerWidth; const vpH = window.innerHeight; if (x + rect.width > vpW) x = e.clientX - rect.width - 15; if (y + rect.height > vpH) y = e.clientY - rect.height - 15; DOMElements.tooltipElement.style.left = `${x}px`; DOMElements.tooltipElement.style.top = `${y}px`; } }
-    function hideTooltip() { tooltipTimeout = setTimeout(() => { DOMElements.tooltipElement.classList.remove('visible'); document.removeEventListener('mousemove', updatePositionTooltipHandler); }, 100); }
-    function getCalculatedIncome() { let totalIncome = gameState.modifiers.baseIncome; let totalUpkeep = 0; gameState.units.forEach(unit => { const unitInfo = UNITS[unit.type]; if (unitInfo) totalUpkeep += unitInfo.upkeep; }); gameState.trainingQueue.forEach(queuedUnit => { const unitInfo = UNITS[queuedUnit.unitType]; if(unitInfo) totalUpkeep += unitInfo.upkeep * 0.25; }); gameState.worldMap.deployedArmies.forEach(army => { army.units.forEach( u => {const unitInfo = UNITS[u.type]; if(unitInfo) totalUpkeep += unitInfo.upkeep;}); }); totalIncome -= totalUpkeep; totalIncome *= gameState.modifiers.incomeMultiplier; return totalIncome; }
-    function getCalculatedTechRate() { return gameState.modifiers.baseTechRate * gameState.modifiers.techRateMultiplier; }
-    function getCalculatedEmpireDefense() { return Math.floor(gameState.modifiers.baseDefense * gameState.modifiers.defenseMultiplier + gameState.modifiers.globalDefenseBoost); }
-    function getUnitEffectiveStats(unitType) { const unitInfo = UNITS[unitType]; if (!unitInfo) return { attack: 0, defense: 0, hp: 0, speed: 0 }; return { attack: unitInfo.baseAttack + gameState.modifiers.globalAttackBoost, defense: unitInfo.baseDefense + gameState.modifiers.globalDefenseBoost, hp: unitInfo.maxHp, speed: unitInfo.baseSpeed };}
-    function applyEffects(itemData, isRemoval = false) { if (!itemData.effects) return; itemData.effects.forEach(effect => { let value = effect.value; if (isRemoval) { if (effect.operation === 'add') value = -value; else if (effect.operation === 'multiply' && value !== 0) value = 1 / value; else if (effect.operation === 'multiply' && value === 0) value = 0;} switch (effect.operation) { case 'add': if (gameState.resources.hasOwnProperty(effect.target)) gameState.resources[effect.target] += value; else if (gameState.modifiers.hasOwnProperty(effect.target)) gameState.modifiers[effect.target] += value; break; case 'multiply': if (gameState.modifiers.hasOwnProperty(effect.target)) gameState.modifiers[effect.target] *= value; break; } });}
-
-    function updateResourceDisplays() { const calculatedIncome = getCalculatedIncome(); const incomeClass = calculatedIncome >= 0 ? 'resource-value' : 'resource-value" style="color: var(--error-color);'; const resourcesHtml = `<div class="resource-display"><span>💰 Gold:</span><span class="resource-value">${formatNumber(gameState.resources.gold)}</span></div><div class="resource-display"><span>📈 Income:</span><span class="${incomeClass}">${formatNumber(calculatedIncome, 1)}/s</span></div><div class="resource-display"><span>👥 Pop:</span><span class="resource-value">${gameState.resources.population}/${formatNumber(gameState.resources.maxPopulation)}</span></div><div class="resource-display"><span>🧪 Tech Pts:</span><span class="resource-value">${formatNumber(gameState.resources.technologyPoints)}</span></div><div class="resource-display"><span>🔬 Research:</span><span class="resource-value">+${formatNumber(getCalculatedTechRate(), 1)}/s</span></div><div class="resource-display"><span>🛡️ Empire Def:</span><span class="resource-value">${formatNumber(getCalculatedEmpireDefense())}</span></div>`; DOMElements.resourceDisplaysContainer.innerHTML = resourcesHtml; DOMElements.armyStrengthDisplay.textContent = formatNumber(calculateArmyStrength()); DOMElements.eraLabelDisplay.textContent = AGES[gameState.age].name; updateRaidAlertUI(); }
-    function updateButtonStates() { document.querySelectorAll('#buildings-container .item-slot').forEach(slot => { const buildingId = slot.dataset.itemId; if (!buildingId) return; const buildingInfo = BUILDINGS[buildingId]; const count = gameState.buildings.filter(b => b.type === buildingId && (b.isConstructed || b.isPlaceholder)).length + gameState.constructionQueue.filter(b => b.type === buildingId).length; const cost = calculateBuildingCost(buildingInfo, count); slot.classList.toggle('disabled', gameState.resources.gold < cost || gameState.constructionQueue.length >= 5); const costEl = slot.querySelector('.item-cost'); if (costEl) costEl.textContent = formatNumber(cost); slot.classList.toggle('placing-active', gameState.placement.isPlacing && gameState.placement.buildingId === buildingId); }); document.querySelectorAll('#units-container .game-button').forEach(button => { const unitId = button.dataset.itemId; if (!unitId) return; const unitInfo = UNITS[unitId]; const cost = Math.floor(unitInfo.cost * gameState.modifiers.unitCostMultiplier); button.disabled = !(gameState.resources.gold >= cost && gameState.resources.population + unitInfo.population <= gameState.resources.maxPopulation && gameState.trainingQueue.length < 5); }); document.querySelectorAll('#tech-container .game-button').forEach(button => { const techId = button.dataset.itemId; if (!techId) return; const techInfo = TECHNOLOGIES[techId]; button.disabled = !!(gameState.currentResearch.id || gameState.resources.gold < techInfo.cost); }); if (gameState.age < AGES.length - 1) { const nextAgeCost = AGES[gameState.age + 1].techCost; const canAdvance = gameState.resources.technologyPoints >= nextAgeCost; DOMElements.advanceAgeButton.disabled = !canAdvance; DOMElements.advanceAgeButton.classList.toggle('pulse', canAdvance); } else { DOMElements.advanceAgeButton.disabled = true; DOMElements.advanceAgeButton.classList.remove('pulse'); } DOMElements.battleButton.disabled = gameState.battle.isActive || countTotalPlayerUnits() === 0; updateExpandLandButtonCosts(); DOMElements.cancelPlacementButton.style.display = gameState.placement.isPlacing ? 'flex' : 'none'; DOMElements.backToBaseButton.style.display = (Math.abs(camera.x) > BACK_TO_BASE_THRESHOLD || Math.abs(camera.y - (-(DOMElements.gameCanvas.height / 3))) > BACK_TO_BASE_THRESHOLD) ? 'block' : 'none'; updateDeployedArmiesUI();}
-    function updateAllUIDisplays() { updateResourceDisplays(); updateResearchUI(); updateAgeUI(); updateTrainingQueueUI(); updateConstructionQueueUI(); updateDeployedArmiesUI(); loadAvailableUnits(); updateButtonStates(); }
-    function updateResearchUI() { if (gameState.currentResearch.id) { const tech = TECHNOLOGIES[gameState.currentResearch.id]; DOMElements.currentResearchDisplay.textContent = `${tech.icon} ${tech.name}`; const progress = (gameState.currentResearch.progress / gameState.currentResearch.timeToComplete) * 100; DOMElements.researchProgressBar.style.width = `${Math.min(progress, 100)}%`; } else { DOMElements.currentResearchDisplay.textContent = "None"; DOMElements.researchProgressBar.style.width = '0%'; } DOMElements.researchedTechsList.innerHTML = gameState.technologies.map(techId => { const tech = TECHNOLOGIES[techId]; return `<div>${tech.icon} ${tech.name}</div>`; }).join(''); }
-    function updateAgeUI() { if (gameState.age < AGES.length - 1) { const nextAgeCost = AGES[gameState.age + 1].techCost; DOMElements.advanceAgeCostDisplay.textContent = formatNumber(nextAgeCost); const progress = (gameState.resources.technologyPoints / nextAgeCost) * 100; DOMElements.ageProgressBar.style.width = `${Math.min(progress, 100)}%`; DOMElements.advanceAgeButton.querySelector('span:first-child').textContent = `Advance to ${AGES[gameState.age + 1].name}`; } else { DOMElements.advanceAgeCostDisplay.textContent = "MAX"; DOMElements.ageProgressBar.style.width = '100%'; DOMElements.advanceAgeButton.querySelector('span:first-child').textContent = "Maximum Age Reached"; DOMElements.advanceAgeButton.disabled = true; } }
-
-    function loadAvailableBuildings() { DOMElements.buildingsContainer.innerHTML = ''; const available = Object.values(BUILDINGS).filter(b => b.minAge <= gameState.age && b.maxAge >= gameState.age); available.forEach(building => { const count = gameState.buildings.filter(b => b.type === building.id && (b.isConstructed || b.isPlaceholder)).length + gameState.constructionQueue.filter(b => b.type === building.id).length; const cost = calculateBuildingCost(building, count); const effectsDesc = building.effects.map(e => `${e.value > 0 ? '+' : ''}${e.value} ${e.target.replace(/([A-Z])/g, ' $1').toLowerCase()}`).join(', '); const el = document.createElement('div'); el.className = 'item-slot'; el.dataset.itemId = building.id; el.dataset.tooltip = `<strong>${building.name}</strong><br>${building.description}<br><em>Effect: ${effectsDesc}</em><br>Size: ${building.sizeX}x${building.sizeY}, Time: ${building.buildTime}s<br>Cost Multiplier: x${building.costMultiplier.toFixed(2)}`; el.innerHTML = `<div class="item-icon">${building.icon}</div><div class="item-details"><div class="item-name">${building.name}</div><div class="item-description">${building.description.substring(0,30)}...</div></div><div class="item-cost">${formatNumber(cost)}</div>`; el.addEventListener('click', () => togglePlacementMode(building.id)); DOMElements.buildingsContainer.appendChild(el); }); updateButtonStates(); }
-    function calculateBuildingCost(buildingInfo, count) { return Math.floor(buildingInfo.baseCost * Math.pow(buildingInfo.costMultiplier, count)); }
-    
-    function togglePlacementMode(buildingId) {
-        const buildingInfo = BUILDINGS[buildingId];
-        const count = gameState.buildings.filter(b => b.type === buildingId && (b.isConstructed || b.isPlaceholder)).length + gameState.constructionQueue.filter(b => b.type === buildingId).length;
-        const cost = calculateBuildingCost(buildingInfo, count);
-
-        if (gameState.placement.isPlacing && gameState.placement.buildingId === buildingId) {
-            cancelPlacementMode();
-        } else {
-             if (gameState.resources.gold < cost) {
-                showNotification("Not enough gold!", 'error');
-                return;
-            }
-            if (gameState.constructionQueue.length >= 5) {
-                showNotification("Construction queue full (max 5)!", 'error');
-                return;
-            }
-            gameState.placement.isPlacing = true;
-            gameState.placement.buildingId = buildingId;
-            DOMElements.gameCanvasContainer.style.cursor = 'copy';
-            showNotification(`Placing ${buildingInfo.name}. Click on map.`, 'info', 5000);
-            updateButtonStates();
-        }
+function uniqueId(prefix = "") {
+  return (
+    prefix +
+    Date.now().toString(36) +
+    Math.random().toString(36).substring(2, 7)
+  );
+}
+function formatNumber(num, decimals = 0) {
+  if (num === undefined || num === null) return "0";
+  return Number(num)
+    .toFixed(decimals)
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+function showNotification(message, type = "info", duration = 3000) {
+  DOMElements.notificationMessage.textContent = message;
+  DOMElements.notification.className = "";
+  DOMElements.notification.classList.add(type, "show");
+  setTimeout(() => {
+    DOMElements.notification.classList.remove("show");
+  }, duration);
+}
+function addMessage(text, isImportant = false) {
+  const el = document.createElement("div");
+  el.classList.add("message");
+  if (isImportant) el.style.fontWeight = "bold";
+  el.textContent = text;
+  DOMElements.messagesContainer.appendChild(el);
+  DOMElements.messagesContainer.scrollTop =
+    DOMElements.messagesContainer.scrollHeight;
+  while (DOMElements.messagesContainer.children.length > 20)
+    DOMElements.messagesContainer.firstChild.remove();
+}
+function showModal(modalElement) {
+  modalElement.classList.add("visible");
+}
+function hideModal(modalElement) {
+  modalElement.classList.remove("visible");
+}
+let tooltipTimeout;
+function displayTooltip(event) {
+  const target = event.target.closest("[data-tooltip]");
+  if (!target) return;
+  const tooltipText = target.dataset.tooltip;
+  if (!tooltipText) return;
+  clearTimeout(tooltipTimeout);
+  DOMElements.tooltipElement.innerHTML = tooltipText;
+  DOMElements.tooltipElement.classList.add("visible");
+  const updatePosition = (e) => {
+    let x = e.clientX + 15;
+    let y = e.clientY + 15;
+    const rect = DOMElements.tooltipElement.getBoundingClientRect();
+    const vpW = window.innerWidth;
+    const vpH = window.innerHeight;
+    if (x + rect.width > vpW) x = e.clientX - rect.width - 15;
+    if (y + rect.height > vpH) y = e.clientY - rect.height - 15;
+    DOMElements.tooltipElement.style.left = `${x}px`;
+    DOMElements.tooltipElement.style.top = `${y}px`;
+  };
+  updatePosition(event);
+  document.addEventListener("mousemove", updatePositionTooltipHandler);
+  target.addEventListener("mouseout", hideTooltip, { once: true });
+}
+function updatePositionTooltipHandler(e) {
+  if (DOMElements.tooltipElement.classList.contains("visible")) {
+    let x = e.clientX + 15;
+    let y = e.clientY + 15;
+    const rect = DOMElements.tooltipElement.getBoundingClientRect();
+    const vpW = window.innerWidth;
+    const vpH = window.innerHeight;
+    if (x + rect.width > vpW) x = e.clientX - rect.width - 15;
+    if (y + rect.height > vpH) y = e.clientY - rect.height - 15;
+    DOMElements.tooltipElement.style.left = `${x}px`;
+    DOMElements.tooltipElement.style.top = `${y}px`;
+  }
+}
+function hideTooltip() {
+  tooltipTimeout = setTimeout(() => {
+    DOMElements.tooltipElement.classList.remove("visible");
+    document.removeEventListener("mousemove", updatePositionTooltipHandler);
+  }, 100);
+}
+function getCalculatedIncome() {
+  let totalIncome = gameState.modifiers.baseIncome;
+  let totalUpkeep = 0;
+  gameState.units.forEach((unit) => {
+    const unitInfo = UNITS[unit.type];
+    if (unitInfo) totalUpkeep += u.count * unitInfo.upkeep;
+  });
+  gameState.trainingQueue.forEach((queuedUnit) => {
+    const unitInfo = UNITS[queuedUnit.unitType];
+    if (unitInfo) totalUpkeep += unitInfo.upkeep * 0.25;
+  });
+  gameState.worldMap.deployedArmies.forEach((army) => {
+    army.units.forEach((u) => {
+      const unitInfo = UNITS[u.type];
+      if (unitInfo) totalUpkeep += unitInfo.upkeep;
+    });
+  });
+  totalIncome -= totalUpkeep;
+  totalIncome *= gameState.modifiers.incomeMultiplier;
+  return totalIncome;
+}
+function getCalculatedTechRate() {
+  return (
+    gameState.modifiers.baseTechRate * gameState.modifiers.techRateMultiplier
+  );
+}
+function getCalculatedEmpireDefense() {
+  return Math.floor(
+    gameState.modifiers.baseDefense * gameState.modifiers.defenseMultiplier +
+      gameState.modifiers.globalDefenseBoost,
+  );
+}
+function getUnitEffectiveStats(unitType) {
+  const unitInfo = UNITS[unitType];
+  if (!unitInfo) return { attack: 0, defense: 0, hp: 0, speed: 0 };
+  return {
+    attack: unitInfo.baseAttack + gameState.modifiers.globalAttackBoost,
+    defense: unitInfo.baseDefense + gameState.modifiers.globalDefenseBoost,
+    hp: unitInfo.maxHp,
+    speed: unitInfo.baseSpeed,
+  };
+}
+function applyEffects(itemData, isRemoval = false) {
+  if (!itemData.effects) return;
+  itemData.effects.forEach((effect) => {
+    let value = effect.value;
+    if (isRemoval) {
+      if (effect.operation === "add") value = -value;
+      else if (effect.operation === "multiply" && value !== 0)
+        value = 1 / value;
+      else if (effect.operation === "multiply" && value === 0) value = 0;
     }
-    
+    switch (effect.operation) {
+      case "add":
+        if (gameState.resources.hasOwnProperty(effect.target))
+          gameState.resources[effect.target] += value;
+        else if (gameState.modifiers.hasOwnProperty(effect.target))
+          gameState.modifiers[effect.target] += value;
+        break;
+      case "multiply":
+        if (gameState.modifiers.hasOwnProperty(effect.target))
+          gameState.modifiers[effect.target] *= value;
+        break;
+    }
+  });
+}
+
+
+function updateResourceDisplays() {
+  const calculatedIncome = getCalculatedIncome();
+  const incomeClass =
+    calculatedIncome >= 0
+      ? "resource-value"
+      : 'resource-value" style="color: var(--error-color);';
+  const resourcesHtml = `<div class="resource-display"><span>💰 Gold:</span><span class="resource-value">${formatNumber(gameState.resources.gold)}</span></div><div class="resource-display"><span>📈 Income:</span><span class="${incomeClass}">${formatNumber(calculatedIncome, 1)}/s</span></div><div class="resource-display"><span>👥 Pop:</span><span class="resource-value">${gameState.resources.population}/${formatNumber(gameState.resources.maxPopulation)}</span></div><div class="resource-display"><span>🧪 Tech Pts:</span><span class="resource-value">${formatNumber(gameState.resources.technologyPoints)}</span></div><div class="resource-display"><span>🔬 Research:</span><span class="resource-value">+${formatNumber(getCalculatedTechRate(), 1)}/s</span></div><div class="resource-display"><span>🛡️ Empire Def:</span><span class="resource-value">${formatNumber(getCalculatedEmpireDefense())}</span></div>`;
+  DOMElements.resourceDisplaysContainer.innerHTML = resourcesHtml;
+  DOMElements.armyStrengthDisplay.textContent = formatNumber(
+    calculateArmyStrength(),
+  );
+  DOMElements.eraLabelDisplay.textContent = AGES[gameState.age].name;
+  updateRaidAlertUI();
+}
+function updateButtonStates() {
+  document
+    .querySelectorAll("#buildings-container .item-slot")
+    .forEach((slot) => {
+      const buildingId = slot.dataset.itemId;
+      if (!buildingId) return;
+      const buildingInfo = BUILDINGS[buildingId];
+      const count =
+        gameState.buildings.filter(
+          (b) => b.type === buildingId && (b.isConstructed || b.isPlaceholder),
+        ).length +
+        gameState.constructionQueue.filter((b) => b.type === buildingId).length;
+      const cost = calculateBuildingCost(buildingInfo, count);
+      slot.classList.toggle(
+        "disabled",
+        gameState.resources.gold < cost ||
+          gameState.constructionQueue.length >= 5,
+      );
+      const costEl = slot.querySelector(".item-cost");
+      if (costEl) costEl.textContent = formatNumber(cost);
+      slot.classList.toggle(
+        "placing-active",
+        gameState.placement.isPlacing &&
+          gameState.placement.buildingId === buildingId,
+      );
+    });
+  document
+    .querySelectorAll("#units-container .game-button")
+    .forEach((button) => {
+      const unitId = button.dataset.itemId;
+      if (!unitId) return;
+      const unitInfo = UNITS[unitId];
+      const cost = Math.floor(
+        unitInfo.cost * gameState.modifiers.unitCostMultiplier,
+      );
+      button.disabled = !(
+        gameState.resources.gold >= cost &&
+        gameState.resources.population + unitInfo.population <=
+          gameState.resources.maxPopulation &&
+        gameState.trainingQueue.length < 5
+      );
+    });
+  document
+    .querySelectorAll("#tech-container .game-button")
+    .forEach((button) => {
+      const techId = button.dataset.itemId;
+      if (!techId) return;
+      const techInfo = TECHNOLOGIES[techId];
+      button.disabled = !!(
+        gameState.currentResearch.id || gameState.resources.gold < techInfo.cost
+      );
+    });
+  if (gameState.age < AGES.length - 1) {
+    const nextAgeCost = AGES[gameState.age + 1].techCost;
+    const canAdvance = gameState.resources.technologyPoints >= nextAgeCost;
+    DOMElements.advanceAgeButton.disabled = !canAdvance;
+    DOMElements.advanceAgeButton.classList.toggle("pulse", canAdvance);
+  } else {
+    DOMElements.advanceAgeButton.disabled = true;
+    DOMElements.advanceAgeButton.classList.remove("pulse");
+  }
+  DOMElements.battleButton.disabled =
+    gameState.battle.isActive || countTotalPlayerUnits() === 0;
+  updateExpandLandButtonCosts();
+  DOMElements.cancelPlacementButton.style.display = gameState.placement
+    .isPlacing
+    ? "flex"
+    : "none";
+  DOMElements.backToBaseButton.style.display =
+    Math.abs(camera.x) > BACK_TO_BASE_THRESHOLD ||
+    Math.abs(camera.y - -(DOMElements.gameCanvas.height / 3)) >
+      BACK_TO_BASE_THRESHOLD
+      ? "block"
+      : "none";
+  updateDeployedArmiesUI();
+}
+function updateAllUIDisplays() {
+  updateResourceDisplays();
+  updateResearchUI();
+  updateAgeUI();
+  updateTrainingQueueUI();
+  updateConstructionQueueUI();
+  updateDeployedArmiesUI();
+  loadAvailableUnits();
+  updateButtonStates();
+}
+function updateResearchUI() {
+  if (gameState.currentResearch.id) {
+    const tech = TECHNOLOGIES[gameState.currentResearch.id];
+    DOMElements.currentResearchDisplay.textContent = `${tech.icon} ${tech.name}`;
+    const progress =
+      (gameState.currentResearch.progress /
+        gameState.currentResearch.timeToComplete) *
+      100;
+    DOMElements.researchProgressBar.style.width = `${Math.min(progress, 100)}%`;
+  } else {
+    DOMElements.currentResearchDisplay.textContent = "None";
+    DOMElements.researchProgressBar.style.width = "0%";
+  }
+  DOMElements.researchedTechsList.innerHTML = gameState.technologies
+    .map((techId) => {
+      const tech = TECHNOLOGIES[techId];
+      return `<div>${tech.icon} ${tech.name}</div>`;
+    })
+    .join("");
+}
+function updateAgeUI() {
+  if (gameState.age < AGES.length - 1) {
+    const nextAgeCost = AGES[gameState.age + 1].techCost;
+    DOMElements.advanceAgeCostDisplay.textContent = formatNumber(nextAgeCost);
+    const progress = (gameState.resources.technologyPoints / nextAgeCost) * 100;
+    DOMElements.ageProgressBar.style.width = `${Math.min(progress, 100)}%`;
+    DOMElements.advanceAgeButton.querySelector("span:first-child").textContent =
+      `Advance to ${AGES[gameState.age + 1].name}`;
+  } else {
+    DOMElements.advanceAgeCostDisplay.textContent = "MAX";
+    DOMElements.ageProgressBar.style.width = "100%";
+    DOMElements.advanceAgeButton.querySelector("span:first-child").textContent =
+      "Maximum Age Reached";
+    DOMElements.advanceAgeButton.disabled = true;
+  }
+}
+
+
+function loadAvailableBuildings() {
+  DOMElements.buildingsContainer.innerHTML = "";
+  const available = Object.values(BUILDINGS).filter(
+    (b) => b.minAge <= gameState.age && b.maxAge >= gameState.age,
+  );
+  available.forEach((building) => {
+    const count =
+      gameState.buildings.filter(
+        (b) => b.type === building.id && (b.isConstructed || b.isPlaceholder),
+      ).length +
+      gameState.constructionQueue.filter((b) => b.type === building.id).length;
+    const cost = calculateBuildingCost(building, count);
+    const effectsDesc = building.effects
+      .map(
+        (e) =>
+          `${e.value > 0 ? "+" : ""}${e.value} ${e.target.replace(/([A-Z])/g, " $1").toLowerCase()}`,
+      )
+      .join(", ");
+    const el = document.createElement("div");
+    el.className = "item-slot";
+    el.dataset.itemId = building.id;
+    el.dataset.tooltip = `<strong>${building.name}</strong><br>${building.description}<br><em>Effect: ${effectsDesc}</em><br>Size: ${building.sizeX}x${building.sizeY}, Time: ${building.buildTime}s<br>Cost Multiplier: x${building.costMultiplier.toFixed(2)}`;
+    el.innerHTML = `<div class="item-icon">${building.icon}</div><div class="item-details"><div class="item-name">${building.name}</div><div class="item-description">${building.description.substring(0, 30)}...</div></div><div class="item-cost">${formatNumber(cost)}</div>`;
+    el.addEventListener("click", () => togglePlacementMode(building.id));
+    DOMElements.buildingsContainer.appendChild(el);
+  });
+  updateButtonStates();
+}
+function calculateBuildingCost(buildingInfo, count) {
+  return Math.floor(
+    buildingInfo.baseCost * Math.pow(buildingInfo.costMultiplier, count),
+  );
+}
+
+function togglePlacementMode(buildingId) {
+  const buildingInfo = BUILDINGS[buildingId];
+  const count =
+    gameState.buildings.filter(
+      (b) => b.type === buildingId && (b.isConstructed || b.isPlaceholder),
+    ).length +
+    gameState.constructionQueue.filter((b) => b.type === buildingId).length;
+  const cost = calculateBuildingCost(buildingInfo, count);
+
+  if (
+    gameState.placement.isPlacing &&
+    gameState.placement.buildingId === buildingId
+  ) {
+    cancelPlacementMode();
+  } else {
+    if (gameState.resources.gold < cost) {
+      showNotification("Not enough gold!", "error");
+      return;
+    }
+    if (gameState.constructionQueue.length >= 5) {
+      showNotification("Construction queue full (max 5)!", "error");
+      return;
+    }
+    gameState.placement.isPlacing = true;
+    gameState.placement.buildingId = buildingId;
+    DOMElements.gameCanvasContainer.style.cursor = "copy";
+    showNotification(
+      `Placing ${buildingInfo.name}. Click on map.`,
+      "info",
+      5000,
+    );
+    updateButtonStates();
+  }
+}
+
     function cancelPlacementMode() {
         gameState.placement.isPlacing = false;
         gameState.placement.buildingId = null;
@@ -809,23 +1117,288 @@
     }
 
 
-    function loadAvailableUnits() { DOMElements.unitsContainer.innerHTML = ''; const availableUnitTypes = Object.values(UNITS).filter(u => u.minAge <= gameState.age && u.maxAge >= gameState.age); availableUnitTypes.forEach(unit => { const cost = Math.floor(unit.cost * gameState.modifiers.unitCostMultiplier); const trainTime = Math.floor(unit.trainTime * gameState.modifiers.unitTrainTimeMultiplier); const el = document.createElement('button'); el.className = 'game-button'; el.dataset.itemId = unit.id; const effectiveStats = getUnitEffectiveStats(unit.id); el.dataset.tooltip = `<strong>${unit.name} (${unit.icon})</strong><br>${unit.description}<br>HP: ${effectiveStats.hp}, Atk: ${effectiveStats.attack}, Def: ${effectiveStats.defense}, Spd: ${effectiveStats.speed}<br>Pop: ${unit.population}, Upkeep: ${unit.upkeep.toFixed(1)}/s<br>Train Time: ${trainTime}s`; el.innerHTML = `<span>${unit.icon} ${unit.name} (Time: ${trainTime}s)</span><span>${formatNumber(cost)}</span>`; el.addEventListener('click', () => addUnitToTrainingQueue(unit.id)); DOMElements.unitsContainer.appendChild(el); }); const unitStacks = {}; gameState.units.forEach(unit => { if (!unitStacks[unit.type]) { unitStacks[unit.type] = { count: 0, unitDef: UNITS[unit.type] };} unitStacks[unit.type].count++; }); DOMElements.currentUnitsList.innerHTML = Object.values(unitStacks).map(stack => { return `<div class="unit-info"><span>${stack.unitDef.icon} ${stack.unitDef.name}</span><span>x${stack.count}</span></div>`; }).join('') || "No units in army."; DOMElements.currentUnitsDisplay.style.display = 'block'; updateButtonStates(); }
-    function addUnitToTrainingQueue(unitId) { const unitInfo = UNITS[unitId]; const cost = Math.floor(unitInfo.cost * gameState.modifiers.unitCostMultiplier); const trainTime = Math.floor(unitInfo.trainTime * gameState.modifiers.unitTrainTimeMultiplier); if (gameState.resources.gold < cost) { showNotification("Not enough gold!", 'error'); return; } if (gameState.resources.population + unitInfo.population > gameState.resources.maxPopulation) { showNotification("Not enough pop!", 'error'); return; } if (gameState.trainingQueue.length >= 5) { showNotification("Queue full (max 5)!", 'error'); return; } gameState.resources.gold -= cost; gameState.trainingQueue.push({ id: uniqueId('trn_'), unitType: unitId, progress: 0, totalTime: trainTime, cost: cost, population: unitInfo.population }); showNotification(`${unitInfo.name} added to queue!`, 'success'); addMessage(`Training ${unitInfo.name}.`); updateTrainingQueueUI(); updateAllUIDisplays(); }
-    function processTrainingQueue(deltaTime) { if (gameState.trainingQueue.length > 0) { const trainingUnit = gameState.trainingQueue[0]; trainingUnit.progress += deltaTime; if (trainingUnit.progress >= trainingUnit.totalTime) { if (gameState.resources.population + trainingUnit.population <= gameState.resources.maxPopulation) { gameState.resources.population += trainingUnit.population; const unitInfo = UNITS[trainingUnit.unitType]; gameState.units.push({ id: uniqueId('unt_'), type: trainingUnit.unitType, originalCost: trainingUnit.cost, recruitedAt: gameState.stats.timePlayed }); showNotification(`${unitInfo.name} trained!`, 'success'); addMessage(`${unitInfo.name} joined army.`); gameState.stats.unitsTrained = (gameState.stats.unitsTrained || 0) + 1; } else { showNotification(`${UNITS[trainingUnit.unitType].name} trained, but no pop! Unit lost. Gold refunded.`, 'error'); addMessage(`Could not field ${UNITS[trainingUnit.unitType].name}. Gold refunded.`); gameState.resources.gold += trainingUnit.cost; } gameState.trainingQueue.shift(); loadAvailableUnits(); updateAllUIDisplays(); } updateTrainingQueueUI(); }}
-    function updateTrainingQueueUI() { DOMElements.trainingQueueCount.textContent = gameState.trainingQueue.length; if (gameState.trainingQueue.length > 0) { DOMElements.trainingQueueDisplay.style.display = 'block'; DOMElements.trainingQueueList.innerHTML = gameState.trainingQueue.map((item, index) => { const unitInfo = UNITS[item.unitType]; const progressPercent = Math.min(100, (item.progress / item.totalTime) * 100); return `<div class="training-queue-item-info"><span>${index + 1}. ${unitInfo.icon} ${unitInfo.name}</span><span>${formatNumber(item.progress,0)}s / ${item.totalTime}s</span></div><div class="progress-container" style="height:5px; margin-bottom:5px;"><div class="progress-bar-small" style="width:${progressPercent}%"></div></div>`; }).join(''); } else { DOMElements.trainingQueueDisplay.style.display = 'none'; DOMElements.trainingQueueList.innerHTML = ""; }}
-    function countTotalPlayerUnits() { return gameState.units.length; }
-    function calculateArmyStrength() { let strength = 0; gameState.units.forEach(unitInstance => { const unitStats = getUnitEffectiveStats(unitInstance.type); strength += (unitStats.attack * 1.5) + unitStats.defense + (unitStats.hp / 4); }); gameState.worldMap.deployedArmies.forEach(army => army.units.forEach(u => {const unitStats = getUnitEffectiveStats(u.type); strength += u.count * ((unitStats.attack*1.5) + unitStats.defense + (unitStats.hp/4)); })); return Math.floor(strength); }
+function loadAvailableUnits() {
+  DOMElements.unitsContainer.innerHTML = "";
+  const availableUnitTypes = Object.values(UNITS).filter(
+    (u) => u.minAge <= gameState.age && u.maxAge >= gameState.age,
+  );
+  availableUnitTypes.forEach((unit) => {
+    const cost = Math.floor(unit.cost * gameState.modifiers.unitCostMultiplier);
+    const trainTime = Math.floor(
+      unit.trainTime * gameState.modifiers.unitTrainTimeMultiplier,
+    );
+    const el = document.createElement("button");
+    el.className = "game-button";
+    el.dataset.itemId = unit.id;
+    const effectiveStats = getUnitEffectiveStats(unit.id);
+    el.dataset.tooltip = `<strong>${unit.name} (${unit.icon})</strong><br>${unit.description}<br>HP: ${effectiveStats.hp}, Atk: ${effectiveStats.attack}, Def: ${effectiveStats.defense}, Spd: ${effectiveStats.speed}<br>Pop: ${unit.population}, Upkeep: ${unit.upkeep.toFixed(1)}/s<br>Train Time: ${trainTime}s`;
+    el.innerHTML = `<span>${unit.icon} ${unit.name} (Time: ${trainTime}s)</span><span>${formatNumber(cost)}</span>`;
+    el.addEventListener("click", () => addUnitToTrainingQueue(unit.id));
+    DOMElements.unitsContainer.appendChild(el);
+  });
+  const unitStacks = {};
+  gameState.units.forEach((unit) => {
+    if (!unitStacks[unit.type]) {
+      unitStacks[unit.type] = { count: 0, unitDef: UNITS[unit.type] };
+    }
+    unitStacks[unit.type].count++;
+  });
+  DOMElements.currentUnitsList.innerHTML =
+    Object.values(unitStacks)
+      .map((stack) => {
+        return `<div class="unit-info"><span>${stack.unitDef.icon} ${stack.unitDef.name}</span><span>x${stack.count}</span></div>`;
+      })
+      .join("") || "No units in army.";
+  DOMElements.currentUnitsDisplay.style.display = "block";
+  updateButtonStates();
+}
+function addUnitToTrainingQueue(unitId) {
+  const unitInfo = UNITS[unitId];
+  const cost = Math.floor(
+    unitInfo.cost * gameState.modifiers.unitCostMultiplier,
+  );
+  const trainTime = Math.floor(
+    unitInfo.trainTime * gameState.modifiers.unitTrainTimeMultiplier,
+  );
+  if (gameState.resources.gold < cost) {
+    showNotification("Not enough gold!", "error");
+    return;
+  }
+  if (
+    gameState.resources.population + unitInfo.population >
+    gameState.resources.maxPopulation
+  ) {
+    showNotification("Not enough pop!", "error");
+    return;
+  }
+  if (gameState.trainingQueue.length >= 5) {
+    showNotification("Queue full (max 5)!", "error");
+    return;
+  }
+  gameState.resources.gold -= cost;
+  gameState.trainingQueue.push({
+    id: uniqueId("trn_"),
+    unitType: unitId,
+    progress: 0,
+    totalTime: trainTime,
+    cost: cost,
+    population: unitInfo.population,
+  });
+  showNotification(`${unitInfo.name} added to queue!`, "success");
+  addMessage(`Training ${unitInfo.name}.`);
+  updateTrainingQueueUI();
+  updateAllUIDisplays();
+}
+function processTrainingQueue(deltaTime) {
+  if (gameState.trainingQueue.length > 0) {
+    const trainingUnit = gameState.trainingQueue[0];
+    trainingUnit.progress += deltaTime;
+    if (trainingUnit.progress >= trainingUnit.totalTime) {
+      if (
+        gameState.resources.population + trainingUnit.population <=
+        gameState.resources.maxPopulation
+      ) {
+        gameState.resources.population += trainingUnit.population;
+        const unitInfo = UNITS[trainingUnit.unitType];
+        gameState.units.push({
+          id: uniqueId("unt_"),
+          type: trainingUnit.unitType,
+          originalCost: trainingUnit.cost,
+          recruitedAt: gameState.stats.timePlayed,
+        });
+        showNotification(`${unitInfo.name} trained!`, "success");
+        addMessage(`${unitInfo.name} joined army.`);
+        gameState.stats.unitsTrained = (gameState.stats.unitsTrained || 0) + 1;
+      } else {
+        showNotification(
+          `${UNITS[trainingUnit.unitType].name} trained, but no pop! Unit lost. Gold refunded.`,
+          "error",
+        );
+        addMessage(
+          `Could not field ${UNITS[trainingUnit.unitType].name}. Gold refunded.`,
+        );
+        gameState.resources.gold += trainingUnit.cost;
+      }
+      gameState.trainingQueue.shift();
+      loadAvailableUnits();
+      updateAllUIDisplays();
+    }
+    updateTrainingQueueUI();
+  }
+}
+function updateTrainingQueueUI() {
+  DOMElements.trainingQueueCount.textContent = gameState.trainingQueue.length;
+  if (gameState.trainingQueue.length > 0) {
+    DOMElements.trainingQueueDisplay.style.display = "block";
+    DOMElements.trainingQueueList.innerHTML = gameState.trainingQueue
+      .map((item, index) => {
+        const unitInfo = UNITS[item.unitType];
+        const progressPercent = Math.min(
+          100,
+          (item.progress / item.totalTime) * 100,
+        );
+        return `<div class="training-queue-item-info"><span>${index + 1}. ${unitInfo.icon} ${unitInfo.name}</span><span>${formatNumber(item.progress, 0)}s / ${item.totalTime}s</span></div><div class="progress-container" style="height:5px; margin-bottom:5px;"><div class="progress-bar-small" style="width:${progressPercent}%"></div></div>`;
+      })
+      .join("");
+  } else {
+    DOMElements.trainingQueueDisplay.style.display = "none";
+    DOMElements.trainingQueueList.innerHTML = "";
+  }
+}
+function countTotalPlayerUnits() {
+  return gameState.units.length;
+}
+function calculateArmyStrength() {
+  let strength = 0;
+  gameState.units.forEach((unitInstance) => {
+    const unitStats = getUnitEffectiveStats(unitInstance.type);
+    strength += unitStats.attack * 1.5 + unitStats.defense + unitStats.hp / 4;
+  });
+  gameState.worldMap.deployedArmies.forEach((army) =>
+    army.units.forEach((u) => {
+      const unitStats = getUnitEffectiveStats(u.type);
+      strength +=
+        u.count *
+        (unitStats.attack * 1.5 + unitStats.defense + unitStats.hp / 4);
+    }),
+  );
+  return Math.floor(strength);
+}
 
-    const ENEMY_OUTPOSTS = [
-        { name: "Rival Tribe Camp", description: "Scout their camp.", icon: "🏕️", rewardBase: 50, minAge: 0, maxAge: 1, composition: [{ type: "clubber", countMin: 3, countMax: 5, unitDef: UNITS.clubber}]},
-        { name: "Boar Den", description: "Dangerous wild boars.", icon: "🐗", rewardBase: 70, minAge: 0, maxAge: 2, composition: [{ type: "wildBoar", countMin: 2, countMax: 4, unitDef: {name: "Wild Boar", icon:"🐗", maxHp:50, baseAttack:8, baseDefense:3, baseSpeed:4, isRanged: false}}]},
-        { name: "Bandit Hideout", description: "Root out the bandits.", icon: "🏴‍☠️", rewardBase: 150, minAge: 1, maxAge: 3, composition: [{ type: "spearman", countMin: 4, countMax: 6, unitDef: UNITS.spearman}, {type: "archer", countMin:2, countMax:3, unitDef: UNITS.archer}]},
-        { name: "Fortified Outpost", description: "A well-defended enemy position.", icon: "🏰", rewardBase: 300, minAge: 2, maxAge: 4, composition: [{ type: "knight", countMin: 3, countMax: 5, unitDef: UNITS.knight}, {type: "archer", countMin:3, countMax:5, unitDef: UNITS.archer}]},
-        { name: "Industrial Complex", description: "Heavily guarded factory.", icon: "🏭", rewardBase: 1000, minAge: 4, maxAge: 5, composition: [{ type: "rifleman", countMin: 6, countMax: 10, unitDef: UNITS.rifleman}, {type: "cannon", countMin:1, countMax:2, unitDef: UNITS.cannon}]},
-        { name: "Alien Wreckage", description: "Investigate the crash site.", icon: "👽", rewardBase: 5000, minAge: 6, maxAge: 7, composition: [{ type: "drone", countMin: 5, countMax: 8, unitDef: UNITS.drone}, {type: "mech", countMin:1, countMax:2, unitDef: UNITS.mech}]},
-    ];
+const ENEMY_OUTPOSTS = [
+  {
+    name: "Rival Tribe Camp",
+    description: "Scout their camp.",
+    icon: "🏕️",
+    rewardBase: 50,
+    minAge: 0,
+    maxAge: 1,
+    composition: [
+      { type: "clubber", countMin: 3, countMax: 5, unitDef: UNITS.clubber },
+    ],
+  },
+  {
+    name: "Boar Den",
+    description: "Dangerous wild boars.",
+    icon: "🐗",
+    rewardBase: 70,
+    minAge: 0,
+    maxAge: 2,
+    composition: [
+      {
+        type: "wildBoar",
+        countMin: 2,
+        countMax: 4,
+        unitDef: {
+          name: "Wild Boar",
+          icon: "🐗",
+          maxHp: 50,
+          baseAttack: 8,
+          baseDefense: 3,
+          baseSpeed: 4,
+          isRanged: false,
+        },
+      },
+    ],
+  },
+  {
+    name: "Bandit Hideout",
+    description: "Root out the bandits.",
+    icon: "🏴‍☠️",
+    rewardBase: 150,
+    minAge: 1,
+    maxAge: 3,
+    composition: [
+      { type: "spearman", countMin: 4, countMax: 6, unitDef: UNITS.spearman },
+      { type: "archer", countMin: 2, countMax: 3, unitDef: UNITS.archer },
+    ],
+  },
+  {
+    name: "Fortified Outpost",
+    description: "A well-defended enemy position.",
+    icon: "🏰",
+    rewardBase: 300,
+    minAge: 2,
+    maxAge: 4,
+    composition: [
+      { type: "knight", countMin: 3, countMax: 5, unitDef: UNITS.knight },
+      { type: "archer", countMin: 3, countMax: 5, unitDef: UNITS.archer },
+    ],
+  },
+  {
+    name: "Industrial Complex",
+    description: "Heavily guarded factory.",
+    icon: "🏭",
+    rewardBase: 1000,
+    minAge: 4,
+    maxAge: 5,
+    composition: [
+      { type: "rifleman", countMin: 6, countMax: 10, unitDef: UNITS.rifleman },
+      { type: "cannon", countMin: 1, countMax: 2, unitDef: UNITS.cannon },
+    ],
+  },
+  {
+    name: "Alien Wreckage",
+    description: "Investigate the crash site.",
+    icon: "👽",
+    rewardBase: 5000,
+    minAge: 6,
+    maxAge: 7,
+    composition: [
+      { type: "drone", countMin: 5, countMax: 8, unitDef: UNITS.drone },
+      { type: "mech", countMin: 1, countMax: 2, unitDef: UNITS.mech },
+    ],
+  },
+];
 
-    function findEnemies() { if (gameState.battle.isActive) { showNotification("Battle active!", 'error'); return; } if (countTotalPlayerUnits() === 0) { showNotification("Need units!", 'error'); return; } const ageStrengthMod = AGES[gameState.age].enemyStrengthModifier || 1; const outposts = ENEMY_OUTPOSTS.filter(e => e.minAge <= gameState.age && e.maxAge >= gameState.age).map(e => { let estimatedStrength = 0; e.composition.forEach(comp => { const unitDef = comp.unitDefOverride || comp.unitDef || UNITS[comp.type] || {maxHp:10,baseAttack:1,baseDefense:1,baseSpeed:1}; const count = Math.floor((comp.countMin + comp.countMax) / 2); estimatedStrength += count * (unitDef.baseAttack + unitDef.baseDefense + unitDef.maxHp/5) * ageStrengthMod; }); return { ...e, calculatedStrength: Math.floor(estimatedStrength), reward: Math.floor(e.rewardBase * ageStrengthMod) }; }); DOMElements.enemySelectionList.innerHTML = ''; outposts.forEach(outpost => { const el = document.createElement('div'); el.className = 'item-slot enemy-preview'; el.dataset.tooltip = `<strong>${outpost.name}</strong><br>${outpost.description}<br>Est. Strength: ${formatNumber(outpost.calculatedStrength)}<br>Reward: ~${formatNumber(outpost.reward)} Gold`; el.innerHTML = `<div class="item-icon enemy-icon">${outpost.icon}</div><div class="item-details"><div class="item-name">${outpost.name}</div><div class="item-description">Strength: ${formatNumber(outpost.calculatedStrength)}</div></div>`; el.addEventListener('click', () => initiateBattle(outpost, 'outpost')); DOMElements.enemySelectionList.appendChild(el); }); DOMElements.enemySelectionContainer.style.display = 'block'; }
+function findEnemies() {
+  if (gameState.battle.isActive) {
+    showNotification("Battle active!", "error");
+    return;
+  }
+  if (countTotalPlayerUnits() === 0) {
+    showNotification("Need units!", "error");
+    return;
+  }
+  const ageStrengthMod = AGES[gameState.age].enemyStrengthModifier || 1;
+  const outposts = ENEMY_OUTPOSTS.filter(
+    (e) => e.minAge <= gameState.age && e.maxAge >= gameState.age,
+  ).map((e) => {
+    let estimatedStrength = 0;
+    e.composition.forEach((comp) => {
+      const unitDef = comp.unitDefOverride ||
+        comp.unitDef ||
+        UNITS[comp.type] || {
+          maxHp: 10,
+          baseAttack: 1,
+          baseDefense: 1,
+          baseSpeed: 1,
+        };
+      const count = Math.floor((comp.countMin + comp.countMax) / 2);
+      estimatedStrength +=
+        count *
+        (unitDef.baseAttack + unitDef.baseDefense + unitDef.maxHp / 5) *
+        ageStrengthMod;
+    });
+    return {
+      ...e,
+      calculatedStrength: Math.floor(estimatedStrength),
+      reward: Math.floor(e.rewardBase * ageStrengthMod),
+    };
+  });
+  DOMElements.enemySelectionList.innerHTML = "";
+  outposts.forEach((outpost) => {
+    const el = document.createElement("div");
+    el.className = "item-slot enemy-preview";
+    el.dataset.tooltip = `<strong>${outpost.name}</strong><br>${outpost.description}<br>Est. Strength: ${formatNumber(outpost.calculatedStrength)}<br>Reward: ~${formatNumber(outpost.reward)} Gold`;
+    el.innerHTML = `<div class="item-icon enemy-icon">${outpost.icon}</div><div class="item-details"><div class="item-name">${outpost.name}</div><div class="item-description">Strength: ${formatNumber(outpost.calculatedStrength)}</div></div>`;
+    el.addEventListener("click", () => initiateBattle(outpost, "outpost"));
+    DOMElements.enemySelectionList.appendChild(el);
+  });
+  DOMElements.enemySelectionContainer.style.display = "block";
+}
+
+
     function initiateBattle(encounterData, battleType = 'outpost', deployedArmyId = null) {
         gameState.battle.isActive = true;
         gameState.battle.log = [];
