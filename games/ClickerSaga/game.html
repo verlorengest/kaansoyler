@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyper Clicker Saga Deluxe ✨</title>
+    <style>
+        :root {
+            --primary-bg: #2c3e50;
+            --secondary-bg: #34495e;
+            --tertiary-bg: #283747;
+            --text-color: #ecf0f1;
+            --accent-color: #e67e22;
+            --accent-hover-color: #d35400;
+            --success-color: #2ecc71;
+            --error-color: #e74c3c;
+            --info-color: #3498db;
+            --xp-color: var(--info-color);
+            --gold-color: #f1c40f;
+            --hp-color: var(--success-color);
+            --prestige-color: #9b59b6;
+            --border-radius: 8px;
+            --box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            --text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary-bg) 0%, var(--secondary-bg) 100%);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            user-select: none;
+            overflow-y: auto;
+        }
+        #game-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 1300px; 
+        }
+        #game-title {
+            font-size: 3em; 
+            color: var(--accent-color);
+            margin-bottom: 25px;
+            text-shadow: 3px 3px 5px rgba(0,0,0,0.5);
+            letter-spacing: 1px;
+        }
+        #global-event-display {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            font-weight: bold;
+            box-shadow: var(--box-shadow);
+            display: none; 
+        }
+        #main-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            background-color: var(--tertiary-bg);
+            border-radius: var(--border-radius);
+            padding: 8px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .tab-button {
+            padding: 12px 25px; 
+            cursor: pointer;
+            border: none;
+            background-color: transparent;
+            color: var(--text-color);
+            font-size: 1.1em; 
+            border-radius: var(--border-radius);
+            transition: background-color 0.3s, color 0.3s, transform 0.1s;
+            margin: 0 5px;
+        }
+        .tab-button.active, .tab-button:hover {
+            background-color: var(--accent-color);
+            color: white;
+            transform: translateY(-2px);
+        }
+        .tab-content { display: none; animation: fadeIn 0.5s ease-out; }
+        .tab-content.active { display: block; width: 100%;}
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        #game-container {
+            display: grid;
+            grid-template-columns: 1fr 2.2fr 1fr; 
+            grid-template-areas:
+                "stats enemy upgrades"
+                "abilities enemy special-upgrades" 
+                "messages messages messages"
+                "controls controls controls";
+            gap: 25px; 
+            background-color: var(--secondary-bg);
+            padding: 25px; 
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 100%;
+        }
+        .game-area {
+            background-color: var(--tertiary-bg); 
+            padding: 20px; 
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+        #stats-area { grid-area: stats; }
+        #stats-area p { margin: 10px 0; font-size: 1em; } 
+        #stats-area span { font-weight: bold; color: var(--accent-color); }
+        #xp-bar-container {
+            width: 100%; height: 12px; background-color: #555; border-radius: 6px; margin-top: 5px; overflow: hidden;
+        }
+        #xp-bar { height: 100%; background-color: var(--xp-color); width: 0%; transition: width 0.2s; }
+
+        #enemy-area {
+            grid-area: enemy; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background-color: rgba(0,0,0,0.15); 
+        }
+        #enemy {
+            width: 220px; height: 220px; 
+            color: white; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border-radius: 20px; 
+            cursor: pointer; text-align: center;
+            border: 4px solid; 
+            transition: transform 0.05s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.3s, border-color 0.3s, box-shadow 0.1s;
+            box-shadow: 0 0 15px rgba(0,0,0,0.4) inset, 0 0 5px var(--accent-color); 
+            position: relative;
+            font-size: 1.1em; 
+        }
+        #enemy.elite { border-style: dashed; box-shadow: 0 0 15px var(--prestige-color), 0 0 25px var(--prestige-color) inset; }
+        #enemy.boss { animation: bossPulse 1.5s infinite; }
+        @keyframes bossPulse { 0%, 100% { box-shadow: 0 0 15px var(--error-color), 0 0 25px var(--error-color) inset; } 50% { box-shadow: 0 0 25px var(--error-color), 0 0 40px var(--error-color) inset; } }
+        #enemy:active { transform: scale(0.92); box-shadow: 0 0 10px rgba(0,0,0,0.2) inset; }
+        #enemy-name { font-weight: bold; font-size: 1.4em; margin-bottom: 8px; text-shadow: var(--text-shadow); }
+        #enemy-hp-text { font-size: 0.95em; }
+        #enemy-hp-bar-container {
+            width: 90%; height: 30px; background-color: rgba(0,0,0,0.4); border-radius: 8px; margin-top: 12px; overflow: hidden; border: 1px solid rgba(0,0,0,0.6);
+        }
+        #enemy-hp-bar { height: 100%; background-color: var(--hp-color); width: 100%; transition: width 0.1s linear; }
+        #damage-feedback-container, #resource-feedback-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+        .feedback-number {
+            position: absolute; font-weight: bold; opacity: 1;
+            animation: floatUpStrong 0.8s ease-out forwards;
+            text-shadow: 1px 1px 1px black;
+        }
+        .damage-number { font-size: 1.7em; }
+        .crit { color: #ffeb3b !important; font-size: 2.2em !important; animation: floatUpCrit 0.9s ease-out forwards !important; }
+        .gold-feedback { font-size: 1.3em; color: var(--gold-color); }
+        .xp-feedback { font-size: 1.3em; color: var(--xp-color); }
+
+        @keyframes floatUpStrong {
+            to { transform: translateY(-70px) scale(0.8); opacity: 0; }
+        }
+        @keyframes floatUpCrit {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            50% { transform: translateY(-40px) scale(1.3); opacity: 0.8; }
+            100% { transform: translateY(-80px) scale(0.7); opacity: 0; }
+        }
+        #boss-timer { margin-top: 15px; font-size: 1.2em; color: var(--error-color); font-weight: bold; }
+
+        #upgrades-area { grid-area: upgrades; }
+        #special-upgrades-area { grid-area: special-upgrades; } 
+        #abilities-area { grid-area: abilities; }
+        
+        .area-title { font-size: 1.6em; margin-bottom: 15px; color: var(--accent-color); text-align: center; text-shadow: var(--text-shadow); }
+        
+        .upgrade-button, .ability-button, #prestige-button, .achievement button, .special-upgrade-button { 
+            display: block; margin-bottom: 12px; padding: 14px; width: 100%; box-sizing: border-box;
+            background-image: linear-gradient(to bottom, var(--accent-color), var(--accent-hover-color));
+            color: white; border: none;
+            border-radius: var(--border-radius); cursor: pointer; transition: all 0.2s ease-in-out;
+            font-size: 1em; position: relative; overflow: hidden;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 3px rgba(0,0,0,0.2);
+        }
+        .upgrade-button:hover, .ability-button:hover, #prestige-button:hover, .special-upgrade-button:hover {
+            background-image: linear-gradient(to bottom, var(--accent-hover-color), var(--accent-color));
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transform: translateY(-1px);
+        }
+        .upgrade-button:active, .ability-button:active, #prestige-button:active, .special-upgrade-button:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        .upgrade-button small, .ability-button small, .special-upgrade-button small { display: block; font-size: 0.85em; opacity: 0.9; margin-top: 3px; }
+        .cooldown-bar {
+            position: absolute; bottom: 0; left: 0; height: 6px; background-color: rgba(46, 204, 113, 0.6);
+            width: 0%; transition: width 0.1s linear; border-radius: 0 0 var(--border-radius) var(--border-radius);
+        }
+        button:disabled {
+            background-image: linear-gradient(to bottom, #7f8c8d, #95a5a6) !important;
+            cursor: not-allowed !important;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
+            transform: translateY(0) !important;
+        }
+
+
+        #achievements-container, #prestige-upgrades-container, #special-upgrades-list { 
+            max-height: 450px; overflow-y: auto; padding-right: 10px;
+        }
+        .achievement {
+            background-color: rgba(0,0,0,0.25); padding: 12px; border-radius: var(--border-radius);
+            margin-bottom: 10px; border-left: 6px solid var(--tertiary-bg); transition: border-color 0.3s;
+        }
+        .achievement.completed { border-left-color: var(--success-color); background-color: rgba(46, 204, 113, 0.1); }
+        .achievement h4 { margin: 0 0 6px 0; color: var(--accent-color); font-size: 1.05em; }
+        .achievement p { margin: 0 0 4px 0; font-size: 0.9em; }
+        .achievement button { font-size: 0.85em; padding: 6px 12px; float: right; background-image: linear-gradient(to bottom, var(--info-color), #2980b9); }
+        .achievement button:hover { background-image: linear-gradient(to bottom, #2980b9, var(--info-color)); }
+        .achievement button:disabled { background-image: linear-gradient(to bottom, #7f8c8d, #95a5a6) !important; }
+
+
+        #messages-area { 
+            grid-area: messages; min-height: 45px; 
+            font-weight: bold; text-align: center; display: flex; align-items: center; justify-content: center;
+            font-size: 1.15em; border-radius: var(--border-radius); background-color: var(--tertiary-bg);
+            text-shadow: var(--text-shadow);
+        }
+        #controls-area { grid-area: controls; text-align: center; }
+        #controls-area button { 
+            margin: 8px; padding: 12px 25px; background-color: #7f8c8d; color: white; 
+            border: none; border-radius: var(--border-radius); cursor: pointer; transition: background-color 0.2s, transform 0.1s;
+            font-size: 1em;
+        }
+        #controls-area button:hover { background-color: #95a5a6; transform: translateY(-1px); }
+        #controls-area button:active { transform: translateY(1px); }
+        
+        #daily-reward-popup, #offline-progress-popup {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
+            background-color: var(--secondary-bg); padding: 35px; border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow); text-align: center; z-index: 1001;
+            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55); border: 3px solid var(--accent-color);
+            width: 90%; max-width: 450px;
+        }
+        #daily-reward-popup.visible, #offline-progress-popup.visible { transform: translate(-50%, -50%) scale(1); }
+        #daily-reward-popup h3, #offline-progress-popup h3 { color: var(--accent-color); margin-top: 0; font-size: 1.8em; }
+        #daily-reward-popup p, #offline-progress-popup p { font-size: 1.1em; margin-bottom: 15px; }
+        #daily-reward-popup button, #offline-progress-popup button { margin-top: 20px; font-size: 1.1em; padding: 12px 25px; }
+        
+        /* Screen Flash Effect */
+        .screen-flash {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            opacity: 0; pointer-events: none; z-index: 2000;
+            animation: flashAnimation 0.5s ease-out;
+        }
+        @keyframes flashAnimation {
+            0% { opacity: 0.8; }
+            100% { opacity: 0; }
+        }
+        /* Screen Shake Effect */
+        .screen-shake { animation: shakeAnimation 0.3s linear; }
+        @keyframes shakeAnimation {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px) rotate(-0.5deg); }
+            50% { transform: translateX(5px) rotate(0.5deg); }
+            75% { transform: translateX(-3px) rotate(-0.3deg); }
+        }
+        /* Ability Glow Effect */
+        .ability-glow {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            box-shadow: inset 0 0 30px 15px var(--info-color);
+            opacity: 0; pointer-events: none; z-index: 1999;
+            animation: abilityGlowAnim 0.6s ease-out;
+        }
+         @keyframes abilityGlowAnim {
+            0% { opacity: 0.6; }
+            100% { opacity: 0; }
+        }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 1100px) { 
+            #game-container {
+                grid-template-columns: 1fr 1fr;
+                grid-template-areas:
+                    "enemy enemy"
+                    "stats upgrades"
+                    "abilities special-upgrades"
+                    "messages messages"
+                    "controls controls";
+            }
+            #enemy { width: 200px; height: 200px;} 
+        }
+        @media (max-width: 700px) { 
+            body { padding: 10px; }
+            #game-wrapper { max-width: 100%; }
+            #game-container {
+                grid-template-columns: 1fr;
+                grid-template-areas:
+                    "enemy"
+                    "stats"
+                    "upgrades"
+                    "abilities"
+                    "special-upgrades"
+                    "messages"
+                    "controls";
+                gap: 15px; 
+                padding: 15px;
+            }
+            .game-area { padding: 15px; }
+            #enemy { width: 180px; height: 180px;}
+            .tab-button { padding: 10px 15px; font-size: 1em;}
+            #game-title { font-size: 2.2em; }
+        }
+
+    </style>
+</head>
+<body>
+    <div id="game-wrapper">
+        <h1 id="game-title">Hyper Clicker Saga ✨</h1>
+        <div id="global-event-display">🎉 Gold Rush Event Active! +50% Gold! 🎉</div>
+
+        <div id="main-tabs">
+            <button class="tab-button active" onclick="openTab('gameTab')">⚔️ Game</button>
+            <button class="tab-button" onclick="openTab('specialUpgradesTab')">🚀 Special</button>
+            <button class="tab-button" onclick="openTab('achievementsTab')">🏆 Achievements (<span id="achievements-count">0</span>)</button>
+            <button class="tab-button" onclick="openTab('prestigeTab')" id="prestige-tab-button" style="display:none;">🌌 Prestige</button>
+        </div>
+
+        <div id="gameTab" class="tab-content active">
+            <div id="game-container">
+                <div id="stats-area" class="game-area">
+                    <h2 class="area-title">📊 Player Stats</h2>
+                    <p>🌟 Level: <span id="level">1</span></p>
+                    <p>📈 XP: <span id="xp">0</span> / <span id="xp-to-next-level">100</span></p>
+                    <div id="xp-bar-container"><div id="xp-bar"></div></div>
+                    <p>💰 Gold: <span id="gold">0</span> G</p>
+                    <p>💥 Click Damage: <span id="click-damage">1</span></p>
+                    <p>🪙 Gold Per Click: <span id="gold-per-click">0</span> G</p>
+                    <p>🤖 Auto DPS: <span id="auto-dps">0</span></p>
+                    <p>🎯 Crit Chance: <span id="crit-chance">0</span>%</p>
+                    <p>💣 Crit Damage: +<span id="crit-damage-bonus">50</span>%</p>
+                    <p>💀 Enemies Defeated: <span id="enemies-defeated">0</span></p>
+                    <hr style="border-color: rgba(255,255,255,0.1); margin: 10px 0;">
+                    <p><strong>Global Bonuses (from Prestige):</strong></p>
+                    <p>💰 Gold Bonus: +<span id="global-gold-bonus-display">0</span>%</p>
+                    <p>📈 XP Bonus: +<span id="global-xp-bonus-display">0</span>%</p>
+                    <p>💥 Damage Bonus: +<span id="global-damage-bonus-display">0</span>%</p>
+                     <p>💎 Prestige Pts: <span id="current-prestige-points-display">0</span></p>
+                </div>
+
+                <div id="enemy-area" class="game-area">
+                    <div id="enemy">
+                        <p id="enemy-name">Goblin 👺</p>
+                        <p id="enemy-hp-text">❤️ HP: <span id="enemy-hp">10</span> / <span id="enemy-max-hp">10</span></p>
+                        <div id="enemy-hp-bar-container">
+                            <div id="enemy-hp-bar"></div>
+                        </div>
+                        <div id="damage-feedback-container"></div>
+                        <div id="resource-feedback-container"></div>
+                    </div>
+                    <p id="boss-timer" style="display:none;">😈 Boss in: <span id="boss-timer-countdown">10</span></p>
+                </div>
+
+                <div id="upgrades-area" class="game-area">
+                    <h2 class="area-title">🔨 Core Upgrades</h2>
+                    <button id="upgrade-click-damage" class="upgrade-button" tooltip="Increases damage per click. Essential for active play!">🖱️ Upgrade Click Damage</button>
+                    <button id="upgrade-gold-per-click" class="upgrade-button" tooltip="Increases gold earned with each click.">🪙 Upgrade Gold Per Click</button>
+                    <button id="upgrade-auto-dps" class="upgrade-button" tooltip="Increases damage dealt automatically per second. Great for idle progress!">🤖 Upgrade Auto DPS</button>
+                    <button id="upgrade-crit-chance" class="upgrade-button" tooltip="Increases the chance to land a critical hit for bonus damage.">🎯 Upgrade Crit Chance</button>
+                    <button id="upgrade-crit-damage" class="upgrade-button" tooltip="Increases the damage multiplier for critical hits.">💣 Upgrade Crit Damage</button>
+                </div>
+
+                <div id="abilities-area" class="game-area">
+                    <h2 class="area-title">⚡ Abilities</h2>
+                    <button id="ability-powerStrike" class="ability-button" disabled>
+                        💥 Power Strike
+                        <small>Deals massive damage! (CD: <span id="ps-cooldown-display">30</span>s)</small>
+                        <div class="cooldown-bar" id="ps-cooldown-bar"></div>
+                    </button>
+                    <button id="ability-goldRush" class="ability-button" disabled>
+                        💰 Gold Rush
+                        <small>Boosts gold gain! (CD: <span id="gr-cooldown-display">60</span>s)</small>
+                        <div class="cooldown-bar" id="gr-cooldown-bar"></div>
+                    </button>
+                    <button id="ability-guardianShield" class="ability-button" disabled>
+                        🛡️ Guardian Shield
+                        <small>Become invulnerable! (CD: <span id="gs-cooldown-display">90</span>s)</small>
+                        <div class="cooldown-bar" id="gs-cooldown-bar"></div>
+                    </button>
+                </div>
+                
+                <div id="special-upgrades-area" class="game-area"> 
+                     <h2 class="area-title">🌟 General Boosts</h2>
+                     <button id="upgrade-xp-boost" class="upgrade-button" style="display:none;" tooltip="Permanently increases all XP gained from enemies.">📈 Upgrade XP Boost</button>
+                     <button id="upgrade-gold-boost" class="upgrade-button" style="display:none;" tooltip="Permanently increases all Gold gained from enemies.">💰 Upgrade Gold Boost</button>
+                </div>
+
+
+                <div id="messages-area" class="game-area">👋 Welcome! Click the enemy to start your adventure!</div>
+                
+                <div id="controls-area" class="game-area">
+                    <button id="save-game">💾 Save</button>
+                    <button id="load-game">📂 Load</button>
+                    <button id="reset-game">🔄 Reset Game</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="specialUpgradesTab" class="tab-content">
+            <div class="game-area">
+                <h2 class="area-title">🚀 Unique Enhancements</h2>
+                <div id="special-upgrades-list">
+                    <button id="special-loot-magnet" class="special-upgrade-button" style="display:none;" tooltip="Passively increases the amount of Gold and XP dropped by enemies.">🧲 Loot Magnet</button>
+                    <button id="special-quick-learner" class="special-upgrade-button" style="display:none;" tooltip="Reduces the amount of XP needed to reach the next level.">🧠 Quick Learner</button>
+                    <button id="special-elite-hunter" class="special-upgrade-button" style="display:none;" tooltip="Increases the chance of encountering Elite enemies.">🎯 Elite Hunter</button>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="achievementsTab" class="tab-content">
+            <div class="game-area">
+                <h2 class="area-title">🏆 Achievements (<span id="achievements-completed-count">0</span>/<span id="achievements-total-count">0</span>)</h2>
+                <div id="achievements-container"></div>
+            </div>
+        </div>
+
+        <div id="prestigeTab" class="tab-content">
+            <div class="game-area">
+                <h2 class="area-title">🌌 Prestige Chamber</h2>
+                <p>Reach Level <span id="prestige-required-level">50</span> to Prestige.</p>
+                <p>Prestiging resets Level, XP, Gold, Core Upgrades, and General Boosts.</p>
+                <p>You will earn <span id="prestige-points-to-gain">0</span> Prestige Points (💎).</p>
+                <p>Current Prestige Points (💎): <span id="current-prestige-points">0</span></p>
+                <button id="prestige-button" disabled>🌌 Prestige Now!</button>
+                <hr style="margin: 20px 0; border-color: rgba(255,255,255,0.1);">
+                <h3 class="area-title">✨ Prestige Upgrades</h3>
+                <div id="prestige-upgrades-container">
+                    <button class="upgrade-button" id="prestige-global-gold" tooltip="Permanently increases all gold earned.">💰 Global Gold Bonus</button>
+                    <button class="upgrade-button" id="prestige-global-xp" tooltip="Permanently increases all XP earned.">📈 Global XP Bonus</button>
+                    <button class="upgrade-button" id="prestige-global-damage" tooltip="Permanently increases all damage dealt.">💥 Global Damage Bonus</button>
+                    <button class="upgrade-button" id="prestige-start-gold" tooltip="Start with more gold after prestiging.">💵 Starting Gold</button>
+                    <button class="upgrade-button" id="prestige-pp-multiplier" tooltip="Increases Prestige Points gained from future Prestiges.">💎 Prestige Point Gain</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="daily-reward-popup">
+        <h3>🎁 Daily Reward! 🎁</h3>
+        <p id="daily-reward-text">Claim your daily bonus!</p>
+        <button id="claim-daily-reward" class="upgrade-button">Claim ✨</button>
+    </div>
+    <div id="offline-progress-popup">
+        <h3>🕒 Welcome Back! 🕒</h3>
+        <p id="offline-progress-text">You earned resources while away!</p>
+        <button id="claim-offline-progress" class="upgrade-button">Collect 💰</button>
+    </div>
+
+    <script>
+        // GAME LOGIC START
+        let gameState;
+
+        const ENEMY_TYPES = [
+            { id: "goblin", name: "Goblin 👺", baseHp: 10, baseXp: 5, baseGold: 2, color: "#e74c3c", borderColor: "#c0392b" },
+            { id: "slime", name: "Slime 🦠", baseHp: 25, baseXp: 8, baseGold: 3, color: "#2ecc71", borderColor: "#27ae60" },
+            { id: "wolf", name: "Dire Wolf 🐺", baseHp: 60, baseXp: 15, baseGold: 5, color: "#95a5a6", borderColor: "#7f8c8d" },
+            { id: "orc", name: "Orc Grunt 💪", baseHp: 150, baseXp: 30, baseGold: 10, color: "#16a085", borderColor: "#1abc9c" },
+            { id: "ogre", name: "Ogre Brute 👹", baseHp: 350, baseXp: 60, baseGold: 20, color: "#f39c12", borderColor: "#e67e22" },
+            { id: "skeleton", name: "Skeleton Warrior 💀", baseHp: 100, baseXp: 25, baseGold: 8, color: "#bdc3c7", borderColor: "#a1a7ab" },
+            { id: "spider", name: "Giant Spider 🕷️", baseHp: 200, baseXp: 45, baseGold: 15, color: "#8e44ad", borderColor: "#9b59b6" },
+            { id: "bat", name: "Cave Bat 🦇", baseHp: 40, baseXp: 10, baseGold: 4, color: "#34495e", borderColor: "#2c3e50" },
+            { id: "elemental", name: "Fire Elemental 🔥", baseHp: 250, baseXp: 50, baseGold: 18, color: "#e67e22", borderColor: "#d35400" },
+        ];
+        const BOSS_ENEMY_TYPES = [
+            { id: "goblin_king", name: "Goblin King 👑👺", baseHp: 500, baseXp: 100, baseGold: 50, color: "#c0392b", borderColor: "#7f8c8d", isBoss: true },
+            { id: "orc_chieftain", name: "Orc Chieftain 🎖️💪", baseHp: 2000, baseXp: 350, baseGold: 150, color: "#1abc9c", borderColor: "#2c3e50", isBoss: true },
+            { id: "ancient_ogre", name: "Ancient Ogre 🗿👹", baseHp: 5000, baseXp: 800, baseGold: 300, color: "#e67e22", borderColor: "#d35400", isBoss: true },
+            { id: "shadow_dragon", name: "Shadow Dragon 🐉💨", baseHp: 10000, baseXp: 1500, baseGold: 500, color: "#4A235A", borderColor: "#1A237E", isBoss: true },
+        ];
+        const BOSS_INTERVAL_RANGE = [30, 50]; 
+        const PRESTIGE_REQUIRED_LEVEL = 50;
+        const ELITE_CHANCE = 0.10; 
+
+        const ABILITIES_TEMPLATE = {
+            POWER_STRIKE: {
+                id: "powerStrike", name: "Power Strike", cooldown: 30, currentCooldown: 0, damageMultiplier: 5, unlockedAtLevel: 5, isActive: false
+            },
+            GOLD_RUSH: {
+                id: "goldRush", name: "Gold Rush", cooldown: 60, currentCooldown: 0, duration: 10, goldMultiplier: 3, unlockedAtLevel: 10, isActive: false
+            },
+            GUARDIAN_SHIELD: {
+                id: "guardianShield", name: "Guardian Shield", cooldown: 90, currentCooldown: 0, duration: 5, unlockedAtLevel: 15, isActive: false
+            }
+        };
+
+        const ACHIEVEMENTS_TEMPLATE = [
+            { id: "defeat_1_goblin", name: "Goblin Slayer 👺", description: "Defeat your first Goblin.", condition: (gs) => gs.enemiesDefeatedByType.goblin >= 1, reward: { gold: 20 }, claimed: false },
+            { id: "reach_level_5", name: "Novice Adventurer ⭐", description: "Reach player level 5.", condition: (gs) => gs.level >= 5, reward: { xp: 100 }, claimed: false },
+            { id: "earn_100_gold", name: "Coin Collector 💰", description: "Accumulate 100 total gold.", condition: (gs) => gs.totalGoldEarned >= 100, reward: { gold: 50 }, claimed: false },
+            { id: "click_100_times", name: "Click Happy 🖱️", description: "Click the enemy 100 times.", condition: (gs) => gs.totalClicks >= 100, reward: { clickDamage: 2 }, permanentBonus: { type: 'clickDamage', value: 1 }, claimed: false },
+            { id: "defeat_10_enemies", name: "Monster Masher 💀", description: "Defeat 10 enemies.", condition: (gs) => gs.enemiesDefeated >= 10, reward: { xp: 200, gold: 100}, claimed: false },
+            { id: "reach_level_10", name: "Seasoned Explorer 🗺️", description: "Reach player level 10.", condition: (gs) => gs.level >= 10, reward: { autoDPS: 3 }, permanentBonus: {type: 'autoDPS', value: 2}, claimed: false },
+            { id: "defeat_first_boss", name: "Boss Vanquisher 😈", description: "Defeat your first boss.", condition: (gs) => gs.bossesDefeated >= 1, reward: { gold: 500, prestigePointsInstant: 1 }, claimed: false },
+            { id: "prestige_once", name: "Reborn 🌌", description: "Prestige for the first time.", condition: (gs) => gs.prestigeCount >= 1, reward: { clickDamage: 10 }, permanentBonus: {type: 'globalDamageMultiplier', value: 0.02}, claimed: false},
+            { id: "use_ability_10_times", name: "Ability User ⚡", description: "Use any ability 10 times.", condition: (gs) => gs.totalAbilitiesUsed >= 10, reward: { gold: 150 }, claimed: false },
+            { id: "reach_crit_10", name: "Critical Eye 🎯", description: "Reach 10% Crit Chance.", condition: (gs) => gs.critChance >= 0.10, reward: { critDamageBonus: 0.25 }, permanentBonus: {type: 'critChance', value: 0.005}, claimed: false },
+            { id: "defeat_elite_5", name: "Elite Hunter ✨", description: "Defeat 5 Elite enemies.", condition: (gs) => gs.elitesDefeated >= 5, reward: { xp: 300 }, claimed: false },
+        ];
+
+        const SPECIAL_UPGRADES_TEMPLATE = {
+            lootMagnet: { id: "special-loot-magnet", name: "🧲 Loot Magnet", description: "Increases gold and XP drops.", baseCost: 500, costMultiplier: 2, level: 0, maxLevel: 10, effectPerLevel: 0.05, unlockedAtLevel: 8 }, 
+            quickLearner: { id: "special-quick-learner", name: "🧠 Quick Learner", description: "Reduces XP needed for next level.", baseCost: 1000, costMultiplier: 2.5, level: 0, maxLevel: 5, effectPerLevel: 0.03, unlockedAtLevel: 12 }, 
+            eliteHunter: { id: "special-elite-hunter", name: "🎯 Elite Hunter", description: "Increases chance of Elite enemies.", baseCost: 2000, costMultiplier: 3, level: 0, maxLevel: 5, effectPerLevel: 0.01, unlockedAtLevel: 18 } 
+        };
+
+        const GLOBAL_EVENTS = [
+            { id: "goldFever", name: "💰 Gold Fever!", duration: 300, goldMultiplier: 1.5, message: "💰 Gold Fever! +50% Gold from all sources for 5 minutes! 🎉" },
+            { id: "xpBoost", name: "📈 XP Frenzy!", duration: 300, xpMultiplier: 1.5, message: "📈 XP Frenzy! +50% XP from all sources for 5 minutes! 🚀" },
+            { id: "critChanceUp", name: "🎯 Critical Surge!", duration: 180, critChanceBonus: 0.10, message: "🎯 Critical Surge! +10% Crit Chance for 3 minutes! 💥" }
+        ];
+        let currentGlobalEvent = null;
+        let globalEventTimer = 0;
+
+        function setNextBossInterval() {
+            gameState.enemiesUntilBoss = Math.floor(Math.random() * (BOSS_INTERVAL_RANGE[1] - BOSS_INTERVAL_RANGE[0] + 1)) + BOSS_INTERVAL_RANGE[0];
+        }
+
+        function getDefaultGameState() {
+            const baseState = {
+                level: 1, xp: 0, xpToNextLevel: 100, gold: 0,
+                clickDamage: 1, goldPerClick: 0, autoDPS: 0, critChance: 0.02, critDamageBonus: 0.5, 
+                currentEnemy: null, enemiesDefeated: 0, 
+                enemiesUntilBoss: Math.floor(Math.random() * (BOSS_INTERVAL_RANGE[1] - BOSS_INTERVAL_RANGE[0] + 1)) + BOSS_INTERVAL_RANGE[0], 
+                bossesDefeated: 0, elitesDefeated: 0,
+                upgradeCosts: {
+                    clickDamage: 10, goldPerClick: 15, autoDPS: 25, critChance: 100, critDamage: 150, xpBoost: 200, goldBoost: 200,
+                },
+                goldPerClickLevel: 0,
+                xpBoostMultiplier: 1.0, goldBoostMultiplier: 1.0, xpBoostLevel: 0, goldBoostLevel: 0,
+                abilities: JSON.parse(JSON.stringify(ABILITIES_TEMPLATE)), 
+                achievements: ACHIEVEMENTS_TEMPLATE.map(templateAch => {
+                    const newAch = { ...templateAch }; 
+                    newAch.condition = templateAch.condition; 
+                    newAch.reward = templateAch.reward ? JSON.parse(JSON.stringify(templateAch.reward)) : undefined;
+                    newAch.permanentBonus = templateAch.permanentBonus ? JSON.parse(JSON.stringify(templateAch.permanentBonus)) : undefined;
+                    newAch.claimed = false;
+                    return newAch;
+                }),
+                enemiesDefeatedByType: {}, totalGoldEarned: 0, totalClicks: 0, totalAbilitiesUsed: 0,
+                prestigePoints: 0, prestigeCount: 0,
+                prestigeUpgrades: { globalGoldBonus: 0, globalXpBonus: 0, globalDamageBonus: 0, startingGoldLevel: 0, ppMultiplier: 0 },
+                prestigeUpgradeCosts: { globalGoldBonus: 1, globalXpBonus: 1, globalDamageBonus: 2, startingGoldLevel: 1, ppMultiplier: 5 },
+                specialUpgrades: JSON.parse(JSON.stringify(SPECIAL_UPGRADES_TEMPLATE)),
+                lastDailyRewardClaimed: 0, lastSaveTime: Date.now(), lastActiveTime: Date.now()
+            };
+            return baseState;
+        }
+        
+        function initGame() {
+            gameState = loadGame();
+            calculateOfflineProgress();
+             if (gameState.enemiesUntilBoss <= 0 || gameState.enemiesUntilBoss < BOSS_INTERVAL_RANGE[0] || gameState.enemiesUntilBoss > BOSS_INTERVAL_RANGE[1]) {
+                setNextBossInterval();
+            }
+            if (!gameState.currentEnemy || gameState.currentEnemy.currentHp <= 0) spawnNewEnemy();
+            
+            setupEventListeners();
+            updateAllUI();
+            checkUnlocks(); 
+            renderAchievements();
+            renderPrestigeUpgrades();
+            renderSpecialUpgrades();
+            checkDailyReward();
+            
+            setInterval(gameLoop, 100); 
+            setInterval(passiveSave, 30000); 
+            setInterval(tryStartGlobalEvent, 60 * 1000 * 5); 
+            
+            console.log("Game Initialized. Welcome Commander! 🚀");
+        }
+
+        function playSound(soundId) { /* Placeholder */ }
+        
+        function setupEventListeners() {
+            document.getElementById('enemy').addEventListener('click', handleEnemyClick);
+            document.getElementById('upgrade-click-damage').addEventListener('click', () => buyUpgrade('clickDamage'));
+            document.getElementById('upgrade-gold-per-click').addEventListener('click', () => buyUpgrade('goldPerClick'));
+            document.getElementById('upgrade-auto-dps').addEventListener('click', () => buyUpgrade('autoDPS'));
+            document.getElementById('upgrade-crit-chance').addEventListener('click', () => buyUpgrade('critChance'));
+            document.getElementById('upgrade-crit-damage').addEventListener('click', () => buyUpgrade('critDamage'));
+            document.getElementById('upgrade-xp-boost').addEventListener('click', () => buyUpgrade('xpBoost'));
+            document.getElementById('upgrade-gold-boost').addEventListener('click', () => buyUpgrade('goldBoost'));
+
+            document.getElementById('ability-powerStrike').addEventListener('click', () => activateAbility('POWER_STRIKE'));
+            document.getElementById('ability-goldRush').addEventListener('click', () => activateAbility('GOLD_RUSH'));
+            document.getElementById('ability-guardianShield').addEventListener('click', () => activateAbility('GUARDIAN_SHIELD'));
+
+
+            document.getElementById('prestige-button').addEventListener('click', handlePrestige);
+            document.getElementById('prestige-global-gold').addEventListener('click', () => buyPrestigeUpgrade('globalGoldBonus'));
+            document.getElementById('prestige-global-xp').addEventListener('click', () => buyPrestigeUpgrade('globalXpBonus'));
+            document.getElementById('prestige-global-damage').addEventListener('click', () => buyPrestigeUpgrade('globalDamageBonus'));
+            document.getElementById('prestige-start-gold').addEventListener('click', () => buyPrestigeUpgrade('startingGoldLevel'));
+            document.getElementById('prestige-pp-multiplier').addEventListener('click', () => buyPrestigeUpgrade('ppMultiplier'));
+            
+            document.getElementById('special-loot-magnet').addEventListener('click', () => buySpecialUpgrade('lootMagnet'));
+            document.getElementById('special-quick-learner').addEventListener('click', () => buySpecialUpgrade('quickLearner'));
+            document.getElementById('special-elite-hunter').addEventListener('click', () => buySpecialUpgrade('eliteHunter'));
+
+            document.getElementById('save-game').addEventListener('click', () => { saveGame(); displayMessage("💾 Game Saved!", "var(--success-color)"); });
+            document.getElementById('load-game').addEventListener('click', () => { 
+                gameState = loadGame(); 
+                calculateOfflineProgress(); 
+                if(!gameState.currentEnemy || gameState.currentEnemy.currentHp <= 0) spawnNewEnemy(); 
+                updateAllUI(); checkUnlocks(); renderAchievements(); renderPrestigeUpgrades(); renderSpecialUpgrades();
+            });
+            document.getElementById('reset-game').addEventListener('click', resetGame);
+            document.getElementById('claim-daily-reward').addEventListener('click', claimDailyReward);
+            document.getElementById('claim-offline-progress').addEventListener('click', () => {
+                document.getElementById('offline-progress-popup').classList.remove('visible');
+                 displayMessage("Offline gains collected! 🥳", "var(--success-color)", 3000);
+            });
+        }
+
+        function openTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(tb => tb.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        function spawnNewEnemy() {
+            let enemyType;
+            let isElite = false;
+
+            if (gameState.enemiesUntilBoss <= 0) {
+                const availableBosses = BOSS_ENEMY_TYPES.filter(b => b.baseHp < gameState.level * 500 || gameState.bossesDefeated > 0);
+                enemyType = availableBosses.length > 0 ? availableBosses[Math.floor(Math.random() * availableBosses.length)] : ENEMY_TYPES[ENEMY_TYPES.length -1 ];
+                if (!enemyType.isBoss) enemyType = {...enemyType, isBoss: true, name: `Arch ${enemyType.name}`}; 
+                document.getElementById('boss-timer').style.display = 'none';
+            } else {
+                const unlockedEnemyCount = Math.min(ENEMY_TYPES.length, Math.floor(gameState.level / 2) + 1);
+                enemyType = ENEMY_TYPES[Math.floor(Math.random() * unlockedEnemyCount)];
+                document.getElementById('boss-timer').style.display = 'block';
+                if (Math.random() < (ELITE_CHANCE + (gameState.specialUpgrades.eliteHunter.level * gameState.specialUpgrades.eliteHunter.effectPerLevel))) {
+                    isElite = true;
+                }
+            }
+            
+            const hpMultiplier = Math.pow(1.20, gameState.level - 1) * Math.pow(1.02, gameState.enemiesDefeated) * (enemyType.isBoss ? 3.5 : 1) * (isElite ? 2 : 1);
+            const resourceMultiplier = Math.pow(1.12, gameState.level - 1) * Math.pow(1.015, gameState.enemiesDefeated) * (enemyType.isBoss ? 3 : 1) * (isElite ? 1.5 : 1);
+
+            const maxHp = Math.max(5, Math.ceil(enemyType.baseHp * hpMultiplier));
+            let enemyName = enemyType.name;
+            if (isElite) enemyName = `✨ Elite ${enemyName}`;
+
+
+            gameState.currentEnemy = {
+                id: enemyType.id, name: enemyName, maxHp: maxHp, currentHp: maxHp,
+                xpValue: Math.ceil(enemyType.baseXp * resourceMultiplier),
+                goldValue: Math.ceil(enemyType.baseGold * resourceMultiplier),
+                color: enemyType.color, borderColor: enemyType.borderColor,
+                isBoss: !!enemyType.isBoss, isElite: isElite
+            };
+
+            const enemyElement = document.getElementById('enemy');
+            enemyElement.style.backgroundColor = gameState.currentEnemy.color;
+            enemyElement.style.borderColor = gameState.currentEnemy.borderColor;
+            enemyElement.classList.remove('enemy-death-animation', 'elite', 'boss'); 
+            if(isElite) enemyElement.classList.add('elite');
+            if(gameState.currentEnemy.isBoss) enemyElement.classList.add('boss');
+            
+            playSound('enemySpawn');
+            updateEnemyUI();
+        }
+
+        function handleEnemyClick() {
+            if (!gameState.currentEnemy || gameState.currentEnemy.currentHp <= 0 || (gameState.abilities.GUARDIAN_SHIELD.isActive && gameState.currentEnemy.isBoss) ) return; 
+            gameState.totalClicks++;
+
+            let currentGoldPerClick = gameState.goldPerClick;
+            let globalGoldBonus = gameState.prestigeUpgrades.globalGoldBonus;
+            let eventGoldMultiplier = (currentGlobalEvent && currentGlobalEvent.id === 'goldFever' ? currentGlobalEvent.goldMultiplier : 1);
+            let lootMagnetGoldBonus = (gameState.specialUpgrades.lootMagnet.level * gameState.specialUpgrades.lootMagnet.effectPerLevel + 1);
+
+            const clickGoldAmount = Math.ceil(currentGoldPerClick * (1 + globalGoldBonus) * eventGoldMultiplier * lootMagnetGoldBonus);
+            if (clickGoldAmount > 0) {
+                earnGold(clickGoldAmount); 
+                displayFeedbackNumber(clickGoldAmount, 'gold', 'resource-feedback-container');
+                updatePlayerStatsUI(); 
+            }
+
+
+            let damageDealt = gameState.clickDamage * (1 + gameState.prestigeUpgrades.globalDamageBonus);
+            let isCrit = false;
+            const effectiveCritChance = gameState.critChance + (currentGlobalEvent && currentGlobalEvent.id === 'critChanceUp' ? currentGlobalEvent.critChanceBonus : 0);
+            if (Math.random() < effectiveCritChance) {
+                damageDealt *= (1 + gameState.critDamageBonus);
+                isCrit = true;
+            }
+            damageDealt = Math.ceil(damageDealt);
+            gameState.currentEnemy.currentHp -= damageDealt;
+            
+            displayDamageNumber(damageDealt, isCrit);
+            playSound(isCrit ? 'critHit' : 'clickHit');
+
+            if (gameState.currentEnemy.currentHp <= 0) {
+                document.getElementById('enemy').classList.add('enemy-death-animation');
+                playSound('enemyDefeat');
+                setTimeout(enemyDefeated, 300); 
+            }
+            updateEnemyUI(); 
+            checkAchievements();
+        }
+
+        function displayFeedbackNumber(value, type, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            const el = document.createElement('span');
+            el.className = 'feedback-number';
+            let prefix = '';
+            if (type === 'damage') { el.classList.add('damage-number'); prefix = '-'; }
+            if (type === 'gold') { el.classList.add('gold-feedback'); prefix = '+'; el.textContent += ' G';}
+            if (type === 'xp') { el.classList.add('xp-feedback'); prefix = '+'; el.textContent += ' XP';}
+            el.textContent = prefix + Math.ceil(value) + (type === 'gold' ? 'G' : type === 'xp' ? 'XP' : '');
+
+
+            el.style.left = Math.random() * 50 + 25 + '%'; 
+            el.style.top = Math.random() * 30 + 20 + '%';  
+            
+            container.appendChild(el);
+            setTimeout(() => { if (container.contains(el)) container.removeChild(el); }, 790);
+        }
+        function displayDamageNumber(damage, isCrit) {
+             displayFeedbackNumber(damage, 'damage', 'damage-feedback-container');
+             if(isCrit) {
+                const critEl = document.getElementById('damage-feedback-container').lastChild;
+                if (critEl) critEl.classList.add('crit');
+             }
+        }
+
+        function enemyDefeated() {
+            const enemy = gameState.currentEnemy;
+            if (!enemy) return; 
+
+            let goldMultiplier = gameState.goldBoostMultiplier * (1 + gameState.prestigeUpgrades.globalGoldBonus) * (gameState.specialUpgrades.lootMagnet.level * gameState.specialUpgrades.lootMagnet.effectPerLevel + 1);
+            let xpMultiplier = gameState.xpBoostMultiplier * (1 + gameState.prestigeUpgrades.globalXpBonus) * (gameState.specialUpgrades.lootMagnet.level * gameState.specialUpgrades.lootMagnet.effectPerLevel + 1);
+            
+            if(currentGlobalEvent) {
+                if(currentGlobalEvent.id === 'goldFever') goldMultiplier *= currentGlobalEvent.goldMultiplier;
+                if(currentGlobalEvent.id === 'xpBoost') xpMultiplier *= currentGlobalEvent.xpMultiplier;
+            }
+
+            const xpGained = Math.ceil(enemy.xpValue * xpMultiplier);
+            const goldEarned = Math.ceil(enemy.goldValue * goldMultiplier);
+            
+            displayFeedbackNumber(xpGained, 'xp', 'resource-feedback-container');
+            displayFeedbackNumber(goldEarned, 'gold', 'resource-feedback-container');
+
+            gainXP(xpGained);
+            earnGold(goldEarned);
+            
+            gameState.enemiesDefeated++;
+            if (enemy.isElite) gameState.elitesDefeated++;
+            if (enemy.isBoss) {
+                gameState.bossesDefeated++;
+                setNextBossInterval(); 
+                displayMessage(`😈 Boss ${enemy.name} Defeated! Massive rewards! 🏆`, "var(--success-color)", 5000);
+            } else {
+                gameState.enemiesUntilBoss--;
+            }
+
+            if (!gameState.enemiesDefeatedByType[enemy.id.split(' ')[0]]) { 
+                gameState.enemiesDefeatedByType[enemy.id.split(' ')[0]] = 0;
+            }
+            gameState.enemiesDefeatedByType[enemy.id.split(' ')[0]]++;
+            
+            checkRandomReward();
+            spawnNewEnemy();
+            updateAllUI();
+            checkAchievements();
+        }
+
+        function gainXP(amount) {
+            gameState.xp += amount;
+            if (gameState.xp >= gameState.xpToNextLevel) {
+                levelUp();
+            }
+        }
+
+        function levelUp() {
+            gameState.level++;
+            gameState.xp -= gameState.xpToNextLevel; 
+            const xpReductionFactor = 1 - (gameState.specialUpgrades.quickLearner.level * gameState.specialUpgrades.quickLearner.effectPerLevel);
+            gameState.xpToNextLevel = Math.ceil((gameState.xpToNextLevel * 1.22 + gameState.level * 25 + 75) * xpReductionFactor);
+            
+            const baseStatIncrease = Math.ceil(gameState.level * 0.18 + 1);
+            gameState.clickDamage += baseStatIncrease;
+            if (gameState.autoDPS > 0) gameState.autoDPS += Math.max(1, Math.ceil(baseStatIncrease * 0.6));
+
+            displayMessage(`🎉 LEVEL UP! You are Level ${gameState.level}! Stats boosted! 🚀`, "var(--success-color)");
+            playSound('levelUp');
+            const gameWrapper = document.getElementById('game-wrapper');
+            gameWrapper.classList.add('screen-shake');
+            const flash = document.createElement('div');
+            flash.className = 'screen-flash';
+            document.body.appendChild(flash);
+            setTimeout(() => {
+                gameWrapper.classList.remove('screen-shake');
+                if(document.body.contains(flash)) document.body.removeChild(flash);
+            }, 500);
+            
+            checkUnlocks();
+            updateAllUI();
+        }
+        
+        function checkUnlocks() {
+             for (const key in ABILITIES_TEMPLATE) {
+                 const ab = ABILITIES_TEMPLATE[key];
+                 const abilityState = gameState.abilities[key];
+                 if(abilityState) { 
+                    document.getElementById(`ability-${ab.id}`).disabled = !(gameState.level >= ab.unlockedAtLevel && abilityState.currentCooldown <=0);
+                 }
+             }
+             if (gameState.level >= 3) document.getElementById('upgrade-xp-boost').style.display = 'block';
+             if (gameState.level >= 5) document.getElementById('upgrade-gold-boost').style.display = 'block';
+             
+             for(const key in SPECIAL_UPGRADES_TEMPLATE) {
+                 const su = SPECIAL_UPGRADES_TEMPLATE[key];
+                 document.getElementById(su.id).style.display = (gameState.level >= su.unlockedAtLevel) ? 'block' : 'none';
+             }
+
+             if (gameState.level >= PRESTIGE_REQUIRED_LEVEL) {
+                document.getElementById('prestige-tab-button').style.display = 'inline-block';
+                document.getElementById('prestige-button').disabled = false;
+             } else {
+                document.getElementById('prestige-tab-button').style.display = 'none';
+                document.getElementById('prestige-button').disabled = true;
+             }
+        }
+
+        function earnGold(amount) {
+            gameState.gold += amount;
+            gameState.totalGoldEarned += amount;
+        }
+
+        function buyUpgrade(type) {
+            let cost = 0;
+            let purchased = false;
+
+            switch (type) {
+                case 'clickDamage':
+                    cost = gameState.upgradeCosts.clickDamage;
+                    if (gameState.gold >= cost) {
+                        gameState.gold -= cost;
+                        const increaseAmount = Math.max(1, Math.ceil(gameState.clickDamage * 0.1 + gameState.level * 0.25 + 1));
+                        gameState.clickDamage += increaseAmount;
+                        gameState.upgradeCosts.clickDamage = Math.ceil(cost * 1.18 + 8 + gameState.level);
+                        purchased = true;
+                    }
+                    break;
+                case 'goldPerClick':
+                    cost = gameState.upgradeCosts.goldPerClick;
+                     if (gameState.gold >= cost) {
+                        gameState.gold -= cost;
+                        const increaseAmount = Math.max(1, Math.ceil(gameState.goldPerClick * 0.15 + Math.max(1, gameState.level * 0.1) + 1));
+                        gameState.goldPerClick += increaseAmount;
+                        gameState.goldPerClickLevel++;
+                        gameState.upgradeCosts.goldPerClick = Math.ceil(cost * 1.25 + 10 + gameState.goldPerClickLevel * 2);
+                        purchased = true;
+                    }
+                    break;
+                case 'autoDPS':
+                    cost = gameState.upgradeCosts.autoDPS;
+                    if (gameState.gold >= cost) {
+                        gameState.gold -= cost;
+                        const dpsIncrease = Math.max(1, Math.ceil(gameState.autoDPS * 0.08 + 1 + gameState.level * 0.2));
+                        gameState.autoDPS += dpsIncrease;
+                        gameState.upgradeCosts.autoDPS = Math.ceil(cost * 1.22 + 12 + gameState.level);
+                        purchased = true;
+                    }
+                    break;
+                case 'critChance':
+                    cost = gameState.upgradeCosts.critChance;
+                    if (gameState.gold >= cost && gameState.critChance < 0.75) { 
+                        gameState.gold -= cost;
+                        gameState.critChance += 0.01; 
+                        gameState.upgradeCosts.critChance = Math.ceil(cost * 1.35 + 30);
+                        purchased = true;
+                    } else if (gameState.critChance >= 0.75) displayMessage("Max Crit Chance reached! 🎯", "var(--error-color)");
+                    break;
+                case 'critDamage':
+                    cost = gameState.upgradeCosts.critDamage;
+                    if (gameState.gold >= cost && gameState.critDamageBonus < 5.0) { 
+                        gameState.gold -= cost;
+                        gameState.critDamageBonus += 0.10; 
+                        gameState.upgradeCosts.critDamage = Math.ceil(cost * 1.28 + 35);
+                        purchased = true;
+                    } else if (gameState.critDamageBonus >= 5.0) displayMessage("Max Crit Damage bonus reached! 💣", "var(--error-color)");
+                    break;
+                case 'xpBoost':
+                    cost = gameState.upgradeCosts.xpBoost;
+                    if (gameState.gold >= cost) {
+                        gameState.gold -= cost;
+                        gameState.xpBoostMultiplier += 0.03; 
+                        gameState.xpBoostLevel++;
+                        gameState.upgradeCosts.xpBoost = Math.ceil(cost * 1.6 + 60);
+                        purchased = true;
+                    }
+                    break;
+                case 'goldBoost':
+                    cost = gameState.upgradeCosts.goldBoost;
+                    if (gameState.gold >= cost) {
+                        gameState.gold -= cost;
+                        gameState.goldBoostMultiplier += 0.03;
+                        gameState.goldBoostLevel++;
+                        gameState.upgradeCosts.goldBoost = Math.ceil(cost * 1.6 + 60);
+                        purchased = true;
+                    }
+                    break;
+            }
+            if (purchased) playSound('upgrade');
+            else if (cost > 0 && gameState.gold < cost) displayMessage("Not enough gold! 😥", "var(--error-color)");
+            
+            updateAllUI();
+        }
+        
+        function activateAbility(abilityKey) {
+            const abilityDef = ABILITIES_TEMPLATE[abilityKey];
+            const abilityState = gameState.abilities[abilityKey];
+
+            if (!abilityDef || !abilityState || gameState.level < abilityDef.unlockedAtLevel) {
+                 displayMessage("Ability not unlocked yet! 🔒", "var(--error-color)");
+                 return;
+            }
+            if (abilityState.currentCooldown > 0) {
+                displayMessage(`${abilityDef.name} is on cooldown! ⏳`, "var(--error-color)");
+                return;
+            }
+            abilityState.currentCooldown = abilityDef.cooldown;
+            gameState.totalAbilitiesUsed++;
+            displayMessage(`${abilityDef.name} Activated! ✨`, "var(--success-color)");
+            playSound('abilityActivate');
+            
+            const glowEffect = document.createElement('div');
+            glowEffect.className = 'ability-glow';
+            if (abilityKey === 'GUARDIAN_SHIELD') glowEffect.style.boxShadow = 'inset 0 0 30px 15px #ffffffaa'; 
+            document.body.appendChild(glowEffect);
+            setTimeout(() => { if(document.body.contains(glowEffect)) document.body.removeChild(glowEffect);}, 600);
+
+
+            if (abilityKey === 'POWER_STRIKE') {
+                if (gameState.currentEnemy && gameState.currentEnemy.currentHp > 0) {
+                    let strikeDamage = Math.ceil(gameState.clickDamage * abilityDef.damageMultiplier * (1 + gameState.prestigeUpgrades.globalDamageBonus));
+                    let isCrit = false;
+                    const effectiveCritChance = gameState.critChance + (currentGlobalEvent && currentGlobalEvent.id === 'critChanceUp' ? currentGlobalEvent.critChanceBonus : 0);
+                    if (Math.random() < effectiveCritChance) {
+                        strikeDamage *= (1 + gameState.critDamageBonus);
+                        isCrit = true;
+                    }
+                    gameState.currentEnemy.currentHp -= strikeDamage;
+                    displayDamageNumber(strikeDamage, isCrit);
+                    playSound(isCrit ? 'critHit' : 'powerStrike');
+                    if (gameState.currentEnemy.currentHp <= 0) {
+                         document.getElementById('enemy').classList.add('enemy-death-animation');
+                         playSound('enemyDefeat');
+                         setTimeout(enemyDefeated, 300);
+                    }
+                    updateEnemyUI();
+                }
+            } else if (abilityKey === 'GOLD_RUSH') {
+                abilityState.isActive = true; 
+                const originalGoldMultiplier = gameState.goldBoostMultiplier;
+                gameState.goldBoostMultiplier *= abilityDef.goldMultiplier;
+                updatePlayerStatsUI(); 
+                setTimeout(() => {
+                    gameState.goldBoostMultiplier = originalGoldMultiplier;
+                    abilityState.isActive = false;
+                    displayMessage("💰 Gold Rush ended.", "var(--text-color)");
+                    updatePlayerStatsUI();
+                }, abilityDef.duration * 1000);
+            } else if (abilityKey === 'GUARDIAN_SHIELD') {
+                abilityState.isActive = true;
+                const enemyElement = document.getElementById('enemy');
+                enemyElement.style.filter = "brightness(1.5) drop-shadow(0 0 10px white)";
+                setTimeout(() => {
+                    abilityState.isActive = false;
+                    enemyElement.style.filter = "";
+                    displayMessage("🛡️ Guardian Shield wore off.", "var(--text-color)");
+                }, abilityDef.duration * 1000);
+            }
+            checkAchievements();
+            updateAbilitiesUI(); 
+        }
+
+        function gameLoop() { 
+            if (gameState.autoDPS > 0 && gameState.currentEnemy && gameState.currentEnemy.currentHp > 0) {
+                 if (!(gameState.abilities.GUARDIAN_SHIELD && gameState.abilities.GUARDIAN_SHIELD.isActive && gameState.currentEnemy.isBoss)) { 
+                    const dpsPerTick = gameState.autoDPS * 0.1 * (1 + gameState.prestigeUpgrades.globalDamageBonus); 
+                    gameState.currentEnemy.currentHp -= dpsPerTick;
+                    if (gameState.currentEnemy.currentHp <= 0) {
+                        const enemyElement = document.getElementById('enemy');
+                        if (!enemyElement.classList.contains('enemy-death-animation')) { 
+                            enemyElement.classList.add('enemy-death-animation');
+                            playSound('enemyDefeat');
+                            setTimeout(enemyDefeated, 300);
+                        }
+                    }
+                    updateEnemyUI();
+                }
+            }
+
+            for (const key in ABILITIES_TEMPLATE) { 
+                const abilityDef = ABILITIES_TEMPLATE[key];
+                const abilityState = gameState.abilities[key];
+                if (abilityState && abilityState.currentCooldown > 0) { 
+                    abilityState.currentCooldown -= 0.1; 
+                    if (abilityState.currentCooldown < 0) {
+                        abilityState.currentCooldown = 0;
+                         if (gameState.level >= abilityDef.unlockedAtLevel) { 
+                            document.getElementById(`ability-${abilityDef.id}`).disabled = false;
+                        }
+                    }
+                }
+            }
+            updateAbilitiesUI();
+
+            if (currentGlobalEvent) {
+                globalEventTimer -= 0.1;
+                if (globalEventTimer <= 0) {
+                    endGlobalEvent();
+                } else {
+                    document.getElementById('global-event-display').textContent = `${currentGlobalEvent.message} (Ends in ${Math.ceil(globalEventTimer)}s)`;
+                }
+            }
+            gameState.lastActiveTime = Date.now(); 
+        }
+
+        function updateAllUI() {
+            updatePlayerStatsUI(); updateEnemyUI(); updateUpgradesUI();
+            updateAbilitiesUI(); updateBossTimerUI(); updatePrestigeUI();
+            renderSpecialUpgrades();
+        }
+
+        function updatePlayerStatsUI() {
+            document.getElementById('level').textContent = gameState.level;
+            document.getElementById('xp').textContent = Math.floor(gameState.xp);
+            document.getElementById('xp-to-next-level').textContent = gameState.xpToNextLevel;
+            document.getElementById('xp-bar').style.width = Math.min(100, (gameState.xp / gameState.xpToNextLevel) * 100) + '%';
+            document.getElementById('gold').textContent = Math.floor(gameState.gold);
+            document.getElementById('click-damage').textContent = Math.ceil(gameState.clickDamage * (1 + gameState.prestigeUpgrades.globalDamageBonus));
+            document.getElementById('gold-per-click').textContent = Math.ceil(gameState.goldPerClick * (1 + gameState.prestigeUpgrades.globalGoldBonus) * (currentGlobalEvent && currentGlobalEvent.id === 'goldFever' ? currentGlobalEvent.goldMultiplier : 1) * (gameState.specialUpgrades.lootMagnet.level * gameState.specialUpgrades.lootMagnet.effectPerLevel + 1));
+            document.getElementById('auto-dps').textContent = Math.ceil(gameState.autoDPS * (1 + gameState.prestigeUpgrades.globalDamageBonus));
+            document.getElementById('crit-chance').textContent = ((gameState.critChance + (currentGlobalEvent && currentGlobalEvent.id === 'critChanceUp' ? currentGlobalEvent.critChanceBonus : 0)) * 100).toFixed(1);
+            document.getElementById('crit-damage-bonus').textContent = (gameState.critDamageBonus * 100).toFixed(0);
+            document.getElementById('enemies-defeated').textContent = gameState.enemiesDefeated;
+            document.getElementById('global-gold-bonus-display').textContent = (gameState.prestigeUpgrades.globalGoldBonus * 100).toFixed(1);
+            document.getElementById('global-xp-bonus-display').textContent = (gameState.prestigeUpgrades.globalXpBonus * 100).toFixed(1);
+            document.getElementById('global-damage-bonus-display').textContent = (gameState.prestigeUpgrades.globalDamageBonus * 100).toFixed(1);
+            document.getElementById('current-prestige-points-display').textContent = gameState.prestigePoints;
+        }
+
+        function updateEnemyUI() {
+            if (gameState.currentEnemy) {
+                document.getElementById('enemy-name').textContent = gameState.currentEnemy.name + (gameState.currentEnemy.isBoss ? " (BOSS 😈)" : gameState.currentEnemy.isElite ? " (Elite ✨)" : "");
+                document.getElementById('enemy-hp').textContent = Math.max(0, Math.ceil(gameState.currentEnemy.currentHp));
+                document.getElementById('enemy-max-hp').textContent = gameState.currentEnemy.maxHp;
+                const hpPercentage = (Math.max(0, gameState.currentEnemy.currentHp) / gameState.currentEnemy.maxHp) * 100;
+                document.getElementById('enemy-hp-bar').style.width = hpPercentage + '%';
+                document.getElementById('enemy-hp-bar').style.backgroundColor = hpPercentage > 60 ? 'var(--hp-color)' : hpPercentage > 30 ? 'var(--gold-color)' : 'var(--error-color)';
+            }
+        }
+        
+        function updateUpgradesUI() {
+            document.getElementById('upgrade-click-damage').innerHTML = `🖱️ Upgrade Click Damage <small>(Cost: ${gameState.upgradeCosts.clickDamage}G | Current: ${Math.ceil(gameState.clickDamage * (1 + gameState.prestigeUpgrades.globalDamageBonus))})</small>`;
+            document.getElementById('upgrade-gold-per-click').innerHTML = `🪙 Upgrade Gold Per Click <small>(Cost: ${gameState.upgradeCosts.goldPerClick}G | Current: ${Math.ceil(gameState.goldPerClick * (1 + gameState.prestigeUpgrades.globalGoldBonus) * (currentGlobalEvent && currentGlobalEvent.id === 'goldFever' ? currentGlobalEvent.goldMultiplier : 1) * (gameState.specialUpgrades.lootMagnet.level * gameState.specialUpgrades.lootMagnet.effectPerLevel + 1))})</small>`;
+            document.getElementById('upgrade-auto-dps').innerHTML = `🤖 Upgrade Auto DPS <small>(Cost: ${gameState.upgradeCosts.autoDPS}G | Current: ${Math.ceil(gameState.autoDPS* (1 + gameState.prestigeUpgrades.globalDamageBonus))})</small>`;
+            document.getElementById('upgrade-crit-chance').innerHTML = `🎯 Upgrade Crit Chance <small>(Cost: ${gameState.upgradeCosts.critChance}G | Current: ${((gameState.critChance + (currentGlobalEvent && currentGlobalEvent.id === 'critChanceUp' ? currentGlobalEvent.critChanceBonus : 0)) * 100).toFixed(1)}%)</small>`;
+            document.getElementById('upgrade-crit-damage').innerHTML = `💣 Upgrade Crit Damage <small>(Cost: ${gameState.upgradeCosts.critDamage}G | Current: +${(gameState.critDamageBonus * 100).toFixed(0)}%)</small>`;
+            
+            if (gameState.level >= 3) {
+                 document.getElementById('upgrade-xp-boost').innerHTML = `📈 XP Boost Lvl ${gameState.xpBoostLevel} <small>(Cost: ${gameState.upgradeCosts.xpBoost}G | +${((gameState.xpBoostMultiplier-1)*100).toFixed(0)}%)</small>`;
+            }
+             if (gameState.level >= 5) {
+                document.getElementById('upgrade-gold-boost').innerHTML = `💰 Gold Boost Lvl ${gameState.goldBoostLevel} <small>(Cost: ${gameState.upgradeCosts.goldBoost}G | +${((gameState.goldBoostMultiplier-1)*100).toFixed(0)}%)</small>`;
+            }
+        }
+        
+        function updateAbilitiesUI() {
+            for (const key in ABILITIES_TEMPLATE) { 
+                const abilityDef = ABILITIES_TEMPLATE[key];
+                const abilityState = gameState.abilities[key];
+                const button = document.getElementById(`ability-${abilityDef.id}`);
+                const cooldownBar = document.getElementById(`${abilityDef.id.substring(0,2).toLowerCase()}-cooldown-bar`); 
+                const cooldownDisplay = document.getElementById(`${abilityDef.id.substring(0,2).toLowerCase()}-cooldown-display`);
+
+                if(button && cooldownBar && cooldownDisplay && abilityState) { 
+                    cooldownDisplay.textContent = Math.ceil(abilityState.currentCooldown);
+                    button.disabled = !(gameState.level >= abilityDef.unlockedAtLevel && abilityState.currentCooldown <= 0);
+                    if (abilityState.currentCooldown > 0) {
+                        cooldownBar.style.width = ((abilityDef.cooldown - abilityState.currentCooldown) / abilityDef.cooldown) * 100 + '%';
+                    } else {
+                        cooldownBar.style.width = '100%';
+                    }
+                }
+            }
+        }
+
+        function updateBossTimerUI() {
+            if (gameState.currentEnemy && !gameState.currentEnemy.isBoss && document.getElementById('boss-timer').style.display === 'block') {
+                document.getElementById('boss-timer-countdown').textContent = gameState.enemiesUntilBoss;
+            }
+        }
+
+        function displayMessage(message, color = "var(--success-color)", duration = 3000) {
+            const messagesArea = document.getElementById('messages-area');
+            messagesArea.innerHTML = message; 
+            messagesArea.style.color = color;
+            if(messagesArea.timeoutId) clearTimeout(messagesArea.timeoutId);
+            messagesArea.timeoutId = setTimeout(() => {
+                messagesArea.innerHTML = '';
+                messagesArea.style.color = "var(--success-color)"; 
+            }, duration);
+        }
+        
+        function checkRandomReward() {
+            const chance = 0.10; 
+            if (Math.random() < chance) {
+                const rewardType = Math.random();
+                let rewardMessage = "";
+                
+                const chestEl = document.createElement('div');
+                chestEl.textContent = "🌟 Rare Cache Found! Opening...";
+                Object.assign(chestEl.style, {
+                    padding: "25px", backgroundColor: "#8e44ad", border: "3px solid #f1c40f",
+                    borderRadius: "15px", textAlign: "center", position: "fixed",
+                    top: "50%", left: "50%", transform: "translate(-50%, -50%) scale(0.1)",
+                    zIndex: "1000", transition: "transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.3s ease-out",
+                    fontSize: "1.8em", color: "white", boxShadow: "0 0 20px rgba(241, 196, 15, 0.7)"
+                });
+                document.body.appendChild(chestEl);
+                playSound('chestAppear');
+                setTimeout(() => { chestEl.style.transform = "translate(-50%, -50%) scale(1)";}, 10);
+
+                setTimeout(() => {
+                    playSound('chestOpen');
+                    if (rewardType < 0.5) { 
+                        const goldAmount = Math.ceil(gameState.gold * (0.2 + Math.random()*0.3) + gameState.currentEnemy.goldValue * (4 + Math.random() * 8));
+                        earnGold(goldAmount);
+                        rewardMessage = `💰💰💰 GOLD STASH! +${goldAmount} Gold!`;
+                        chestEl.style.backgroundColor = "#f1c40f"; chestEl.style.borderColor = "#e67e22";
+                    } else if (rewardType < 0.85) { 
+                        const xpAmount = Math.ceil(gameState.xpToNextLevel * (0.3 + Math.random()*0.3) + gameState.currentEnemy.xpValue * (2.5 + Math.random() * 6));
+                        gainXP(xpAmount);
+                        rewardMessage = `✨✨✨ XP SURGE! +${xpAmount} XP!`;
+                        chestEl.style.backgroundColor = "#3498db"; chestEl.style.borderColor = "#2980b9";
+                    } else { 
+                        const tempCritBonus = 0.15; 
+                        gameState.critChance += tempCritBonus; 
+                        rewardMessage = `⚡⚡⚡ CRIT FRENZY! +${(tempCritBonus*100).toFixed(0)}% Crit Chance for 20s!`;
+                        chestEl.style.backgroundColor = "#e74c3c"; chestEl.style.borderColor = "#c0392b";
+                        setTimeout(() => {
+                            gameState.critChance -= tempCritBonus;
+                            if(gameState.critChance < 0.02) gameState.critChance = 0.02; 
+                            displayMessage("Crit Frenzy faded. 😥", "var(--text-color)");
+                            updatePlayerStatsUI();
+                        }, 20000);
+                    }
+                    chestEl.textContent = rewardMessage;
+                    setTimeout(() => {
+                         chestEl.style.opacity = "0";
+                         chestEl.style.transform = "translate(-50%, -50%) scale(0.1)";
+                         setTimeout(() => { if (document.body.contains(chestEl)) document.body.removeChild(chestEl); }, 400);
+                    }, 2500);
+                   
+                    displayMessage(rewardMessage, "var(--accent-color)", 4000);
+                    updateAllUI();
+                }, 1500); 
+            }
+        }
+
+        function renderAchievements() {
+            const container = document.getElementById('achievements-container');
+            if(!container) return;
+            container.innerHTML = '';
+            let completedCount = 0;
+            gameState.achievements.forEach(ach => {
+                const achDiv = document.createElement('div');
+                achDiv.classList.add('achievement');
+                
+                let isConditionMet = false;
+                if (typeof ach.condition === 'function') { 
+                    isConditionMet = ach.condition(gameState);
+                } else {
+                    console.error("Achievement condition error (not a function):", ach.name, ach);
+                }
+
+                if (ach.claimed) {
+                    achDiv.classList.add('completed');
+                    completedCount++;
+                }
+                let achHTML = `<h4>${ach.name} ${ach.claimed ? "✔️" : "⏳"}</h4><p>${ach.description}</p>`;
+                if(ach.reward) {
+                    achHTML += `<small>🎁 Reward: ${formatReward(ach.reward)}</small>`;
+                }
+                if (ach.permanentBonus) {
+                    achHTML += `<br><small>💪 Permanent Bonus: ${formatPermanentBonus(ach.permanentBonus)}</small>`;
+                }
+                achDiv.innerHTML = achHTML;
+
+                if (!ach.claimed && isConditionMet) {
+                     const claimButton = document.createElement('button');
+                     claimButton.textContent = 'Claim!';
+                     claimButton.onclick = () => claimAchievement(ach.id);
+                     achDiv.appendChild(claimButton); 
+                }
+                container.appendChild(achDiv);
+            });
+            document.getElementById('achievements-completed-count').textContent = completedCount;
+            document.getElementById('achievements-total-count').textContent = gameState.achievements.length;
+            document.getElementById('achievements-count').textContent = `${completedCount}/${gameState.achievements.length}`;
+        }
+
+        function formatReward(reward) {
+            let str = "";
+            if(reward.gold) str += `💰${reward.gold}G `;
+            if(reward.xp) str += `📈${reward.xp}XP `;
+            if(reward.clickDamage) str += `💥+${reward.clickDamage} Click Dmg `;
+            if(reward.autoDPS) str += `🤖+${reward.autoDPS} Auto DPS `;
+            if(reward.prestigePointsInstant) str += `💎${reward.prestigePointsInstant} PP `;
+            if(reward.critDamageBonus) str += `💣+${(reward.critDamageBonus*100).toFixed(0)}% Crit Dmg`;
+            return str.trim();
+        }
+        function formatPermanentBonus(bonus) {
+            let str = "";
+            if (bonus.type === 'clickDamage') str = `💥+${bonus.value} Click Dmg`;
+            if (bonus.type === 'autoDPS') str = `🤖+${bonus.value} Auto DPS`;
+            if (bonus.type === 'globalDamageMultiplier') str = `💥+${(bonus.value * 100).toFixed(0)}% Global Dmg`;
+            if (bonus.type === 'critChance') str = `🎯+${(bonus.value * 100).toFixed(1)}% Crit Chance`;
+            return str;
+        }
+
+        function checkAchievements() {
+            let changed = false;
+            gameState.achievements.forEach(ach => {
+                if (!ach.claimed && typeof ach.condition === 'function' && ach.condition(gameState)) {
+                    changed = true;
+                }
+            });
+            if(changed) renderAchievements();
+        }
+
+        function claimAchievement(id) {
+            const ach = gameState.achievements.find(a => a.id === id);
+            if (ach && !ach.claimed && typeof ach.condition === 'function' && ach.condition(gameState)) {
+                ach.claimed = true;
+                if (ach.reward) {
+                    if (ach.reward.gold) earnGold(ach.reward.gold);
+                    if (ach.reward.xp) gainXP(ach.reward.xp);
+                    if (ach.reward.clickDamage) gameState.clickDamage += ach.reward.clickDamage;
+                    if (ach.reward.autoDPS) gameState.autoDPS += ach.reward.autoDPS;
+                    if (ach.reward.prestigePointsInstant) gameState.prestigePoints += ach.reward.prestigePointsInstant;
+                    if (ach.reward.critDamageBonus) gameState.critDamageBonus += ach.reward.critDamageBonus;
+                }
+                if (ach.permanentBonus) {
+                    applyPermanentBonus(ach.permanentBonus);
+                }
+                displayMessage(`🏆 Achievement "${ach.name}" Claimed! 🎉`, "var(--success-color)", 4000);
+                playSound('achievement');
+                renderAchievements();
+                updateAllUI();
+            }
+        }
+        function applyPermanentBonus(bonus) {
+             if (bonus.type === 'clickDamage') gameState.clickDamage += bonus.value;
+             if (bonus.type === 'autoDPS') gameState.autoDPS += bonus.value;
+             if (bonus.type === 'globalDamageMultiplier') gameState.prestigeUpgrades.globalDamageBonus += bonus.value;
+             if (bonus.type === 'critChance') gameState.critChance += bonus.value;
+        }
+
+
+        function updatePrestigeUI() {
+            const pointsToGain = Math.floor(Math.pow(gameState.level / 10, 1.2) * (1 + gameState.prestigeUpgrades.ppMultiplier * 0.1)); 
+            document.getElementById('prestige-points-to-gain').textContent = pointsToGain;
+            document.getElementById('current-prestige-points').textContent = gameState.prestigePoints;
+            document.getElementById('prestige-required-level').textContent = PRESTIGE_REQUIRED_LEVEL;
+
+            document.getElementById('prestige-global-gold').innerHTML = `💰 Global Gold Bonus Lvl ${Math.floor(gameState.prestigeUpgrades.globalGoldBonus * 100)} <small>(+${(gameState.prestigeUpgrades.globalGoldBonus*100).toFixed(0)}% | Cost: ${gameState.prestigeUpgradeCosts.globalGoldBonus}💎)</small>`;
+            document.getElementById('prestige-global-xp').innerHTML = `📈 Global XP Bonus Lvl ${Math.floor(gameState.prestigeUpgrades.globalXpBonus * 100)} <small>(+${(gameState.prestigeUpgrades.globalXpBonus*100).toFixed(0)}% | Cost: ${gameState.prestigeUpgradeCosts.globalXpBonus}💎)</small>`;
+            document.getElementById('prestige-global-damage').innerHTML = `💥 Global Damage Bonus Lvl ${Math.floor(gameState.prestigeUpgrades.globalDamageBonus * 50)} <small>(+${(gameState.prestigeUpgrades.globalDamageBonus*100).toFixed(0)}% | Cost: ${gameState.prestigeUpgradeCosts.globalDamageBonus}💎)</small>`;
+            document.getElementById('prestige-start-gold').innerHTML = `💵 Starting Gold Lvl ${gameState.prestigeUpgrades.startingGoldLevel} <small>(+${gameState.prestigeUpgrades.startingGoldLevel * 100}G | Cost: ${gameState.prestigeUpgradeCosts.startingGoldLevel}💎)</small>`;
+            document.getElementById('prestige-pp-multiplier').innerHTML = `💎 Prestige Point Gain Lvl ${gameState.prestigeUpgrades.ppMultiplier} <small>(+${gameState.prestigeUpgrades.ppMultiplier * 10}% PP | Cost: ${gameState.prestigeUpgradeCosts.ppMultiplier}💎)</small>`;
+        }
+
+        function handlePrestige() {
+            if (gameState.level < PRESTIGE_REQUIRED_LEVEL) {
+                displayMessage(`You need to be level ${PRESTIGE_REQUIRED_LEVEL} to prestige. ⏳`, "var(--error-color)");
+                return;
+            }
+            if (confirm("🌌 Are you sure you want to prestige? This will reset most progress for powerful permanent bonuses and Prestige Points! 🌌")) {
+                const pointsGained = Math.floor(Math.pow(gameState.level / 10, 1.2) * (1 + gameState.prestigeUpgrades.ppMultiplier * 0.1));
+                gameState.prestigePoints += pointsGained;
+                gameState.prestigeCount++;
+
+                const prestigeUpgrades = JSON.parse(JSON.stringify(gameState.prestigeUpgrades));
+                const prestigePoints = gameState.prestigePoints;
+                const prestigeCount = gameState.prestigeCount;
+                const claimedAchievementPermBonuses = gameState.achievements
+                    .filter(a => a.claimed && a.permanentBonus)
+                    .map(a => ({ ...a.permanentBonus })); 
+
+
+                const oldAchievementsState = gameState.achievements.map(a => ({id: a.id, claimed: a.claimed }));
+                const oldSpecialUpgrades = JSON.parse(JSON.stringify(gameState.specialUpgrades)); 
+
+                gameState = getDefaultGameState(); 
+                gameState.prestigeUpgrades = prestigeUpgrades;
+                gameState.prestigePoints = prestigePoints;
+                gameState.prestigeCount = prestigeCount;
+                gameState.gold += gameState.prestigeUpgrades.startingGoldLevel * 100; 
+                gameState.specialUpgrades = oldSpecialUpgrades; 
+                
+                
+                gameState.achievements = ACHIEVEMENTS_TEMPLATE.map(templateAch => {
+                    const oldAchData = oldAchievementsState.find(oa => oa.id === templateAch.id);
+                    const newAch = { ...templateAch };
+                    newAch.condition = templateAch.condition; 
+                    newAch.reward = templateAch.reward ? JSON.parse(JSON.stringify(templateAch.reward)) : undefined;
+                    newAch.permanentBonus = templateAch.permanentBonus ? JSON.parse(JSON.stringify(templateAch.permanentBonus)) : undefined;
+                    newAch.claimed = oldAchData ? oldAchData.claimed : false;
+                    return newAch;
+                });
+                
+                claimedAchievementPermBonuses.forEach(bonus => applyPermanentBonus(bonus));
+
+
+                setNextBossInterval(); // Reset boss interval after prestige
+                spawnNewEnemy();
+                checkUnlocks();
+                updateAllUI();
+                renderAchievements();
+                renderPrestigeUpgrades();
+                renderSpecialUpgrades();
+                displayMessage(`🌌 PRESTIGED! Gained ${pointsGained}💎. Welcome back, Ascendant! ✨`, "var(--prestige-color)", 6000);
+                playSound('prestige');
+                openTab('gameTab');
+            }
+        }
+
+        function buyPrestigeUpgrade(type) {
+            const cost = gameState.prestigeUpgradeCosts[type];
+            if (gameState.prestigePoints >= cost) {
+                gameState.prestigePoints -= cost;
+                switch (type) {
+                    case 'globalGoldBonus': gameState.prestigeUpgrades.globalGoldBonus += 0.01; gameState.prestigeUpgradeCosts.globalGoldBonus = Math.ceil(gameState.prestigeUpgradeCosts.globalGoldBonus * 1.2 +1); break; 
+                    case 'globalXpBonus': gameState.prestigeUpgrades.globalXpBonus += 0.01; gameState.prestigeUpgradeCosts.globalXpBonus = Math.ceil(gameState.prestigeUpgradeCosts.globalXpBonus * 1.2 + 1); break; 
+                    case 'globalDamageBonus': gameState.prestigeUpgrades.globalDamageBonus += 0.02; gameState.prestigeUpgradeCosts.globalDamageBonus = Math.ceil(gameState.prestigeUpgradeCosts.globalDamageBonus * 1.3 + 1); break; 
+                    case 'startingGoldLevel': gameState.prestigeUpgrades.startingGoldLevel += 1; gameState.prestigeUpgradeCosts.startingGoldLevel = Math.ceil(gameState.prestigeUpgradeCosts.startingGoldLevel * 1.5 + 1); break;
+                    case 'ppMultiplier': gameState.prestigeUpgrades.ppMultiplier += 1; gameState.prestigeUpgradeCosts.ppMultiplier = Math.ceil(gameState.prestigeUpgradeCosts.ppMultiplier * 2 + 3); break;
+                }
+                displayMessage("✨ Prestige Upgrade Purchased! 💪", "var(--prestige-color)");
+                playSound('upgrade');
+                updateAllUI();
+                renderPrestigeUpgrades();
+            } else {
+                displayMessage("Not enough Prestige Points! 💎😥", "var(--error-color)");
+            }
+        }
+        
+        function renderPrestigeUpgrades() { updatePrestigeUI(); }
+
+        function renderSpecialUpgrades() {
+            for (const key in gameState.specialUpgrades) {
+                const su = gameState.specialUpgrades[key];
+                const button = document.getElementById(su.id);
+                if(button) {
+                    button.style.display = (gameState.level >= su.unlockedAtLevel) ? 'block' : 'none';
+                    let effectText = "";
+                    if(key === 'lootMagnet') effectText = `+${(su.level * su.effectPerLevel * 100).toFixed(0)}% Gold/XP`;
+                    else if(key === 'quickLearner') effectText = `-${(su.level * su.effectPerLevel * 100).toFixed(0)}% XP Needed`;
+                    else if(key === 'eliteHunter') effectText = `+${(su.level * su.effectPerLevel * 100).toFixed(0)}% Elite Chance`;
+
+                    button.innerHTML = `${su.name} Lvl ${su.level} <small>(Cost: ${Math.ceil(su.baseCost * Math.pow(su.costMultiplier, su.level))}G | ${effectText})</small>`;
+                    button.disabled = su.level >= su.maxLevel;
+                }
+            }
+        }
+        function buySpecialUpgrade(key) {
+            const su = gameState.specialUpgrades[key];
+            if (su.level >= su.maxLevel) {
+                displayMessage(`${su.name} is at max level! 🚀`, "var(--info-color)"); return;
+            }
+            const cost = Math.ceil(su.baseCost * Math.pow(su.costMultiplier, su.level));
+            if (gameState.gold >= cost) {
+                gameState.gold -= cost;
+                su.level++;
+                displayMessage(`${su.name} upgraded to Lvl ${su.level}! ✨`, "var(--success-color)");
+                playSound('upgrade');
+                updateAllUI();
+            } else {
+                displayMessage(`Not enough gold for ${su.name}! 😥`, "var(--error-color)");
+            }
+        }
+
+
+        function checkDailyReward() {
+            const now = Date.now();
+            const twentyFourHours = 24 * 60 * 60 * 1000;
+            if (now - gameState.lastDailyRewardClaimed > twentyFourHours) {
+                document.getElementById('daily-reward-popup').classList.add('visible');
+                const rewardGold = 100 + gameState.level * 15 + gameState.prestigeCount * 200 + gameState.prestigeUpgrades.startingGoldLevel * 50;
+                const rewardXp = 200 + gameState.level * 30 + gameState.prestigeCount * 400;
+                document.getElementById('daily-reward-text').innerHTML = `Claim 💰${rewardGold}G and 📈${rewardXp}XP!`;
+                playSound('popupOpen');
+            }
+        }
+        function claimDailyReward() {
+            const rewardGold = 100 + gameState.level * 15 + gameState.prestigeCount * 200 + gameState.prestigeUpgrades.startingGoldLevel * 50;
+            const rewardXp = 200 + gameState.level * 30 + gameState.prestigeCount * 400;
+            earnGold(rewardGold);
+            gainXP(rewardXp); 
+            gameState.lastDailyRewardClaimed = Date.now();
+            document.getElementById('daily-reward-popup').classList.remove('visible');
+            displayMessage(`🎁 Daily Reward: +💰${rewardGold}G, +📈${rewardXp}XP! 🎉`, "var(--gold-color)", 4000);
+            playSound('rewardClaim');
+            updateAllUI();
+        }
+        
+        function calculateOfflineProgress() {
+            const now = Date.now();
+            const timeOfflineMs = now - (gameState.lastActiveTime || now);
+            const maxOfflineTimeMs = 2 * 60 * 60 * 1000; 
+            const effectiveOfflineTimeMs = Math.min(timeOfflineMs, maxOfflineTimeMs);
+            const offlineSeconds = effectiveOfflineTimeMs / 1000;
+
+            if (offlineSeconds > 60) { 
+                const baseGoldPerSec = (gameState.autoDPS * 0.05 + gameState.goldPerClick * 0.2); 
+                const offlineGoldRate = baseGoldPerSec * (1 + gameState.prestigeUpgrades.globalGoldBonus) * (gameState.specialUpgrades.lootMagnet.level * gameState.specialUpgrades.lootMagnet.effectPerLevel + 1);
+                const baseXpPerSec = (gameState.autoDPS * 0.02); 
+                const offlineXpRate = baseXpPerSec * (1 + gameState.prestigeUpgrades.globalXpBonus) * (gameState.specialUpgrades.lootMagnet.level * gameState.specialUpgrades.lootMagnet.effectPerLevel + 1);   
+
+                const goldGained = Math.floor(offlineGoldRate * offlineSeconds * 0.25); 
+                const xpGained = Math.floor(offlineXpRate * offlineSeconds * 0.25);
+
+                if (goldGained > 0 || xpGained > 0) {
+                    earnGold(goldGained);
+                    gainXP(xpGained);
+                    document.getElementById('offline-progress-text').innerHTML = `You earned 💰${goldGained}G and 📈${xpGained}XP while away for ${formatTime(offlineSeconds)}!`;
+                    document.getElementById('offline-progress-popup').classList.add('visible');
+                    playSound('popupOpen');
+                }
+            }
+            gameState.lastActiveTime = now; 
+        }
+        function formatTime(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = Math.floor(totalSeconds % 60);
+            let str = "";
+            if (hours > 0) str += `${hours}h `;
+            if (minutes > 0) str += `${minutes}m `;
+            if (seconds > 0 || str === "") str += `${seconds}s`;
+            return str.trim();
+        }
+
+        function tryStartGlobalEvent() {
+            if (currentGlobalEvent || Math.random() > 0.33) return; 
+
+            currentGlobalEvent = GLOBAL_EVENTS[Math.floor(Math.random() * GLOBAL_EVENTS.length)];
+            globalEventTimer = currentGlobalEvent.duration;
+            document.getElementById('global-event-display').textContent = currentGlobalEvent.message;
+            document.getElementById('global-event-display').style.display = 'block';
+            displayMessage(`🎉 EVENT STARTED: ${currentGlobalEvent.name} 🎉`, 'var(--info-color)', 5000);
+            playSound('eventStart');
+            updatePlayerStatsUI(); 
+        }
+
+        function endGlobalEvent() {
+            if (!currentGlobalEvent) return;
+            displayMessage(`💨 Event Ended: ${currentGlobalEvent.name}.`, 'var(--text-color)', 4000);
+            currentGlobalEvent = null;
+            globalEventTimer = 0;
+            document.getElementById('global-event-display').style.display = 'none';
+            playSound('eventEnd');
+            updatePlayerStatsUI(); 
+        }
+
+        function passiveSave() {
+            if (Date.now() - gameState.lastSaveTime > 28000) { 
+                saveGame();
+                gameState.lastSaveTime = Date.now();
+            }
+        }
+        function saveGame() {
+            try {
+                gameState.lastActiveTime = Date.now(); 
+                localStorage.setItem('hyperClickerSagaState_v2', JSON.stringify(gameState)); 
+                gameState.lastSaveTime = Date.now();
+            } catch (e) {
+                displayMessage("Error saving game 😥 (localStorage full/disabled).", "var(--error-color)");
+            }
+        }
+
+        function loadGame() {
+            let loadedStateJSON = null;
+            const savedGame = localStorage.getItem('hyperClickerSagaState_v2'); 
+            if (savedGame) {
+                try {
+                    loadedStateJSON = JSON.parse(savedGame);
+                } catch (e) {
+                    console.error("Error parsing saved game:", e);
+                    localStorage.removeItem('hyperClickerSagaState_v2'); 
+                }
+            }
+            
+            const defaultState = getDefaultGameState(); 
+            let finalState = JSON.parse(JSON.stringify(defaultState)); // Start with a deep clone of default for data
+
+            // Manually re-assign functions from templates
+            finalState.achievements = ACHIEVEMENTS_TEMPLATE.map(templateAch => {
+                 const loadedAchData = loadedStateJSON && loadedStateJSON.achievements ? loadedStateJSON.achievements.find(la => la.id === templateAch.id) : null;
+                return {
+                    ...templateAch, // Get all properties from template, including functions
+                    reward: templateAch.reward ? JSON.parse(JSON.stringify(templateAch.reward)) : undefined,
+                    permanentBonus: templateAch.permanentBonus ? JSON.parse(JSON.stringify(templateAch.permanentBonus)) : undefined,
+                    claimed: loadedAchData ? loadedAchData.claimed : false 
+                };
+            });
+             finalState.abilities = {}; 
+            for (const abKey in ABILITIES_TEMPLATE) { 
+                finalState.abilities[abKey] = {
+                    ...ABILITIES_TEMPLATE[abKey], // Base structure including functions
+                    ...(loadedStateJSON && loadedStateJSON.abilities && loadedStateJSON.abilities[abKey] ? loadedStateJSON.abilities[abKey] : {}) 
+                };
+                if(loadedStateJSON && loadedStateJSON.abilities && typeof loadedStateJSON.abilities[abKey]?.currentCooldown !== 'number') {
+                    finalState.abilities[abKey].currentCooldown = ABILITIES_TEMPLATE[abKey].currentCooldown;
+                }
+                finalState.abilities[abKey].isActive = ABILITIES_TEMPLATE[abKey].isActive;
+            }
+            finalState.specialUpgrades = {};
+            for (const suKey in SPECIAL_UPGRADES_TEMPLATE) {
+                 finalState.specialUpgrades[suKey] = {
+                    ...SPECIAL_UPGRADES_TEMPLATE[suKey],
+                     ...(loadedStateJSON && loadedStateJSON.specialUpgrades && loadedStateJSON.specialUpgrades[suKey] ? loadedStateJSON.specialUpgrades[suKey] : {})
+                };
+                if(loadedStateJSON && loadedStateJSON.specialUpgrades && typeof loadedStateJSON.specialUpgrades[suKey]?.level !== 'number') {
+                    finalState.specialUpgrades[suKey].level = SPECIAL_UPGRADES_TEMPLATE[suKey].level;
+                }
+            }
+
+
+            if (loadedStateJSON) {
+                for (const key in defaultState) {
+                    if (loadedStateJSON.hasOwnProperty(key) && key !== 'achievements' && key !== 'abilities' && key !== 'specialUpgrades') { // Skip already handled ones
+                        if (typeof defaultState[key] === 'object' && defaultState[key] !== null && !Array.isArray(defaultState[key])) {
+                            finalState[key] = { ...defaultState[key], ...loadedStateJSON[key] };
+                        } else if (typeof loadedStateJSON[key] !== 'undefined') { 
+                            finalState[key] = loadedStateJSON[key];
+                        }
+                    }
+                }
+                
+                if (!finalState.currentEnemy || typeof finalState.currentEnemy.maxHp === 'undefined' || finalState.currentEnemy.currentHp <= 0) {
+                     finalState.currentEnemy = null;
+                }
+                ['upgradeCosts', 'prestigeUpgrades', 'prestigeUpgradeCosts', 'enemiesDefeatedByType'].forEach(objKey => {
+                    if(!finalState[objKey]) finalState[objKey] = {...defaultState[objKey]};
+                });
+
+                 displayMessage("💾 Game Loaded Successfully! 🎉", "var(--success-color)");
+            } else {
+                 displayMessage("👋 No saved game found. Starting new adventure!", "var(--text-color)");
+            }
+            if(typeof finalState.lastActiveTime !== 'number') finalState.lastActiveTime = Date.now();
+            return finalState;
+        }
+
+        function resetGame() {
+            if (confirm("🛑 ARE YOU SURE you want to reset ALL progress, including Prestige and Achievements? This is permanent and cannot be undone! 🛑")) {
+                localStorage.removeItem('hyperClickerSagaState_v2');
+                gameState = getDefaultGameState();
+                
+                ['upgrade-xp-boost', 'upgrade-gold-boost', 'prestige-tab-button'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if(el) el.style.display = 'none';
+                });
+                 const prestigeButton = document.getElementById('prestige-button');
+                 if(prestigeButton) prestigeButton.disabled = true;
+
+                openTab('gameTab'); 
+                
+                spawnNewEnemy(); 
+                updateAllUI();
+                renderAchievements();
+                renderPrestigeUpgrades();
+                renderSpecialUpgrades();
+                displayMessage("🔄 Game Completely Reset! A fresh start awaits! ✨", "var(--error-color)", 5000);
+                playSound('reset');
+            }
+        }
+
+        window.onload = initGame;
+        // GAME LOGIC END
+    </script>
+</body>
+</html>

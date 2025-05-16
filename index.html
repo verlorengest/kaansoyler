@@ -1,127 +1,310 @@
-<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Web Games</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Epic Web Games Hub</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f2f2f2;
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
+    body {
+      font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background: linear-gradient(135deg, #1f1c2c 0%, #928dab 100%);
+      color: #f0f0f0;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
     header {
-      background: #333;
+      background: rgba(22, 22, 37, 0.8);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       color: #fff;
-      padding: 20px;
+      padding: 25px 0;
       text-align: center;
+      border-bottom: 4px solid #6c5ce7;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    header h1 {
+      font-size: 2.8em;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      background: linear-gradient(45deg, #a29bfe, #6c5ce7, #fd79a8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-fill-color: transparent;
+    }
+    header p {
+      font-size: 1em;
+      color: #d1d1d1;
+      margin-top: 5px;
     }
     main {
-      padding: 20px;
+      padding: 40px 0;
     }
     .game-list {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      max-width: 600px;
-      margin: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 35px;
+      list-style: none;
     }
     .game-item {
-      background: #fff;
-      border-radius: 8px;
-      padding: 15px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      background: rgba(44, 44, 68, 0.7);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      border-radius: 15px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+      overflow: hidden;
+      transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      display: flex;
+      flex-direction: column;
+      position: relative;
     }
-    .game-item a {
-      text-decoration: none;
-      color: #007bff;
+    .game-item:hover {
+      transform: translateY(-12px) scale(1.02);
+      box-shadow: 0 15px 35px rgba(108, 92, 231, 0.5);
+    }
+    .game-item-badge {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background-color: #fd79a8;
+      color: #fff;
+      padding: 5px 10px;
+      font-size: 0.8em;
       font-weight: bold;
+      border-radius: 5px;
+      z-index: 1;
     }
-    .game-item a:hover {
-      text-decoration: underline;
+    .game-item-badge.popular {
+      background-color: #00cec9;
+    }
+    .game-item-thumbnail {
+      width: 100%;
+      height: 200px;
+      background-color: #333;
+      overflow: hidden;
+    }
+    .game-item-thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+    .game-item:hover .game-item-thumbnail img {
+      transform: scale(1.1);
+    }
+    .game-item-content {
+      padding: 25px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .game-item-title {
+      font-size: 1.6em;
+      color: #fff;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+    .game-item-description {
+      font-size: 0.95em;
+      color: #c0c0c0;
+      margin-bottom: 20px;
+      flex-grow: 1;
+      min-height: 70px;
+    }
+    .play-button {
+      display: inline-block;
+      background: linear-gradient(45deg, #6c5ce7, #a29bfe);
+      color: #fff;
+      padding: 12px 25px;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      text-align: center;
+      transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      align-self: flex-start;
+      margin-top: auto;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .play-button:hover,
+    .play-button:focus {
+      background: linear-gradient(45deg, #a29bfe, #6c5ce7);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(108, 92, 231, 0.6);
+      text-decoration: none;
+      outline: none;
+    }
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      background: rgba(22, 22, 37, 0.8);
+      margin-top: 50px;
+      color: #a0a0a0;
+      border-top: 2px solid #6c5ce7;
+    }
+    footer p {
+      margin: 0;
+      font-size: 0.9em;
+    }
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 2.2em;
+      }
+      .game-list {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+      }
+      .game-item-title {
+        font-size: 1.4em;
+      }
+      .game-item-description {
+        font-size: 0.9em;
+        min-height: 60px;
+      }
+      .play-button {
+        padding: 10px 20px;
+      }
+    }
+    @media (max-width: 480px) {
+      header h1 {
+        font-size: 1.8em;
+      }
+      header p {
+        font-size: 0.9em;
+      }
+      .game-list {
+        gap: 20px;
+      }
     }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>Web Games</h1>
+  <div class="container">
+    <h1>Boring-Games.com !</h1>
+    <p>Your portal to countless hours of boring!</p>
+  </div>
 </header>
 
 <main>
-  <section class="game-list">
-    <div class="game-item">
-      <a href="games/AOET6/AoETycoon.html">Age of Empires Tycoon</a>
-    </div>
-    <!-- Yeni oyunlar buraya eklenebilir -->
-  </section>
+  <div class="container">
+    <section class="game-list">
+
+      <div class="game-item">
+        <div class="game-item-badge">Popular</div>
+        <div class="game-item-thumbnail">
+          <img src="https://placehold.co/600x400/6c5ce7/FFF?text=Age+of+Empires+Tycoon&font=roboto" alt="Age of Empires Tycoon Thumbnail">
+        </div>
+        <div class="game-item-content">
+          <h3 class="game-item-title">Age of Empires Tycoon</h3>
+          <p class="game-item-description">Build your empire, manage resources, and dominate the lands in this classic strategy game adaptation. Hours of engaging gameplay await!</p>
+          <a href="games/AOET6/AoETycoon.html" class="play-button">Play Now</a>
+        </div>
+      </div>
+
+      <div class="game-item">
+        <div class="game-item-badge">New</div>
+        <div class="game-item-thumbnail">
+          <img src="https://placehold.co/600x400/fd79a8/FFF?text=Space+Invaders+Infinity&font=montserrat" alt="Space Invaders Infinity Thumbnail">
+        </div>
+        <div class="game-item-content">
+          <h3 class="game-item-title">Space Invaders Infinity</h3>
+          <p class="game-item-description">Defend the galaxy from endless waves of alien attackers. Featuring power-ups and challenging bosses in a retro-modern style.</p>
+          <a href="#" class="play-button">Play Now</a>
+        </div>
+      </div>
+
+      <div class="game-item">
+        <div class="game-item-thumbnail">
+          <img src="https://placehold.co/600x400/00cec9/333?text=Puzzle+Master+Pro&font=lato" alt="Puzzle Master Pro Thumbnail">
+        </div>
+        <div class="game-item-content">
+          <h3 class="game-item-title">Puzzle Master Pro</h3>
+          <p class="game-item-description">Challenge your mind with hundreds of intricate puzzles, brain teasers, and logic games. Are you smart enough?</p>
+          <a href="#" class="play-button">Play Now</a>
+        </div>
+      </div>
+
+      <div class="game-item">
+        <div class="game-item-badge">Hot</div>
+        <div class="game-item-thumbnail">
+          <img src="https://placehold.co/600x400/fab1a0/333?text=Speed+Racers+Ultimate&font=oswald" alt="Speed Racers Ultimate Thumbnail">
+        </div>
+        <div class="game-item-content">
+          <h3 class="game-item-title">Speed Racers Ultimate</h3>
+          <p class="game-item-description">Experience high-octane racing action on diverse global tracks. Customize your car and burn rubber to victory!</p>
+          <a href="#" class="play-button">Play Now</a>
+        </div>
+      </div>
+
+      <div class="game-item">
+        <div class="game-item-thumbnail">
+          <img src="https://placehold.co/600x400/ffeaa7/333?text=Mystic+Adventure+RPG&font=playfairdisplay" alt="Mystic Adventure RPG Thumbnail">
+        </div>
+        <div class="game-item-content">
+          <h3 class="game-item-title">Mystic Adventure RPG</h3>
+          <p class="game-item-description">Embark on an epic journey in a vast fantasy world. Fight mythical monsters, discover hidden treasures, and forge your legend.</p>
+          <a href="#" class="play-button">Play Now</a>
+        </div>
+      </div>
+
+      <div class="game-item">
+        <div class="game-item-thumbnail">
+          <img src="https://placehold.co/600x400/55efc4/333?text=Strategy+Card+Clash&font=raleway" alt="Strategy Card Clash Thumbnail">
+        </div>
+        <div class="game-item-content">
+          <h3 class="game-item-title">Strategy Card Clash</h3>
+          <p class="game-item-description">Collect powerful cards, build unique decks, and battle opponents in this highly strategic and addictive card game.</p>
+          <a href="#" class="play-button">Play Now</a>
+        </div>
+      </div>
+
+      <div class="game-item">
+        <div class="game-item-badge">Featured</div>
+        <div class="game-item-thumbnail">
+          <img src="https://placehold.co/600x400/81ecec/333?text=Pixel+Platformer+Fun&font=pacifico" alt="Pixel Platformer Fun Thumbnail">
+        </div>
+        <div class="game-item-content">
+          <h3 class="game-item-title">Pixel Platformer Fun</h3>
+          <p class="game-item-description">Jump, dash, and explore vibrant pixel art worlds in this delightful platformer. Full of secrets and challenges.</p>
+          <a href="#" class="play-button">Play Now</a>
+        </div>
+      </div>
+
+      <div class="game-item">
+        <div class="game-item-thumbnail">
+          <img src="https://placehold.co/600x400/74b9ff/FFF?text=Cosmic+Explorer&font=bebasneue" alt="Cosmic Explorer Thumbnail">
+        </div>
+        <div class="game-item-content">
+          <h3 class="game-item-title">Cosmic Explorer</h3>
+          <p class="game-item-description">Pilot your starship through unknown galaxies, discover new planets, trade resources, and encounter alien civilizations.</p>
+          <a href="#" class="play-button">Play Now</a>
+        </div>
+      </div>
+
+    </section>
+  </div>
 </main>
+
+<footer>
+  <div class="container">
+    <p>© 2024 Epic Web Games Hub. All rights reserved. Created with passion for gaming.</p>
+  </div>
+</footer>
 
 </body>
 </html>
-=======
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Web Games</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f2f2f2;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background: #333;
-      color: #fff;
-      padding: 20px;
-      text-align: center;
-    }
-    main {
-      padding: 20px;
-    }
-    .game-list {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      max-width: 600px;
-      margin: auto;
-    }
-    .game-item {
-      background: #fff;
-      border-radius: 8px;
-      padding: 15px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    .game-item a {
-      text-decoration: none;
-      color: #007bff;
-      font-weight: bold;
-    }
-    .game-item a:hover {
-      text-decoration: underline;
-    }
-  </style>
-</head>
-<body>
-
-<header>
-  <h1>Web Games</h1>
-</header>
-
-<main>
-  <section class="game-list">
-    <div class="game-item">
-      <a href="games/AOET6/AoETycoon.html">Age of Empires Tycoon</a>
-    </div>
-    <!-- Yeni oyunlar buraya eklenebilir -->
-  </section>
-</main>
-
-</body>
-</html>
->>>>>>> 030b698970d36000110c37f4cd3be2a8aff41b65
