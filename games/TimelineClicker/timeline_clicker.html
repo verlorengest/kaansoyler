@@ -18,7 +18,7 @@
             --info-color: #2196f3;
             --knowledge-color: var(--info-color);
             --influence-color: #ff9800; 
-            --epoch-progress-color: var(--success-color);
+            --development-progress-color: var(--success-color);
             --temporal-shard-color: #9c27b0;
             --border-radius: 8px;
             --box-shadow: 0 5px 20px rgba(0,0,0,0.4);
@@ -95,8 +95,8 @@
             display: grid;
             grid-template-columns: 1fr 2.2fr 1fr; 
             grid-template-areas:
-                "stats epoch advancements"
-                "breakthroughs epoch societal-shifts" 
+                "stats current-development advancements"
+                "breakthroughs current-development societal-shifts" 
                 "messages messages messages"
                 "controls controls controls";
             gap: 25px; 
@@ -116,17 +116,18 @@
         #stats-area { grid-area: stats; }
         #stats-area p { margin: 10px 0; font-size: 1em; } 
         #stats-area span { font-weight: bold; color: var(--accent-color); }
-        #knowledge-bar-container {
+        #era-progress-bar-container {
             width: 100%; height: 12px; background-color: #444; border-radius: 6px; margin-top: 5px; overflow: hidden;
         }
-        #knowledge-bar { height: 100%; background-color: var(--knowledge-color); width: 0%; transition: width 0.2s; }
+        #era-progress-bar { height: 100%; background-color: var(--accent-color); width: 0%; transition: width 0.2s; }
 
-        #epoch-area {
-            grid-area: epoch; display: flex; flex-direction: column; align-items: center; justify-content: center;
+
+        #current-development-area { /* Renamed from epoch-area */
+            grid-area: current-development; display: flex; flex-direction: column; align-items: center; justify-content: center;
             background-color: rgba(0,0,0,0.15); 
         }
-        #current-epoch-display {
-            width: 250px; height: 250px; /* Adjusted size */
+        #current-development-display { /* Renamed from current-epoch-display */
+            width: 250px; height: 250px; 
             color: white; display: flex; flex-direction: column; align-items: center; justify-content: center;
             border-radius: 20px; 
             cursor: pointer; text-align: center;
@@ -136,23 +137,24 @@
             position: relative;
             font-size: 1.1em; 
         }
-        #current-epoch-display.major-turning-point { animation: majorTurningPointPulse 1.5s infinite; }
+        #current-development-display.major-milestone { animation: majorTurningPointPulse 1.5s infinite; } /* For special developments */
         @keyframes majorTurningPointPulse { 0%, 100% { box-shadow: 0 0 15px var(--temporal-shard-color), 0 0 25px var(--temporal-shard-color) inset; } 50% { box-shadow: 0 0 25px var(--temporal-shard-color), 0 0 40px var(--temporal-shard-color) inset; } }
-        #current-epoch-display:active { transform: scale(0.92); box-shadow: 0 0 10px rgba(0,0,0,0.2) inset; }
-        #epoch-name { font-weight: bold; font-size: 1.4em; margin-bottom: 8px; text-shadow: var(--text-shadow); }
-        #epoch-description { font-size: 0.9em; margin-bottom: 10px; opacity: 0.8; max-width: 90%;}
-        #epoch-progress-text { font-size: 0.95em; }
-        #epoch-progress-bar-container {
+        #current-development-display:active { transform: scale(0.92); box-shadow: 0 0 10px rgba(0,0,0,0.2) inset; }
+        #development-name { font-weight: bold; font-size: 1.4em; margin-bottom: 8px; text-shadow: var(--text-shadow); }
+        #development-description { font-size: 0.9em; margin-bottom: 10px; opacity: 0.8; max-width: 90%;}
+        #development-progress-text { font-size: 0.95em; }
+        #development-progress-bar-container {
             width: 90%; height: 30px; background-color: rgba(0,0,0,0.4); border-radius: 8px; margin-top: 12px; overflow: hidden; border: 1px solid rgba(0,0,0,0.6);
         }
-        #epoch-progress-bar { height: 100%; background-color: var(--epoch-progress-color); width: 100%; transition: width 0.1s linear; }
+        #development-progress-bar { height: 100%; background-color: var(--development-progress-color); width: 100%; transition: width 0.1s linear; }
+        
         #progress-feedback-container, #resource-feedback-container { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
         .feedback-number {
             position: absolute; font-weight: bold; opacity: 1;
             animation: floatUpStrong 0.8s ease-out forwards;
             text-shadow: 1px 1px 1px black;
         }
-        .progress-number { font-size: 1.7em; color: var(--accent-color); } /* Progress feedback */
+        .progress-number { font-size: 1.7em; color: var(--accent-color); } 
         .breakthrough-feedback { color: #ffeb3b !important; font-size: 2.2em !important; animation: floatUpCrit 0.9s ease-out forwards !important; }
         .knowledge-feedback { font-size: 1.3em; color: var(--knowledge-color); }
         .influence-feedback { font-size: 1.3em; color: var(--influence-color); }
@@ -165,7 +167,8 @@
             50% { transform: translateY(-40px) scale(1.3); opacity: 0.8; }
             100% { transform: translateY(-80px) scale(0.7); opacity: 0; }
         }
-        #major-event-timer { margin-top: 15px; font-size: 1.2em; color: var(--temporal-shard-color); font-weight: bold; }
+        #era-flavor-text { margin-top: 15px; font-size: 1.1em; color: var(--text-color); font-style: italic; text-align: center;}
+
 
         #advancements-area { grid-area: advancements; }
         #societal-shifts-area { grid-area: societal-shifts; } 
@@ -193,11 +196,11 @@
         }
         .advancement-button small, .breakthrough-button small, .paradigm-button small { display: block; font-size: 0.85em; opacity: 0.9; margin-top: 3px; }
         .cooldown-bar {
-            position: absolute; bottom: 0; left: 0; height: 6px; background-color: rgba(var(--success-color), 0.6); /* Adjusted for theme */
+            position: absolute; bottom: 0; left: 0; height: 6px; background-color: rgba(var(--success-color), 0.6); 
             width: 0%; transition: width 0.1s linear; border-radius: 0 0 var(--border-radius) var(--border-radius);
         }
         button:disabled {
-            background-image: linear-gradient(to bottom, #546e7a, #78909c) !important; /* Adjusted for theme */
+            background-image: linear-gradient(to bottom, #546e7a, #78909c) !important; 
             color: #bdbdbd !important;
             cursor: not-allowed !important;
             box-shadow: 0 1px 2px rgba(0,0,0,0.1) !important;
@@ -248,7 +251,7 @@
         
         .screen-flash {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(102, 252, 241, 0.7); /* Accent color flash */
+            background-color: rgba(102, 252, 241, 0.7); 
             opacity: 0; pointer-events: none; z-index: 2000;
             animation: flashAnimation 0.5s ease-out;
         }
@@ -278,13 +281,13 @@
             #game-container {
                 grid-template-columns: 1fr 1fr;
                 grid-template-areas:
-                    "epoch epoch"
+                    "current-development current-development"
                     "stats advancements"
                     "breakthroughs societal-shifts"
                     "messages messages"
                     "controls controls";
             }
-            #current-epoch-display { width: 220px; height: 220px;} 
+            #current-development-display { width: 220px; height: 220px;} 
         }
         @media (max-width: 700px) { 
             body { padding: 10px; }
@@ -292,7 +295,7 @@
             #game-container {
                 grid-template-columns: 1fr;
                 grid-template-areas:
-                    "epoch"
+                    "current-development"
                     "stats"
                     "advancements"
                     "breakthroughs"
@@ -303,7 +306,7 @@
                 padding: 15px;
             }
             .game-area { padding: 15px; }
-            #current-epoch-display { width: 200px; height: 200px;}
+            #current-development-display { width: 200px; height: 200px;}
             .tab-button { padding: 10px 15px; font-size: 1em;}
             #game-title { font-size: 2.0em; }
         }
@@ -327,15 +330,16 @@
                 <div id="stats-area" class="game-area">
                     <h2 class="area-title">📊 Civilization Stats</h2>
                     <p>🕰️ Current Era: <span id="current-era-name">The Void</span></p>
-                    <p>💡 Knowledge: <span id="knowledge">0</span> / <span id="knowledge-to-next-era">1000</span></p>
-                    <div id="knowledge-bar-container"><div id="knowledge-bar"></div></div>
+                    <p>🛠️ Era Progress: <span id="era-developments-completed">0</span> / <span id="era-developments-total">0</span></p>
+                    <div id="era-progress-bar-container"><div id="era-progress-bar"></div></div>
+                    <p>💡 Knowledge: <span id="knowledge">0</span></p>
                     <p>🌍 Influence: <span id="influence">0</span></p>
                     <p>🖱️ Progress/Click: <span id="progress-per-click">1</span></p>
                     <p>💡 Knowledge/Click: <span id="knowledge-per-click">0</span></p>
                     <p>📈 Societal Momentum: <span id="passive-progress-rate">0</span> P/s</p>
                     <p>✨ Breakthrough Chance: <span id="breakthrough-chance">2</span>%</p>
                     <p>💥 Breakthrough Impact: +<span id="breakthrough-impact-bonus">50</span>%</p>
-                    <p>✔️ Epochs Completed: <span id="epochs-completed">0</span></p>
+                    <p>✔️ Eras Completed this Shift: <span id="eras-completed-this-shift">0</span></p>
                     <hr style="border-color: rgba(102,252,241,0.1); margin: 10px 0;">
                     <p><strong>Global Modifiers (from Epoch Shifts):</strong></p>
                     <p>💡 Knowledge Bonus: +<span id="global-knowledge-bonus-display">0</span>%</p>
@@ -344,18 +348,18 @@
                     <p>🌀 Temporal Shards: <span id="current-temporal-shards-display">0</span></p>
                 </div>
 
-                <div id="epoch-area" class="game-area">
-                    <div id="current-epoch-display" style="background-color: #333; border-color: #555;">
-                        <p id="epoch-name">Primal Spark</p>
-                        <p id="epoch-description">Awaiting the dawn of consciousness...</p>
-                        <p id="epoch-progress-text">⚙️ Progress: <span id="epoch-current-progress">0</span> / <span id="epoch-max-progress">10</span></p>
-                        <div id="epoch-progress-bar-container">
-                            <div id="epoch-progress-bar" style="width: 0%;"></div>
+                <div id="current-development-area" class="game-area">
+                    <div id="current-development-display" style="background-color: #333; border-color: #555;">
+                        <p id="development-name">Initial Spark</p>
+                        <p id="development-description">The very first stirring of potential...</p>
+                        <p id="development-progress-text">⚙️ Progress: <span id="development-current-progress">0</span> / <span id="development-max-progress">10</span></p>
+                        <div id="development-progress-bar-container">
+                            <div id="development-progress-bar" style="width: 0%;"></div>
                         </div>
                         <div id="progress-feedback-container"></div>
                         <div id="resource-feedback-container"></div>
                     </div>
-                    <p id="major-event-timer" style="display:none;">🌠 Major Turning Point in: <span id="major-event-countdown">10</span> Epochs</p>
+                    <p id="era-flavor-text">The mists of time swirl, awaiting a guiding hand...</p>
                 </div>
 
                 <div id="advancements-area" class="game-area">
@@ -381,7 +385,7 @@
                     </button>
                      <button id="breakthrough-rapidDevelopment" class="breakthrough-button" disabled>
                         🚀 Rapid Development
-                        <small>Greatly speeds up current epoch! (CD: <span id="rd-cooldown-display">90</span>s)</small>
+                        <small>Greatly speeds up current development! (CD: <span id="rd-cooldown-display">90</span>s)</small>
                         <div class="cooldown-bar" id="rd-cooldown-bar"></div>
                     </button>
                 </div>
@@ -406,9 +410,6 @@
             <div class="game-area">
                 <h2 class="area-title">🌌 Paradigm Shifts</h2>
                 <div id="paradigms-list">
-                    <button id="paradigm-scientific-method" class="paradigm-button" style="display:none;">🔬 Scientific Method</button>
-                    <button id="paradigm-industrialization" class="paradigm-button" style="display:none;">🏭 Industrialization</button>
-                    <button id="paradigm-information-age" class="paradigm-button" style="display:none;">💻 Information Age</button>
                 </div>
             </div>
         </div>
@@ -423,8 +424,8 @@
         <div id="epochShiftTab" class="tab-content">
             <div class="game-area">
                 <h2 class="area-title">🌀 Epoch Shift Chamber</h2>
-                <p>Reach Era <span id="epoch-shift-required-era">"The Classical Age"</span> to perform an Epoch Shift.</p>
-                <p>Shifting resets current Era, Knowledge, Influence, Core Advancements, and Societal Shifts.</p>
+                <p>Reach Era: "<span id="epoch-shift-required-era-name-display">Classical Age</span>" to perform an Epoch Shift.</p>
+                <p>Shifting resets current Era, Developments, Knowledge, Influence, Core Advancements, and Societal Shifts.</p>
                 <p>You will earn <span id="temporal-shards-to-gain">0</span> Temporal Shards (🌀).</p>
                 <p>Current Temporal Shards (🌀): <span id="current-temporal-shards">0</span></p>
                 <button id="epoch-shift-button" class="advancement-button" disabled>🌀 Shift Epoch!</button>
@@ -455,138 +456,155 @@
     <script>
         let gameState;
 
-        const EPOCH_DEFINITIONS = [
-            { 
-                id: "primal_spark", name: "Primal Spark ✨", eraName: "The Void",
-                description: "Awaiting the dawn of consciousness...", 
-                effortRequired: 10, 
-                rewards: { knowledge: 5, influence: 1 },
-                backgroundColor: "#33373d", borderColor: "#4a5058",
-                unlocksAdvancements: [], nextEpochs: ["stone_age_awakening"]
+        const ERA_DEFINITIONS = [
+            {
+                id: "prehistory", name: "Prehistory",
+                description: "Before written records, humanity took its first tentative steps.",
+                backgroundColor: "#4a5058", borderColor: "#33373d",
+                unlocksAdvancements: [], unlocksBreakthroughsAtStart: [], unlocksParadigms: [],
+                isMajorTurningPointEra: false, epochShiftRequirementOrder: 0,
+                developments: [
+                    { id: "primordial_spark", name: "Primordial Spark ✨", description: "The very first stirring of potential.", effortRequired: 20, rewards: { knowledge: 5, influence: 1 } },
+                    { id: "sentience_dawn", name: "Dawn of Sentience 🤔", description: "Basic awareness begins to form.", effortRequired: 30, rewards: { knowledge: 10, influence: 2 } }
+                ]
             },
-            { 
-                id: "stone_age_awakening", name: "Stone Age: Awakening 🔥", eraName: "Stone Age",
-                description: "The first tools, the first fires. Humanity begins.",
-                effortRequired: 50, 
-                rewards: { knowledge: 20, influence: 5 },
+            {
+                id: "stone_age", name: "Stone Age",
+                description: "The dawn of humanity, marked by rudimentary tools and the struggle for survival.",
                 backgroundColor: "#795548", borderColor: "#5d4037",
-                unlocksAdvancements: ["adv-progress-per-click", "adv-knowledge-per-click"], nextEpochs: ["stone_age_hunters"]
+                unlocksAdvancements: ["adv-progress-per-click", "adv-knowledge-per-click"],
+                unlocksBreakthroughsAtStart: ["INSPIRED_THOUGHT"],
+                unlocksParadigms: [],
+                isMajorTurningPointEra: false, epochShiftRequirementOrder: 1,
+                developments: [
+                    { id: "crude_tools", name: "Crude Stone Tools 🛠️", description: "Sharp-edged rocks prove useful.", effortRequired: 50, rewards: { knowledge: 20, influence: 5, tempProgressPerClickBonus: 1, tempBonusDurationTicks: 30 } },
+                    { id: "controlled_fire", name: "Controlled Fire 🔥", description: "Harnessing flames for warmth, cooking, and protection.", effortRequired: 80, rewards: { knowledge: 35, influence: 8, tempKnowledgePerClickBonus: 1, tempBonusDurationTicks: 30 } },
+                    { id: "hunter_gatherers", name: "Hunter-Gatherer Bands 🏹", description: "Small groups cooperate to survive.", effortRequired: 120, rewards: { knowledge: 50, influence: 12 } , unlocksAdvancements: ["adv-passive-progress"]},
+                    { id: "cave_art", name: "Cave Art 🎨", description: "Early expressions of symbolism and storytelling.", effortRequired: 150, rewards: { knowledge: 60, influence: 15, breakthroughChanceBonus: 0.001 } }
+                ]
             },
             {
-                id: "stone_age_hunters", name: "Stone Age: Hunter-Gatherers 🏹", eraName: "Stone Age",
-                description: "Tribes form, surviving the wild.",
-                effortRequired: 250,
-                rewards: { knowledge: 75, influence: 15 },
-                backgroundColor: "#8d6e63", borderColor: "#6d4c41",
-                unlocksAdvancements: ["adv-passive-progress"], nextEpochs: ["neolithic_revolution"]
-            },
-            {
-                id: "neolithic_revolution", name: "Neolithic Revolution: First Farms 🌾", eraName: "Neolithic Age",
-                description: "Agriculture dawns, settlements take root.",
-                effortRequired: 1000,
-                rewards: { knowledge: 250, influence: 50 },
+                id: "neolithic_age", name: "Neolithic Age",
+                description: "The agricultural revolution transforms human society.",
                 backgroundColor: "#4caf50", borderColor: "#388e3c",
-                unlocksAdvancements: ["adv-breakthrough-chance"], nextEpochs: ["bronze_age_cities"], isMajorTurningPointCandidate: true
+                unlocksAdvancements: ["adv-breakthrough-chance"],
+                unlocksBreakthroughsAtStart: ["GOLDEN_AGE"],
+                unlocksParadigms: [],
+                isMajorTurningPointEra: false, epochShiftRequirementOrder: 2,
+                developments: [
+                    { id: "early_farming", name: "Early Farming 🌾", description: "Cultivating crops provides a stable food source.", effortRequired: 250, rewards: { knowledge: 100, influence: 25 } },
+                    { id: "animal_domestication", name: "Animal Domestication 🐑", description: "Taming animals for food, labor, and companionship.", effortRequired: 300, rewards: { knowledge: 120, influence: 30 } },
+                    { id: "permanent_settlements", name: "Permanent Settlements 🏘️", description: "Villages emerge as people stay in one place.", effortRequired: 400, rewards: { knowledge: 180, influence: 40 } },
+                    { id: "pottery", name: "Pottery Crafting🏺", description: "Creating vessels for storage and cooking.", effortRequired: 350, rewards: { knowledge: 150, influence: 35 } }
+                ]
             },
             {
-                id: "bronze_age_cities", name: "Bronze Age: First Cities 🏛️", eraName: "Bronze Age",
-                description: "Metalworking and organized societies emerge.",
-                effortRequired: 5000,
-                rewards: { knowledge: 800, influence: 150 },
+                id: "bronze_age", name: "Bronze Age",
+                description: "The discovery of bronze leads to new tools, weapons, and complex societies.",
                 backgroundColor: "#e67e22", borderColor: "#d35400",
-                unlocksAdvancements: ["adv-breakthrough-impact"], nextEpochs: ["iron_age_empires"]
+                unlocksAdvancements: ["adv-breakthrough-impact", "shift-knowledge-affinity"],
+                unlocksBreakthroughsAtStart: ["RAPID_DEVELOPMENT"],
+                unlocksParadigms: [],
+                isMajorTurningPointEra: true, epochShiftRequirementOrder: 3, // Example of a Major Turning Point Era
+                developments: [
+                    { id: "bronze_smelting", name: "Bronze Smelting 🔩", description: "Combining copper and tin to create a stronger metal.", effortRequired: 600, rewards: { knowledge: 250, influence: 60 } },
+                    { id: "first_cities", name: "First Cities 🏙️", description: "Large, organized urban centers develop.", effortRequired: 800, rewards: { knowledge: 350, influence: 80 } },
+                    { id: "writing_systems", name: "Early Writing Systems ✍️", description: "Recording information through symbols.", effortRequired: 1000, rewards: { knowledge: 500, influence: 100 }, isKeyDevelopment: true },
+                    { id: "trade_routes", name: "Trade Routes 🗺️", description: "Networks for exchanging goods and ideas expand.", effortRequired: 700, rewards: { knowledge: 300, influence: 120 } }
+                ]
+            },
+            {
+                id: "iron_age", name: "Iron Age",
+                description: "Iron technology spreads, forging stronger empires and tools.",
+                backgroundColor: "#7f8c8d", borderColor: "#607d8b",
+                unlocksAdvancements: ["shift-influence-spread"],
+                unlocksBreakthroughsAtStart: [],
+                unlocksParadigms: ["scientificMethod", "industrialization"], // Example unlock
+                isMajorTurningPointEra: false, epochShiftRequirementOrder: 4,
+                developments: [
+                    { id: "iron_working", name: "Iron Working ⚔️", description: "Mastering the art of forging iron.", effortRequired: 1500, rewards: { knowledge: 700, influence: 150 } },
+                    { id: "large_empires", name: "Rise of Large Empires 🏛️", description: "Consolidation of power into vast states.", effortRequired: 2000, rewards: { knowledge: 900, influence: 250 } },
+                    { id: "coinage", name: "Coinage Introduction 💰", description: "Standardized currency simplifies trade.", effortRequired: 1800, rewards: { knowledge: 800, influence: 200 } },
+                ]
             },
              {
-                id: "iron_age_empires", name: "Iron Age: Empires Rise ⚔️", eraName: "Iron Age",
-                description: "Iron tools and weapons forge mighty empires.",
-                effortRequired: 20000,
-                rewards: { knowledge: 2500, influence: 400 },
-                backgroundColor: "#7f8c8d", borderColor: "#607d8b",
-                unlocksAdvancements: [], nextEpochs: ["classical_antiquity"], isMajorTurningPointCandidate: true
+                id: "classical_antiquity", name: "Classical Antiquity",
+                description: "A period of immense cultural, philosophical, and political achievements.",
+                backgroundColor: "#3498db", borderColor: "#2980b9",
+                unlocksAdvancements: [],
+                unlocksBreakthroughsAtStart: [],
+                unlocksParadigms: [],
+                isMajorTurningPointEra: true, epochShiftRequirementOrder: 5,
+                developments: [
+                    { id: "philosophy_schools", name: "Schools of Philosophy 🤔", description: "Great thinkers ponder existence and ethics.", effortRequired: 3000, rewards: { knowledge: 1200, influence: 300 } },
+                    { id: "democratic_ideals", name: "Democratic Ideals 🗳️", description: "Concepts of citizen participation in governance emerge.", effortRequired: 3500, rewards: { knowledge: 1500, influence: 350 } },
+                    { id: "monumental_architecture", name: "Monumental Architecture 🏛️", description: "Construction of grand temples, theaters, and public works.", effortRequired: 4000, rewards: { knowledge: 1800, influence: 400 } },
+                ]
             },
             {
-                id: "classical_antiquity", name: "Classical Antiquity: Philosophy & Republics 📜", eraName: "Classical Age",
-                description: "Philosophy, democracy, and grand architecture.",
-                effortRequired: 75000,
-                rewards: { knowledge: 8000, influence: 1000 },
-                backgroundColor: "#3498db", borderColor: "#2980b9",
-                unlocksAdvancements: [], nextEpochs: ["medieval_period"]
-            },
-        ];
-
-        const MAJOR_TURNING_POINT_DEFINITIONS = [
-             { 
-                id: "invention_of_writing", name: "MAJOR: Invention of Writing ✍️", eraName: "Bronze Age",
-                description: "Knowledge can now be preserved and transmitted across generations.",
-                effortRequiredScale: 1.5, rewardScale: 2, 
-                backgroundColor: "#9b59b6", borderColor: "#8e44ad", isMajorTurningPoint: true
-            },
-            { 
-                id: "rise_of_philosophy", name: "MAJOR: Rise of Philosophy 🤔", eraName: "Classical Age",
-                description: "New ways of thinking challenge old norms and lay foundations for science.",
-                effortRequiredScale: 1.8, rewardScale: 2.5, 
-                backgroundColor: "#1abc9c", borderColor: "#16a085", isMajorTurningPoint: true
+                id: "singularity_approaches", name: "Singularity Approaches",
+                description: "The theoretical point where artificial superintelligence triggers runaway technological growth.",
+                backgroundColor: "#9b59b6", borderColor: "#8e44ad",
+                isMajorTurningPointEra: true, epochShiftRequirementOrder: 99, // Far future
+                developments: [
+                     { id: "true_ai", name: "True AI Awakening 🤖", description: "Artificial general intelligence is achieved.", effortRequired: 1000000, rewards: { knowledge: 500000, influence: 100000 } },
+                ]
             }
         ];
 
-        const EPOCH_SHIFT_REQUIRED_ERA_NAME = "Classical Age"; 
-        const MAJOR_EVENT_INTERVAL_RANGE = [5, 10]; 
+        const EPOCH_SHIFT_REQUIRED_ERA_ORDER = 5; // Corresponds to "Classical Antiquity" (order 5)
         const BREAKTHROUGH_CHANCE_BASE = 0.02; 
 
         const BREAKTHROUGHS_TEMPLATE = {
             INSPIRED_THOUGHT: {
-                id: "inspiredThought", name: "Inspired Thought", cooldown: 30, currentCooldown: 0, progressMultiplier: 5, unlockedAtEraName: "Stone Age", isActive: false
+                id: "inspiredThought", name: "Inspired Thought", cooldown: 30, currentCooldown: 0, progressMultiplier: 5, isActive: false
             },
             GOLDEN_AGE: {
-                id: "goldenAge", name: "Golden Age", cooldown: 60, currentCooldown: 0, duration: 10, resourceMultiplier: 2, unlockedAtEraName: "Neolithic Age", isActive: false
+                id: "goldenAge", name: "Golden Age", cooldown: 60, currentCooldown: 0, duration: 10, resourceMultiplier: 2, isActive: false
             },
             RAPID_DEVELOPMENT: {
-                id: "rapidDevelopment", name: "Rapid Development", cooldown: 90, currentCooldown: 0, duration: 5, epochSpeedMultiplier: 3, unlockedAtEraName: "Bronze Age", isActive: false
+                id: "rapidDevelopment", name: "Rapid Development", cooldown: 90, currentCooldown: 0, duration: 5, developmentSpeedMultiplier: 3, isActive: false
             }
         };
 
         const MILESTONES_TEMPLATE = [
-            { id: "complete_primal_spark", name: "First Flicker ✨", description: "Complete the 'Primal Spark' epoch.", condition: (gs) => gs.completedEpochIds.includes("primal_spark"), reward: { knowledge: 20 }, claimed: false },
-            { id: "reach_stone_age", name: "Dawn of an Era 🌄", description: "Reach the Stone Age.", condition: (gs) => gs.currentEra.eraName === "Stone Age", reward: { influence: 10 }, claimed: false },
-            { id: "complete_5_epochs", name: "Early Steps 🐾", description: "Complete 5 epochs.", condition: (gs) => gs.epochsCompleted >= 5, reward: { knowledge: 100 }, claimed: false },
-            { id: "earn_1000_knowledge", name: "Budding Scholar 🧠", description: "Accumulate 1000 total knowledge.", condition: (gs) => gs.totalKnowledgeEarned >= 1000, reward: { progressPerClick: 2 }, permanentBonus: { type: 'progressPerClick', value: 1 }, claimed: false },
-            { id: "perform_epoch_shift", name: "Timeline Weaver 🌀", description: "Perform your first Epoch Shift.", condition: (gs) => gs.epochShifts > 0, reward: { temporalShardsInstant: 1 }, permanentBonus: {type: 'globalProgressBonus', value: 0.02}, claimed: false},
+            { id: "complete_prehistory", name: "First Steps 🐾", description: "Complete the Prehistory era.", condition: (gs) => gs.completedEraIds.includes("prehistory"), reward: { knowledge: 50 }, claimed: false },
+            { id: "reach_stone_age", name: "Dawn of Tool Use 🛠️", description: "Reach the Stone Age.", condition: (gs) => gs.currentEraId === "stone_age", reward: { influence: 20 }, claimed: false },
+            { id: "complete_3_eras", name: "Early Progress 📈", description: "Complete 3 different Eras in a single Epoch Shift.", condition: (gs) => gs.erasCompletedThisShift >= 3, reward: { knowledge: 200 }, claimed: false },
+            { id: "earn_5000_knowledge", name: "Growing Wisdom 🧠", description: "Accumulate 5000 total knowledge in a single Epoch Shift.", condition: (gs) => gs.knowledgeEarnedThisShift >= 5000, reward: { progressPerClick: 3 }, permanentBonus: { type: 'progressPerClick', value: 1 }, claimed: false },
+            { id: "perform_epoch_shift", name: "Timeline Weaver 🌀", description: "Perform your first Epoch Shift.", condition: (gs) => gs.epochShiftsPerformedTotal > 0, reward: { temporalShardsInstant: 1 }, permanentBonus: {type: 'globalProgressBonus', value: 0.02}, claimed: false},
+            { id: "unlock_writing", name: "The Written Word ✍️", description: "Complete the 'Early Writing Systems' development.", condition: (gs) => gs.completedDevelopmentIds.includes("writing_systems"), reward: { knowledge: 300, influence: 50 }, claimed: false },
         ];
 
         const PARADIGMS_TEMPLATE = {
-            scientificMethod: { id: "paradigm-scientific-method", name: "🔬 Scientific Method", description: "Systematic observation and experimentation.", baseCostResource: "knowledge", baseCost: 50000, costMultiplier: 2, level: 0, maxLevel: 5, effectPerLevel: { knowledgeBonus: 0.05, breakthroughChance: 0.005 }, unlockedAtEraName: "Classical Age" }, 
-            industrialization: { id: "paradigm-industrialization", name: "🏭 Industrialization", description: "Mass production and technological revolution.", baseCostResource: "influence", baseCost: 20000, costMultiplier: 2.5, level: 0, maxLevel: 3, effectPerLevel: { passiveProgressRateBonus: 0.1, knowledgeFromEpochs: 0.1 }, unlockedAtEraName: "Iron Age" }, 
+            scientificMethod: { id: "scientificMethod", name: "🔬 Scientific Method", description: "Systematic observation and experimentation enhances knowledge gain.", baseCostResource: "knowledge", baseCost: 20000, costMultiplier: 2, level: 0, maxLevel: 5, effectPerLevel: { knowledgeBonus: 0.05, breakthroughChance: 0.001 } }, 
+            industrialization: { id: "industrialization", name: "🏭 Industrialization", description: "Mass production accelerates societal momentum.", baseCostResource: "influence", baseCost: 15000, costMultiplier: 2.5, level: 0, maxLevel: 3, effectPerLevel: { passiveProgressRateBonus: 0.1, knowledgeFromDevelopments: 0.05 } }, 
+            informationAge: { id: "informationAge", name: "💻 Information Age", description: "Global connectivity amplifies all progress.", baseCostResource: "knowledge", baseCost: 100000, costMultiplier: 3, level: 0, maxLevel: 5, effectPerLevel: { allResourceBonus: 0.03 } , unlockedAtEraId: "iron_age" },
         };
         
         const GLOBAL_EVENTS_TIMELINE = [
-            { id: "ageOfDiscovery", name: "🗺️ Age of Discovery!", duration: 300, influenceMultiplier: 1.5, message: "🗺️ Age of Discovery! +50% Influence from all sources for 5 minutes!  sailed!" },
-            { id: "renaissance", name: "🎨 Renaissance!", duration: 300, knowledgeMultiplier: 1.3, breakthroughChanceBonus: 0.05, message: "🎨 Renaissance! +30% Knowledge & +5% Breakthrough Chance for 5 minutes! 🌠" },
-            { id: "philosophicalFlourishing", name: "💭 Philosophical Flourishing!", duration: 180, passiveProgressMultiplier: 1.2, message: "💭 Time of Great Thinkers! +20% Societal Momentum for 3 minutes! 💡" }
+            { id: "ageOfDiscovery", name: "🗺️ Age of Discovery!", duration: 300, influenceMultiplier: 1.5, message: "🗺️ Age of Discovery! +50% Influence from all sources for 5 minutes!" },
+            { id: "renaissance", name: "🎨 Renaissance!", duration: 300, knowledgeMultiplier: 1.3, breakthroughChanceBonus: 0.05, message: "🎨 Renaissance! +30% Knowledge & +5% Breakthrough Chance for 5 minutes!" },
+            { id: "philosophicalFlourishing", name: "💭 Philosophical Flourishing!", duration: 180, passiveProgressMultiplier: 1.2, message: "💭 Time of Great Thinkers! +20% Societal Momentum for 3 minutes!" }
         ];
         let currentGlobalEvent = null;
         let globalEventTimer = 0;
-
-
-        function setNextMajorEventInterval() {
-            gameState.epochsUntilMajorEvent = Math.floor(Math.random() * (MAJOR_EVENT_INTERVAL_RANGE[1] - MAJOR_EVENT_INTERVAL_RANGE[0] + 1)) + MAJOR_EVENT_INTERVAL_RANGE[0];
-        }
         
         function getBaseAdvancementCost(base, level, multiplier = 1.2, flatIncrease = 10) {
-            return Math.ceil(base * Math.pow(multiplier, level) + flatIncrease * level);
+            const eraOrder = ERA_DEFINITIONS.find(e => e.id === gameState.currentEraId)?.epochShiftRequirementOrder || 0;
+            return Math.ceil(base * Math.pow(multiplier, level) + flatIncrease * level * (eraOrder + 1));
         }
 
         function getDefaultGameState() {
-            const firstEpoch = EPOCH_DEFINITIONS[0];
+            const firstEra = ERA_DEFINITIONS[0];
             const baseState = {
-                currentEraIndex: 0,
-                currentEpochId: firstEpoch.id,
-                currentEpochProgress: 0,
+                currentEraId: firstEra.id,
+                currentDevelopmentIndex: 0,
+                currentDevelopmentProgress: 0,
                 knowledge: 0, influence: 0,
                 progressPerClick: 1, knowledgePerClick: 0, passiveProgressRate: 0, 
                 breakthroughChance: BREAKTHROUGH_CHANCE_BASE, breakthroughImpactBonus: 0.5, 
-                epochsCompleted: 0, 
-                epochsUntilMajorEvent: Math.floor(Math.random() * (MAJOR_EVENT_INTERVAL_RANGE[1] - MAJOR_EVENT_INTERVAL_RANGE[0] + 1)) + MAJOR_EVENT_INTERVAL_RANGE[0],
-                majorEventsCompleted: 0,
+                erasCompletedThisShift: 0,
                 advancementCosts: {
                     progressPerClick: 10, knowledgePerClick: 15, passiveProgressRate: 25, breakthroughChance: 100, breakthroughImpact: 150,
                     knowledgeAffinity: 2000, influenceSpread: 2000,
@@ -597,33 +615,34 @@
                 },
                 knowledgeAffinityBonus: 0, influenceSpreadBonus: 0,
                 breakthroughs: JSON.parse(JSON.stringify(BREAKTHROUGHS_TEMPLATE)), 
-                milestones: MILESTONES_TEMPLATE.map(templateAch => ({
-                    ...templateAch, 
-                    condition: templateAch.condition, 
-                    reward: templateAch.reward ? JSON.parse(JSON.stringify(templateAch.reward)) : undefined,
-                    permanentBonus: templateAch.permanentBonus ? JSON.parse(JSON.stringify(templateAch.permanentBonus)) : undefined,
+                milestones: MILESTONES_TEMPLATE.map(templateMs => ({
+                    ...templateMs, 
+                    condition: templateMs.condition, 
+                    reward: templateMs.reward ? JSON.parse(JSON.stringify(templateMs.reward)) : undefined,
+                    permanentBonus: templateMs.permanentBonus ? JSON.parse(JSON.stringify(templateMs.permanentBonus)) : undefined,
                     claimed: false
                 })),
-                completedEpochIds: [], totalKnowledgeEarned: 0, totalInfluenceEarned: 0, totalClicks: 0, totalBreakthroughsUsed: 0,
-                temporalShards: 0, epochShifts: 0,
+                completedDevelopmentIds: [], completedEraIds: [], 
+                knowledgeEarnedThisShift: 0, influenceEarnedThisShift: 0, totalClicks: 0, totalBreakthroughsUsed: 0,
+                temporalShards: 0, epochShiftsPerformedTotal: 0,
                 epochShiftUpgrades: { globalKnowledgeBonus: 0, globalInfluenceBonus: 0, globalProgressBonus: 0, startingKnowledgeLevel: 0, shardMultiplierLevel: 0 },
                 epochShiftUpgradeCosts: { globalKnowledgeBonus: 1, globalInfluenceBonus: 1, globalProgressBonus: 2, startingKnowledgeLevel: 1, shardMultiplierLevel: 5 },
                 paradigms: JSON.parse(JSON.stringify(PARADIGMS_TEMPLATE)),
+                temporaryBonuses: { progressPerClick: 0, knowledgePerClick: 0, durationTicks: 0},
                 lastDailyRewardClaimed: 0, lastSaveTime: Date.now(), lastActiveTime: Date.now()
             };
-            baseState.currentEra = EPOCH_DEFINITIONS.find(e => e.id === baseState.currentEpochId);
-            baseState.knowledgeToNextEra = baseState.currentEra.eraName === "The Void" ? 1000 : EPOCH_DEFINITIONS.find(e => e.eraName !== baseState.currentEra.eraName)?.effortRequired * 10 || 1000000;
             return baseState;
         }
         
         function initGame() {
             gameState = loadGame();
             calculateOfflineProgress();
-            if (gameState.epochsUntilMajorEvent <= 0 || gameState.epochsUntilMajorEvent < MAJOR_EVENT_INTERVAL_RANGE[0] || gameState.epochsUntilMajorEvent > MAJOR_EVENT_INTERVAL_RANGE[1]) {
-                setNextMajorEventInterval();
-            }
-            if (!gameState.currentEpoch || gameState.currentEpochProgress >= gameState.currentEpoch.effortRequired) {
-                 startNewEpoch(gameState.currentEpochId || EPOCH_DEFINITIONS[0].id);
+            
+            const currentEra = getCurrentEraDefinition();
+            if (!currentEra || !currentEra.developments || gameState.currentDevelopmentIndex >= currentEra.developments.length) {
+                 startNewEra(gameState.currentEraId || ERA_DEFINITIONS[0].id); 
+            } else {
+                startSpecificDevelopment(gameState.currentEraId, gameState.currentDevelopmentIndex);
             }
             
             setupEventListeners();
@@ -642,7 +661,7 @@
         function playSound(soundId) {  }
         
         function setupEventListeners() {
-            document.getElementById('current-epoch-display').addEventListener('click', handleEpochClick);
+            document.getElementById('current-development-display').addEventListener('click', handleProgressClick);
             document.getElementById('adv-progress-per-click').addEventListener('click', () => buyAdvancement('progressPerClick'));
             document.getElementById('adv-knowledge-per-click').addEventListener('click', () => buyAdvancement('knowledgePerClick'));
             document.getElementById('adv-passive-progress').addEventListener('click', () => buyAdvancement('passiveProgressRate'));
@@ -662,10 +681,11 @@
             document.getElementById('eshift-start-knowledge').addEventListener('click', () => buyEpochShiftUpgrade('startingKnowledgeLevel'));
             document.getElementById('eshift-shard-multiplier').addEventListener('click', () => buyEpochShiftUpgrade('shardMultiplierLevel'));
             
-            document.getElementById('paradigm-scientific-method').addEventListener('click', () => buyParadigm('scientificMethod'));
-            document.getElementById('paradigm-industrialization').addEventListener('click', () => buyParadigm('industrialization'));
-            document.getElementById('paradigm-information-age').addEventListener('click', () => {
-                if (document.getElementById('paradigm-information-age')) buyParadigm('informationAge');
+            Object.keys(PARADIGMS_TEMPLATE).forEach(pKey => {
+                const paradigmButton = document.getElementById(PARADIGMS_TEMPLATE[pKey].id);
+                 if (paradigmButton) { // Paradigms might be added dynamically later
+                    paradigmButton.addEventListener('click', () => buyParadigm(pKey));
+                }
             });
 
 
@@ -673,7 +693,12 @@
             document.getElementById('load-game').addEventListener('click', () => { 
                 gameState = loadGame(); 
                 calculateOfflineProgress(); 
-                if(!gameState.currentEpoch || gameState.currentEpochProgress >= gameState.currentEpoch.effortRequired) startNewEpoch(EPOCH_DEFINITIONS[0].id); 
+                const eraDef = getCurrentEraDefinition();
+                if(!eraDef || !eraDef.developments || gameState.currentDevelopmentIndex >= eraDef.developments.length) {
+                    startNewEra(gameState.currentEraId || ERA_DEFINITIONS[0].id);
+                } else {
+                    startSpecificDevelopment(gameState.currentEraId, gameState.currentDevelopmentIndex);
+                }
                 updateAllUI(); checkUnlocksAndAvailability(); renderMilestones(); renderEpochShiftUpgrades(); renderParadigms();
             });
             document.getElementById('reset-game').addEventListener('click', resetGame);
@@ -688,120 +713,158 @@
             document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
             document.querySelectorAll('.tab-button').forEach(tb => tb.classList.remove('active'));
             document.getElementById(tabName).classList.add('active');
-            event.currentTarget.classList.add('active');
+            if (event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            }
+        }
+        
+        function getCurrentEraDefinition() {
+            return ERA_DEFINITIONS.find(e => e.id === gameState.currentEraId);
+        }
+        function getCurrentDevelopmentDefinition() {
+            const era = getCurrentEraDefinition();
+            if (era && era.developments && gameState.currentDevelopmentIndex < era.developments.length) {
+                return era.developments[gameState.currentDevelopmentIndex];
+            }
+            return null;
         }
 
-        function startNewEpoch(epochId, isMajorOverride = false) {
-            let epochDefinition;
-            let isMajorTurningPoint = isMajorOverride;
 
-            if (gameState.epochsUntilMajorEvent <= 0 && !isMajorOverride) {
-                const availableMajorTurningPoints = MAJOR_TURNING_POINT_DEFINITIONS.filter(
-                    mtp => mtp.eraName === gameState.currentEra.eraName && !gameState.completedEpochIds.includes(mtp.id)
-                );
-                if (availableMajorTurningPoints.length > 0) {
-                    epochDefinition = availableMajorTurningPoints[Math.floor(Math.random() * availableMajorTurningPoints.length)];
-                    isMajorTurningPoint = true;
-                }
-            }
-            
-            if (!epochDefinition) {
-                epochDefinition = EPOCH_DEFINITIONS.find(e => e.id === epochId);
-                if (!epochDefinition) { 
-                    epochDefinition = EPOCH_DEFINITIONS[0]; 
-                }
-                if (epochDefinition.isMajorTurningPointCandidate && Math.random() < 0.3 && !isMajorTurningPoint) {
-                     isMajorTurningPoint = true; 
-                }
+        function startNewEra(eraId) {
+            const newEraDef = ERA_DEFINITIONS.find(e => e.id === eraId);
+            if (!newEraDef) {
+                startNewEra(ERA_DEFINITIONS[ERA_DEFINITIONS.length-1].id); // Go to last defined era if something goes wrong
+                return;
             }
 
+            gameState.currentEraId = newEraDef.id;
+            gameState.currentDevelopmentIndex = 0;
+            gameState.erasCompletedThisShift++;
 
-            let effort = epochDefinition.effortRequired;
-            let kReward = epochDefinition.rewards.knowledge;
-            let iReward = epochDefinition.rewards.influence;
-
-            if (isMajorTurningPoint && epochDefinition.effortRequiredScale) effort *= epochDefinition.effortRequiredScale;
-            if (isMajorTurningPoint && epochDefinition.rewardScale) {
-                kReward *= epochDefinition.rewardScale;
-                iReward *= epochDefinition.rewardScale;
+            if (newEraDef.unlocksAdvancements) {
+                newEraDef.unlocksAdvancements.forEach(advId => {
+                    const advButton = document.getElementById(advId);
+                    if (advButton) advButton.style.display = 'block';
+                });
             }
-            
-            const eraProgressMultiplier = Math.pow(1.15, gameState.currentEraIndex) * Math.pow(1.01, gameState.epochsCompleted);
-            effort = Math.max(5, Math.ceil(effort * eraProgressMultiplier));
-            kReward = Math.ceil(kReward * eraProgressMultiplier * (1 + gameState.paradigms.industrialization.level * 0.1));
-            iReward = Math.ceil(iReward * eraProgressMultiplier);
-            
-
-            gameState.currentEpoch = {
-                ...epochDefinition,
-                effortRequired: effort,
-                rewards: { knowledge: kReward, influence: iReward },
-                isMajorTurningPoint: isMajorTurningPoint,
-                currentBackgroundColor: epochDefinition.backgroundColor,
-                currentBorderColor: epochDefinition.borderColor
-            };
-            gameState.currentEpochId = gameState.currentEpoch.id;
-            gameState.currentEpochProgress = 0;
-            
-            if (gameState.currentEra.eraName !== epochDefinition.eraName) {
-                gameState.currentEraIndex++; 
-                gameState.currentEra = epochDefinition; 
-                gameState.knowledgeToNextEra = EPOCH_DEFINITIONS.find(e => e.eraName !== gameState.currentEra.eraName && EPOCH_DEFINITIONS.indexOf(e) > EPOCH_DEFINITIONS.indexOf(gameState.currentEra))?.effortRequired * 10 || gameState.knowledgeToNextEra * 2;
-                displayMessage(`🕰️ Advanced to the ${gameState.currentEra.eraName}! New possibilities await!`, "var(--accent-color)", 4000);
+             if (newEraDef.unlocksBreakthroughsAtStart) {
+                newEraDef.unlocksBreakthroughsAtStart.forEach(btKey => {
+                    const btButton = document.getElementById(`breakthrough-${BREAKTHROUGHS_TEMPLATE[btKey].id}`);
+                    if(btButton && gameState.breakthroughs[btKey].currentCooldown <=0) btButton.disabled = false;
+                });
+            }
+            if (newEraDef.unlocksParadigms) {
+                newEraDef.unlocksParadigms.forEach(pKey => {
+                    const pButton = document.getElementById(PARADIGMS_TEMPLATE[pKey].id);
+                    if (pButton) pButton.style.display = 'block';
+                });
             }
 
 
-            const epochDisplay = document.getElementById('current-epoch-display');
-            epochDisplay.style.backgroundColor = gameState.currentEpoch.currentBackgroundColor;
-            epochDisplay.style.borderColor = gameState.currentEpoch.currentBorderColor;
-            epochDisplay.classList.toggle('major-turning-point', isMajorTurningPoint);
-            
-            document.getElementById('major-event-timer').style.display = isMajorTurningPoint ? 'none' : 'block';
+            const devDisplay = document.getElementById('current-development-display');
+            devDisplay.style.backgroundColor = newEraDef.backgroundColor;
+            devDisplay.style.borderColor = newEraDef.borderColor;
+            devDisplay.classList.toggle('major-milestone', !!newEraDef.isMajorTurningPointEra);
+            document.getElementById('era-flavor-text').textContent = newEraDef.description;
 
-            playSound('epochStart');
-            updateEpochUI();
+            displayMessage(`🕰️ Advanced to the ${newEraDef.name}! New developments await.`, "var(--accent-color)", 4000);
+            playSound('eraAdvanceSound');
+            
+            const gameWrapper = document.getElementById('game-wrapper'); // Screen effects for era change
+            gameWrapper.classList.add('screen-shake');
+            const flash = document.createElement('div');
+            flash.className = 'screen-flash';
+            document.body.appendChild(flash);
+            setTimeout(() => {
+                gameWrapper.classList.remove('screen-shake');
+                if(document.body.contains(flash)) document.body.removeChild(flash);
+            }, 500);
+
+
+            startSpecificDevelopment(newEraDef.id, 0);
             checkUnlocksAndAvailability();
+            updatePlayerStatsUI(); 
+        }
+
+        function startSpecificDevelopment(eraId, devIndex) {
+            gameState.currentEraId = eraId; // Ensure eraId is set
+            gameState.currentDevelopmentIndex = devIndex;
+            gameState.currentDevelopmentProgress = 0;
+
+            const development = getCurrentDevelopmentDefinition();
+            if (!development) {
+                // This might happen if an era has no developments, or trying to load an invalid state.
+                // Attempt to move to the next era or handle error
+                const currentEraIdx = ERA_DEFINITIONS.findIndex(e => e.id === gameState.currentEraId);
+                if (currentEraIdx < ERA_DEFINITIONS.length - 1) {
+                    startNewEra(ERA_DEFINITIONS[currentEraIdx + 1].id);
+                } else {
+                    displayMessage("All timelines explored... for now. Consider an Epoch Shift.", "var(--temporal-shard-color)");
+                    // Potentially disable clicking or show an "end game" state for this shift
+                }
+                return;
+            }
+            
+             if (development.unlocksAdvancements) { // Advancements unlocked by specific developments
+                development.unlocksAdvancements.forEach(advId => {
+                    const advButton = document.getElementById(advId);
+                    if (advButton) advButton.style.display = 'block';
+                });
+            }
+
+            updateDevelopmentUI();
+            playSound('developmentStartSound');
         }
 
 
-        function handleEpochClick() {
-            if (!gameState.currentEpoch || gameState.currentEpochProgress >= gameState.currentEpoch.effortRequired) return; 
+        function handleProgressClick() {
+            const development = getCurrentDevelopmentDefinition();
+            if (!development || gameState.currentDevelopmentProgress >= development.effortRequired) return; 
+            
             gameState.totalClicks++;
 
-            let currentKnowledgePerClick = gameState.knowledgePerClick;
-            let globalKnowledgeBonus = gameState.epochShiftUpgrades.globalKnowledgeBonus + gameState.paradigms.scientificMethod.level * gameState.paradigms.scientificMethod.effectPerLevel.knowledgeBonus;
-            let eventKnowledgeMultiplier = (currentGlobalEvent && currentGlobalEvent.knowledgeMultiplier ? currentGlobalEvent.knowledgeMultiplier : 1);
+            let baseProgPerClick = gameState.progressPerClick + gameState.temporaryBonuses.progressPerClick;
+            let globalProgBonus = gameState.epochShiftUpgrades.globalProgressBonus;
+            let progressMade = baseProgPerClick * (1 + globalProgBonus);
+
+            let baseKnowPerClick = gameState.knowledgePerClick + gameState.temporaryBonuses.knowledgePerClick;
+            let globalKnowBonus = gameState.epochShiftUpgrades.globalKnowledgeBonus + gameState.knowledgeAffinityBonus + (gameState.paradigms.scientificMethod.level * gameState.paradigms.scientificMethod.effectPerLevel.knowledgeBonus);
+            let eventKnowMultiplier = (currentGlobalEvent?.knowledgeMultiplier) || 1;
+            let paradigmKnowMultiplier = 1 + (gameState.paradigms.informationAge.level * (gameState.paradigms.informationAge.effectPerLevel?.allResourceBonus || 0));
+            const clickKnowledgeAmount = Math.ceil(baseKnowPerClick * (1 + globalKnowBonus) * eventKnowMultiplier * paradigmKnowMultiplier);
             
-            const clickKnowledgeAmount = Math.ceil(currentKnowledgePerClick * (1 + globalKnowledgeBonus + gameState.knowledgeAffinityBonus) * eventKnowledgeMultiplier);
             if (clickKnowledgeAmount > 0) {
                 earnKnowledge(clickKnowledgeAmount); 
                 displayFeedbackNumber(clickKnowledgeAmount, 'knowledge', 'resource-feedback-container');
             }
-
-            let progressMade = gameState.progressPerClick * (1 + gameState.epochShiftUpgrades.globalProgressBonus);
+            
             let isBreakthrough = false;
-            const effectiveBreakthroughChance = gameState.breakthroughChance + (currentGlobalEvent && currentGlobalEvent.breakthroughChanceBonus ? currentGlobalEvent.breakthroughChanceBonus : 0)  + gameState.paradigms.scientificMethod.level * gameState.paradigms.scientificMethod.effectPerLevel.breakthroughChance;
+            const effectiveBreakthroughChance = gameState.breakthroughChance + (currentGlobalEvent?.breakthroughChanceBonus || 0) + (gameState.paradigms.scientificMethod.level * gameState.paradigms.scientificMethod.effectPerLevel.breakthroughChance);
             if (Math.random() < effectiveBreakthroughChance) {
                 progressMade *= (1 + gameState.breakthroughImpactBonus);
                 isBreakthrough = true;
-                 displayMessage("✨ Breakthrough!", "var(--knowledge-color)", 1500);
+                displayMessage("✨ Breakthrough!", "var(--knowledge-color)", 1500);
             }
             progressMade = Math.ceil(progressMade);
 
             if (gameState.breakthroughs.RAPID_DEVELOPMENT.isActive) {
-                progressMade *= BREAKTHROUGHS_TEMPLATE.RAPID_DEVELOPMENT.epochSpeedMultiplier;
+                progressMade *= BREAKTHROUGHS_TEMPLATE.RAPID_DEVELOPMENT.developmentSpeedMultiplier;
+            }
+            if (gameState.breakthroughs.INSPIRED_THOUGHT.isActive) { // Make Inspired Thought a short buff instead of instant
+                 progressMade *= BREAKTHROUGHS_TEMPLATE.INSPIRED_THOUGHT.progressMultiplier;
             }
 
-            gameState.currentEpochProgress += progressMade;
+
+            gameState.currentDevelopmentProgress += progressMade;
             
             displayProgressNumber(progressMade, isBreakthrough);
             playSound(isBreakthrough ? 'breakthroughSound' : 'clickSound');
 
-            if (gameState.currentEpochProgress >= gameState.currentEpoch.effortRequired) {
-                playSound('epochCompleteSound');
-                completeEpoch(); 
+            if (gameState.currentDevelopmentProgress >= development.effortRequired) {
+                playSound('developmentCompleteSound');
+                completeDevelopment(); 
             }
-            updateEpochUI(); 
+            updateDevelopmentUI(); 
             checkMilestones();
             updatePlayerStatsUI();
         }
@@ -833,12 +896,15 @@
              }
         }
 
-        function completeEpoch() {
-            const epoch = gameState.currentEpoch;
-            if (!epoch) return; 
+        function completeDevelopment() {
+            const development = getCurrentDevelopmentDefinition();
+            if (!development) return; 
 
-            let knowledgeMultiplier = (1 + gameState.epochShiftUpgrades.globalKnowledgeBonus + gameState.knowledgeAffinityBonus + gameState.paradigms.scientificMethod.level * gameState.paradigms.scientificMethod.effectPerLevel.knowledgeBonus);
+            let knowledgeMultiplier = (1 + gameState.epochShiftUpgrades.globalKnowledgeBonus + gameState.knowledgeAffinityBonus + (gameState.paradigms.scientificMethod.level * gameState.paradigms.scientificMethod.effectPerLevel.knowledgeBonus));
             let influenceMultiplier = (1 + gameState.epochShiftUpgrades.globalInfluenceBonus + gameState.influenceSpreadBonus);
+            let paradigmResourceMultiplier = 1 + (gameState.paradigms.informationAge.level * (gameState.paradigms.informationAge.effectPerLevel?.allResourceBonus || 0));
+            knowledgeMultiplier *= paradigmResourceMultiplier;
+            influenceMultiplier *= paradigmResourceMultiplier;
             
             if(currentGlobalEvent) {
                 if(currentGlobalEvent.knowledgeMultiplier) knowledgeMultiplier *= currentGlobalEvent.knowledgeMultiplier;
@@ -848,118 +914,127 @@
                 knowledgeMultiplier *= BREAKTHROUGHS_TEMPLATE.GOLDEN_AGE.resourceMultiplier;
                 influenceMultiplier *= BREAKTHROUGHS_TEMPLATE.GOLDEN_AGE.resourceMultiplier;
             }
+            knowledgeMultiplier *= (1 + gameState.paradigms.industrialization.level * (gameState.paradigms.industrialization.effectPerLevel?.knowledgeFromDevelopments || 0));
 
 
-            const knowledgeGained = Math.ceil(epoch.rewards.knowledge * knowledgeMultiplier);
-            const influenceGained = Math.ceil(epoch.rewards.influence * influenceMultiplier);
+            const knowledgeGained = Math.ceil((development.rewards.knowledge || 0) * knowledgeMultiplier);
+            const influenceGained = Math.ceil((development.rewards.influence || 0) * influenceMultiplier);
             
-            displayFeedbackNumber(knowledgeGained, 'knowledge', 'resource-feedback-container');
-            displayFeedbackNumber(influenceGained, 'influence', 'resource-feedback-container');
-
-            earnKnowledge(knowledgeGained);
-            earnInfluence(influenceGained);
+            if (knowledgeGained > 0) {
+                displayFeedbackNumber(knowledgeGained, 'knowledge', 'resource-feedback-container');
+                earnKnowledge(knowledgeGained);
+            }
+            if (influenceGained > 0) {
+                displayFeedbackNumber(influenceGained, 'influence', 'resource-feedback-container');
+                earnInfluence(influenceGained);
+            }
             
-            gameState.epochsCompleted++;
-            if (!gameState.completedEpochIds.includes(epoch.id)) {
-                gameState.completedEpochIds.push(epoch.id);
+            if (development.rewards.tempProgressPerClickBonus) {
+                gameState.temporaryBonuses.progressPerClick += development.rewards.tempProgressPerClickBonus;
+                gameState.temporaryBonuses.durationTicks = Math.max(gameState.temporaryBonuses.durationTicks, development.rewards.tempBonusDurationTicks || 0);
+            }
+            if (development.rewards.tempKnowledgePerClickBonus) {
+                 gameState.temporaryBonuses.knowledgePerClick += development.rewards.tempKnowledgePerClickBonus;
+                 gameState.temporaryBonuses.durationTicks = Math.max(gameState.temporaryBonuses.durationTicks, development.rewards.tempBonusDurationTicks || 0);
+            }
+            if (development.rewards.breakthroughChanceBonus) {
+                gameState.breakthroughChance += development.rewards.breakthroughChanceBonus;
             }
 
-            if (epoch.isMajorTurningPoint) {
-                gameState.majorEventsCompleted++;
-                setNextMajorEventInterval(); 
-                displayMessage(`🌠 Major Turning Point "${epoch.name}" Passed! History reshaped! 🌍`, "var(--temporal-shard-color)", 5000);
+
+            if (!gameState.completedDevelopmentIds.includes(development.id)) {
+                gameState.completedDevelopmentIds.push(development.id);
+            }
+            displayMessage(`💡 Development "${development.name}" Completed!`, "var(--success-color)", 2500);
+
+            gameState.currentDevelopmentIndex++;
+            const currentEra = getCurrentEraDefinition();
+            
+            if (gameState.currentDevelopmentIndex >= currentEra.developments.length) {
+                if (!gameState.completedEraIds.includes(currentEra.id)) {
+                    gameState.completedEraIds.push(currentEra.id);
+                }
+                const currentEraGlobalIndex = ERA_DEFINITIONS.findIndex(e => e.id === gameState.currentEraId);
+                if (currentEraGlobalIndex < ERA_DEFINITIONS.length - 1) {
+                    startNewEra(ERA_DEFINITIONS[currentEraGlobalIndex + 1].id);
+                } else {
+                    displayMessage("All known history unfolds... What lies beyond? Perhaps an Epoch Shift holds the answer.", "var(--temporal-shard-color)", 6000);
+                    // Handle end of defined eras (e.g. prompt epoch shift or display 'content complete for now')
+                }
             } else {
-                gameState.epochsUntilMajorEvent--;
+                startSpecificDevelopment(gameState.currentEraId, gameState.currentDevelopmentIndex);
             }
             
-            let nextEpochId = epoch.nextEpochs[Math.floor(Math.random() * epoch.nextEpochs.length)];
-            if (!EPOCH_DEFINITIONS.find(e => e.id === nextEpochId)) {
-                 const currentIndex = EPOCH_DEFINITIONS.findIndex(e => e.id === epoch.id);
-                 nextEpochId = EPOCH_DEFINITIONS[Math.min(currentIndex + 1, EPOCH_DEFINITIONS.length -1)].id;
-            }
-            
-            startNewEpoch(nextEpochId);
             updateAllUI();
             checkMilestones();
         }
 
         function earnKnowledge(amount) {
             gameState.knowledge += amount;
-            gameState.totalKnowledgeEarned += amount;
+            gameState.knowledgeEarnedThisShift += amount;
         }
         function earnInfluence(amount) {
             gameState.influence += amount;
-            gameState.totalInfluenceEarned += amount;
-        }
-
-
-        function checkEraProgression() {
-            if (gameState.knowledge >= gameState.knowledgeToNextEra) {
-                const currentEraDef = EPOCH_DEFINITIONS.find(e => e.eraName === gameState.currentEra.eraName);
-                const currentEraDefIndex = EPOCH_DEFINITIONS.indexOf(currentEraDef);
-                let nextEraDef = null;
-                for(let i = currentEraDefIndex + 1; i < EPOCH_DEFINITIONS.length; i++) {
-                    if(EPOCH_DEFINITIONS[i].eraName !== gameState.currentEra.eraName) {
-                        nextEraDef = EPOCH_DEFINITIONS[i];
-                        break;
-                    }
-                }
-
-                if (nextEraDef) {
-                    gameState.knowledge -= gameState.knowledgeToNextEra;
-                    gameState.currentEraIndex = EPOCH_DEFINITIONS.indexOf(nextEraDef);
-                    gameState.currentEra = nextEraDef;
-                    gameState.knowledgeToNextEra = EPOCH_DEFINITIONS.find(e => e.eraName !== gameState.currentEra.eraName && EPOCH_DEFINITIONS.indexOf(e) > gameState.currentEraIndex)?.effortRequired * 10 || gameState.knowledgeToNextEra * 2.5;
-
-                    const baseStatIncrease = Math.ceil(gameState.currentEraIndex * 0.20 + 1);
-                    gameState.progressPerClick += baseStatIncrease;
-                    if (gameState.passiveProgressRate > 0) gameState.passiveProgressRate += Math.max(1, Math.ceil(baseStatIncrease * 0.5));
-
-                    displayMessage(`🎉 ADVANCED TO ERA: ${gameState.currentEra.eraName}! New horizons open! 🚀`, "var(--accent-color)");
-                    playSound('eraAdvance');
-                    const gameWrapper = document.getElementById('game-wrapper');
-                    gameWrapper.classList.add('screen-shake');
-                    const flash = document.createElement('div');
-                    flash.className = 'screen-flash';
-                    document.body.appendChild(flash);
-                    setTimeout(() => {
-                        gameWrapper.classList.remove('screen-shake');
-                        if(document.body.contains(flash)) document.body.removeChild(flash);
-                    }, 500);
-                    
-                    checkUnlocksAndAvailability();
-                    updateAllUI();
-                }
-            }
+            gameState.influenceEarnedThisShift += amount;
         }
         
         function checkUnlocksAndAvailability() {
-             const currentEraInfo = gameState.currentEra;
-             if (!currentEraInfo) return;
+            const currentEra = getCurrentEraDefinition();
+            if (!currentEra) return;
 
-             for (const key in BREAKTHROUGHS_TEMPLATE) {
-                 const breakthroughDef = BREAKTHROUGHS_TEMPLATE[key];
-                 const breakthroughState = gameState.breakthroughs[key];
-                 const unlocked = EPOCH_DEFINITIONS.findIndex(e=>e.eraName === breakthroughDef.unlockedAtEraName) <= EPOCH_DEFINITIONS.findIndex(e=>e.eraName === currentEraInfo.eraName);
-                 if(breakthroughState) { 
-                    document.getElementById(`breakthrough-${breakthroughDef.id}`).disabled = !(unlocked && breakthroughState.currentCooldown <=0);
+            Object.values(BREAKTHROUGHS_TEMPLATE).forEach(btDef => {
+                 const button = document.getElementById(`breakthrough-${btDef.id}`);
+                 if (button) {
+                    const eraUnlocked = ERA_DEFINITIONS.findIndex(e => e.id === currentEra.id) >= ERA_DEFINITIONS.findIndex(era => era.unlocksBreakthroughsAtStart && era.unlocksBreakthroughsAtStart.includes(btDef.id.toUpperCase().replace(/ /g, '_')));
+                    const isUnlockedByCurrentEra = currentEra.unlocksBreakthroughsAtStart?.includes(btDef.id.toUpperCase().replace(/ /g, '_'));
+                    button.disabled = !( (isUnlockedByCurrentEra || eraUnlocked) && gameState.breakthroughs[btDef.id.toUpperCase().replace(/ /g, '_')]?.currentCooldown <= 0);
                  }
-             }
+            });
 
-             document.getElementById('shift-knowledge-affinity').style.display = EPOCH_DEFINITIONS.findIndex(e=>e.eraName === "Neolithic Age") <= EPOCH_DEFINITIONS.findIndex(e=>e.eraName === currentEraInfo.eraName) ? 'block' : 'none';
-             document.getElementById('shift-influence-spread').style.display = EPOCH_DEFINITIONS.findIndex(e=>e.eraName === "Bronze Age") <= EPOCH_DEFINITIONS.findIndex(e=>e.eraName === currentEraInfo.eraName) ? 'block' : 'none';
-             
-             for(const key in PARADIGMS_TEMPLATE) {
-                 const paradigm = PARADIGMS_TEMPLATE[key];
-                 const paradigmButton = document.getElementById(paradigm.id);
-                 if (paradigmButton) {
-                    paradigmButton.style.display = EPOCH_DEFINITIONS.findIndex(e=>e.eraName === paradigm.unlockedAtEraName) <= EPOCH_DEFINITIONS.findIndex(e=>e.eraName === currentEraInfo.eraName) ? 'block' : 'none';
-                 }
-             }
+            const advUnlocks = {
+                "adv-progress-per-click": "stone_age", "adv-knowledge-per-click": "stone_age", "adv-passive-progress": "stone_age", // Example: hunter_gatherers development in stone_age
+                "adv-breakthrough-chance": "neolithic_age", "adv-breakthrough-impact": "bronze_age",
+                "shift-knowledge-affinity": "bronze_age", "shift-influence-spread": "iron_age"
+            };
 
-             const canEpochShift = EPOCH_DEFINITIONS.findIndex(e=>e.eraName === EPOCH_SHIFT_REQUIRED_ERA_NAME) <= EPOCH_DEFINITIONS.findIndex(e=>e.eraName === currentEraInfo.eraName);
-             document.getElementById('epoch-shift-tab-button').style.display = canEpochShift ? 'inline-block' : 'none';
-             document.getElementById('epoch-shift-button').disabled = !canEpochShift;
+            Object.keys(advUnlocks).forEach(advId => {
+                const btn = document.getElementById(advId);
+                if (btn) {
+                    const requiredEraId = advUnlocks[advId];
+                    const requiredEraOrder = ERA_DEFINITIONS.find(e => e.id === requiredEraId)?.epochShiftRequirementOrder || 999;
+                    const currentEraOrder = currentEra.epochShiftRequirementOrder;
+                    btn.style.display = currentEraOrder >= requiredEraOrder ? 'block' : 'none';
+                }
+            });
+            
+            // Check development-specific unlocks
+            const currentDev = getCurrentDevelopmentDefinition();
+            if (currentDev && currentDev.unlocksAdvancements) {
+                 currentDev.unlocksAdvancements.forEach(advId => {
+                    const advButton = document.getElementById(advId);
+                    if (advButton) advButton.style.display = 'block';
+                });
+            }
+
+
+             Object.values(PARADIGMS_TEMPLATE).forEach(pDef => {
+                const pButton = document.getElementById(pDef.id);
+                if (pButton) {
+                    const unlockEraId = pDef.unlockedAtEraId || ERA_DEFINITIONS.find(e => e.unlocksParadigms && e.unlocksParadigms.includes(pDef.id))?.id;
+                    const requiredEraOrder = ERA_DEFINITIONS.find(e => e.id === unlockEraId)?.epochShiftRequirementOrder || 999;
+                    const currentEraOrder = currentEra.epochShiftRequirementOrder;
+                    pButton.style.display = currentEraOrder >= requiredEraOrder ? 'block' : 'none';
+                }
+             });
+
+
+             const shiftRequiredEra = ERA_DEFINITIONS.find(e => e.epochShiftRequirementOrder === EPOCH_SHIFT_REQUIRED_ERA_ORDER);
+             if (shiftRequiredEra) {
+                const canEpochShift = currentEra.epochShiftRequirementOrder >= shiftRequiredEra.epochShiftRequirementOrder;
+                document.getElementById('epoch-shift-tab-button').style.display = canEpochShift ? 'inline-block' : 'none';
+                document.getElementById('epoch-shift-button').disabled = !canEpochShift;
+                document.getElementById('epoch-shift-required-era-name-display').textContent = shiftRequiredEra.name;
+             }
         }
 
 
@@ -968,29 +1043,30 @@
             let purchased = false;
             let resource = 'influence'; 
 
-            if (type === 'progressPerClick' || type === 'passiveProgressRate' || type === 'breakthroughChance' || type === 'breakthroughImpact') resource = 'knowledge';
+            if (['progressPerClick', 'passiveProgressRate', 'breakthroughChance', 'breakthroughImpact', 'knowledgeAffinity'].includes(type)) resource = 'knowledge';
 
 
             if ((resource === 'knowledge' && gameState.knowledge >= cost) || (resource === 'influence' && gameState.influence >= cost)) {
                 if (resource === 'knowledge') gameState.knowledge -= cost; else gameState.influence -= cost;
                 gameState.advancementLevels[type]++;
                 const level = gameState.advancementLevels[type];
+                const currentEraOrder = getCurrentEraDefinition()?.epochShiftRequirementOrder || 0;
 
                 switch (type) {
                     case 'progressPerClick':
-                        const progIncrease = Math.max(1, Math.ceil(gameState.progressPerClick * 0.1 + gameState.currentEraIndex * 0.25 + 1));
+                        const progIncrease = Math.max(1, Math.ceil(gameState.progressPerClick * 0.1 + currentEraOrder * 0.25 + 1));
                         gameState.progressPerClick += progIncrease;
-                        gameState.advancementCosts.progressPerClick = getBaseAdvancementCost(10, level, 1.18, 8 + gameState.currentEraIndex);
+                        gameState.advancementCosts.progressPerClick = getBaseAdvancementCost(10, level, 1.18, 8);
                         break;
                     case 'knowledgePerClick':
-                        const knowIncrease = Math.max(1, Math.ceil(gameState.knowledgePerClick * 0.15 + Math.max(1, gameState.currentEraIndex * 0.1) + 1));
+                        const knowIncrease = Math.max(1, Math.ceil(gameState.knowledgePerClick * 0.15 + Math.max(1, currentEraOrder * 0.1) + 1));
                         gameState.knowledgePerClick += knowIncrease;
-                        gameState.advancementCosts.knowledgePerClick = getBaseAdvancementCost(15, level, 1.25, 10 + level * 2);
+                        gameState.advancementCosts.knowledgePerClick = getBaseAdvancementCost(15, level, 1.25, 10);
                         break;
                     case 'passiveProgressRate':
-                        const rateIncrease = Math.max(1, Math.ceil(gameState.passiveProgressRate * 0.08 + 1 + gameState.currentEraIndex * 0.2));
+                        const rateIncrease = Math.max(1, Math.ceil(gameState.passiveProgressRate * 0.08 + 1 + currentEraOrder * 0.2));
                         gameState.passiveProgressRate += rateIncrease;
-                        gameState.advancementCosts.passiveProgressRate = getBaseAdvancementCost(25, level, 1.22, 12 + gameState.currentEraIndex);
+                        gameState.advancementCosts.passiveProgressRate = getBaseAdvancementCost(25, level, 1.22, 12);
                         break;
                     case 'breakthroughChance':
                         if (gameState.breakthroughChance < 0.50) { gameState.breakthroughChance += 0.0025; }
@@ -1021,9 +1097,19 @@
         function activateBreakthrough(breakthroughKey) {
             const breakthroughDef = BREAKTHROUGHS_TEMPLATE[breakthroughKey];
             const breakthroughState = gameState.breakthroughs[breakthroughKey];
-            const currentEraInfo = gameState.currentEra;
+            const currentEra = getCurrentEraDefinition();
+             if (!currentEra) return;
 
-            if (!breakthroughDef || !breakthroughState || EPOCH_DEFINITIONS.findIndex(e=>e.eraName === breakthroughDef.unlockedAtEraName) > EPOCH_DEFINITIONS.findIndex(e=>e.eraName === currentEraInfo.eraName)) {
+            const isUnlockedByCurrentEra = currentEra.unlocksBreakthroughsAtStart?.includes(breakthroughKey);
+            let eraHasAbilityUnlock = false;
+             ERA_DEFINITIONS.forEach(eraDef => {
+                if(eraDef.epochShiftRequirementOrder <= currentEra.epochShiftRequirementOrder && eraDef.unlocksBreakthroughsAtStart?.includes(breakthroughKey)){
+                    eraHasAbilityUnlock = true;
+                }
+            });
+
+
+            if (!breakthroughDef || !breakthroughState || !eraHasAbilityUnlock) {
                  displayMessage("Breakthrough not available yet! 🔒", "var(--error-color)");
                  return;
             }
@@ -1042,44 +1128,36 @@
             document.body.appendChild(glowEffect);
             setTimeout(() => { if(document.body.contains(glowEffect)) document.body.removeChild(glowEffect);}, 600);
 
+            breakthroughState.isActive = true; 
+            updatePlayerStatsUI(); // Update stats to reflect active buff
 
-            if (breakthroughKey === 'INSPIRED_THOUGHT') {
-                if (gameState.currentEpoch && gameState.currentEpochProgress < gameState.currentEpoch.effortRequired) {
-                    let burstProgress = Math.ceil(gameState.progressPerClick * breakthroughDef.progressMultiplier * (1 + gameState.epochShiftUpgrades.globalProgressBonus));
-                     gameState.currentEpochProgress += burstProgress;
-                    displayProgressNumber(burstProgress, true);
-                    if (gameState.currentEpochProgress >= gameState.currentEpoch.effortRequired) {
-                         completeEpoch();
-                    }
-                    updateEpochUI();
-                }
-            } else if (breakthroughKey === 'GOLDEN_AGE' || breakthroughKey === 'RAPID_DEVELOPMENT') {
-                breakthroughState.isActive = true; 
-                updatePlayerStatsUI(); 
-                setTimeout(() => {
-                    breakthroughState.isActive = false;
-                    displayMessage(`⚡ ${breakthroughDef.name} effect ended.`, "var(--text-color)");
-                    updatePlayerStatsUI();
-                }, breakthroughDef.duration * 1000);
-            }
+            setTimeout(() => {
+                breakthroughState.isActive = false;
+                displayMessage(`⚡ ${breakthroughDef.name} effect ended.`, "var(--text-color)");
+                updatePlayerStatsUI(); // Update stats again when buff ends
+            }, breakthroughDef.duration * 1000 || 100); // If no duration (like inspired thought), very short active time for logic
+
             checkMilestones();
             updateBreakthroughsUI(); 
         }
 
         function gameLoop() { 
-            if (gameState.passiveProgressRate > 0 && gameState.currentEpoch && gameState.currentEpochProgress < gameState.currentEpoch.effortRequired) {
+            const development = getCurrentDevelopmentDefinition();
+            if (gameState.passiveProgressRate > 0 && development && gameState.currentDevelopmentProgress < development.effortRequired) {
                 let progressPerTick = gameState.passiveProgressRate * 0.1 * (1 + gameState.epochShiftUpgrades.globalProgressBonus);
-                if (currentGlobalEvent && currentGlobalEvent.passiveProgressMultiplier) progressPerTick *= currentGlobalEvent.passiveProgressMultiplier;
-                 if (gameState.breakthroughs.RAPID_DEVELOPMENT.isActive) {
-                    progressPerTick *= BREAKTHROUGHS_TEMPLATE.RAPID_DEVELOPMENT.epochSpeedMultiplier;
-                }
-                progressPerTick *= (1 + gameState.paradigms.industrialization.level * gameState.paradigms.industrialization.effectPerLevel.passiveProgressRateBonus)
+                progressPerTick *= (1 + (gameState.paradigms.industrialization.level * (gameState.paradigms.industrialization.effectPerLevel?.passiveProgressRateBonus || 0)));
+                progressPerTick *= (1 + (gameState.paradigms.informationAge.level * (gameState.paradigms.informationAge.effectPerLevel?.allResourceBonus || 0)));
 
-                gameState.currentEpochProgress += progressPerTick;
-                if (gameState.currentEpochProgress >= gameState.currentEpoch.effortRequired) {
-                    completeEpoch();
+
+                if (currentGlobalEvent && currentGlobalEvent.passiveProgressMultiplier) progressPerTick *= currentGlobalEvent.passiveProgressMultiplier;
+                if (gameState.breakthroughs.RAPID_DEVELOPMENT.isActive) {
+                    progressPerTick *= BREAKTHROUGHS_TEMPLATE.RAPID_DEVELOPMENT.developmentSpeedMultiplier;
                 }
-                updateEpochUI();
+                gameState.currentDevelopmentProgress += progressPerTick;
+                if (gameState.currentDevelopmentProgress >= development.effortRequired) {
+                    completeDevelopment();
+                }
+                updateDevelopmentUI();
             }
 
             for (const key in BREAKTHROUGHS_TEMPLATE) { 
@@ -1089,16 +1167,21 @@
                     breakthroughState.currentCooldown -= 0.1; 
                     if (breakthroughState.currentCooldown < 0) {
                         breakthroughState.currentCooldown = 0;
-                        const currentEraInfo = gameState.currentEra;
-                        if (EPOCH_DEFINITIONS.findIndex(e=>e.eraName === breakthroughDef.unlockedAtEraName) <= EPOCH_DEFINITIONS.findIndex(e=>e.eraName === currentEraInfo.eraName)) { 
-                            document.getElementById(`breakthrough-${breakthroughDef.id}`).disabled = false;
-                        }
+                         checkUnlocksAndAvailability(); // Re-check if button should be enabled
                     }
                 }
             }
-            updateBreakthroughsUI();
-            checkEraProgression();
+             if (gameState.temporaryBonuses.durationTicks > 0) {
+                gameState.temporaryBonuses.durationTicks -= 1;
+                if (gameState.temporaryBonuses.durationTicks <= 0) {
+                    gameState.temporaryBonuses.progressPerClick = 0;
+                    gameState.temporaryBonuses.knowledgePerClick = 0;
+                    displayMessage("Temporary bonuses faded.", "var(--text-color)", 2000);
+                    updatePlayerStatsUI();
+                }
+            }
 
+            updateBreakthroughsUI();
 
             if (currentGlobalEvent) {
                 globalEventTimer -= 0.1;
@@ -1112,55 +1195,78 @@
         }
 
         function updateAllUI() {
-            updatePlayerStatsUI(); updateEpochUI(); updateAdvancementsUI();
-            updateBreakthroughsUI(); updateMajorEventTimerUI(); updateEpochShiftUI();
+            updatePlayerStatsUI(); 
+            updateDevelopmentUI(); 
+            updateAdvancementsUI();
+            updateBreakthroughsUI(); 
+            updateEpochShiftUI();
             renderParadigms();
         }
 
         function updatePlayerStatsUI() {
-            const currentEraInfo = gameState.currentEra;
-            document.getElementById('current-era-name').textContent = currentEraInfo.eraName;
+            const currentEra = getCurrentEraDefinition();
+            if (!currentEra) return;
+
+            document.getElementById('current-era-name').textContent = currentEra.name;
+            document.getElementById('era-developments-completed').textContent = gameState.currentDevelopmentIndex;
+            document.getElementById('era-developments-total').textContent = currentEra.developments.length;
+            document.getElementById('era-progress-bar').style.width = Math.min(100, (gameState.currentDevelopmentIndex / currentEra.developments.length) * 100) + '%';
+            
             document.getElementById('knowledge').textContent = Math.floor(gameState.knowledge);
-            document.getElementById('knowledge-to-next-era').textContent = gameState.knowledgeToNextEra;
-            document.getElementById('knowledge-bar').style.width = Math.min(100, (gameState.knowledge / gameState.knowledgeToNextEra) * 100) + '%';
             document.getElementById('influence').textContent = Math.floor(gameState.influence);
             
-            let displayProgPerClick = gameState.progressPerClick * (1 + gameState.epochShiftUpgrades.globalProgressBonus);
-            if(gameState.breakthroughs.RAPID_DEVELOPMENT.isActive) displayProgPerClick *= BREAKTHROUGHS_TEMPLATE.RAPID_DEVELOPMENT.epochSpeedMultiplier;
+            let displayProgPerClick = gameState.progressPerClick + gameState.temporaryBonuses.progressPerClick;
+            displayProgPerClick *= (1 + gameState.epochShiftUpgrades.globalProgressBonus);
+            if(gameState.breakthroughs.RAPID_DEVELOPMENT.isActive) displayProgPerClick *= BREAKTHROUGHS_TEMPLATE.RAPID_DEVELOPMENT.developmentSpeedMultiplier;
+            if(gameState.breakthroughs.INSPIRED_THOUGHT.isActive) displayProgPerClick *= BREAKTHROUGHS_TEMPLATE.INSPIRED_THOUGHT.progressMultiplier;
+            displayProgPerClick *= (1 + (gameState.paradigms.informationAge.level * (gameState.paradigms.informationAge.effectPerLevel?.allResourceBonus || 0)));
             document.getElementById('progress-per-click').textContent = Math.ceil(displayProgPerClick);
 
-            let displayKnowledgePerClick = gameState.knowledgePerClick * (1 + gameState.epochShiftUpgrades.globalKnowledgeBonus + gameState.knowledgeAffinityBonus + gameState.paradigms.scientificMethod.level * gameState.paradigms.scientificMethod.effectPerLevel.knowledgeBonus) * (currentGlobalEvent && currentGlobalEvent.knowledgeMultiplier ? currentGlobalEvent.knowledgeMultiplier : 1);
+            let displayKnowledgePerClick = gameState.knowledgePerClick + gameState.temporaryBonuses.knowledgePerClick;
+            displayKnowledgePerClick *= (1 + gameState.epochShiftUpgrades.globalKnowledgeBonus + gameState.knowledgeAffinityBonus + (gameState.paradigms.scientificMethod.level * gameState.paradigms.scientificMethod.effectPerLevel.knowledgeBonus));
+            displayKnowledgePerClick *= (currentGlobalEvent?.knowledgeMultiplier || 1);
             if(gameState.breakthroughs.GOLDEN_AGE.isActive) displayKnowledgePerClick *= BREAKTHROUGHS_TEMPLATE.GOLDEN_AGE.resourceMultiplier;
+            displayKnowledgePerClick *= (1 + (gameState.paradigms.informationAge.level * (gameState.paradigms.informationAge.effectPerLevel?.allResourceBonus || 0)));
             document.getElementById('knowledge-per-click').textContent = Math.ceil(displayKnowledgePerClick);
             
-            let displayPassiveProgress = gameState.passiveProgressRate * (1 + gameState.epochShiftUpgrades.globalProgressBonus) * (1 + gameState.paradigms.industrialization.level * gameState.paradigms.industrialization.effectPerLevel.passiveProgressRateBonus);
-            if(currentGlobalEvent && currentGlobalEvent.passiveProgressMultiplier) displayPassiveProgress *= currentGlobalEvent.passiveProgressMultiplier;
-            if(gameState.breakthroughs.RAPID_DEVELOPMENT.isActive) displayPassiveProgress *= BREAKTHROUGHS_TEMPLATE.RAPID_DEVELOPMENT.epochSpeedMultiplier;
+            let displayPassiveProgress = gameState.passiveProgressRate;
+            displayPassiveProgress *= (1 + gameState.epochShiftUpgrades.globalProgressBonus);
+            displayPassiveProgress *= (1 + (gameState.paradigms.industrialization.level * (gameState.paradigms.industrialization.effectPerLevel?.passiveProgressRateBonus || 0)));
+            displayPassiveProgress *= (1 + (gameState.paradigms.informationAge.level * (gameState.paradigms.informationAge.effectPerLevel?.allResourceBonus || 0)));
+            if(currentGlobalEvent?.passiveProgressMultiplier) displayPassiveProgress *= currentGlobalEvent.passiveProgressMultiplier;
+            if(gameState.breakthroughs.RAPID_DEVELOPMENT.isActive) displayPassiveProgress *= BREAKTHROUGHS_TEMPLATE.RAPID_DEVELOPMENT.developmentSpeedMultiplier;
             document.getElementById('passive-progress-rate').textContent = Math.ceil(displayPassiveProgress);
 
-            document.getElementById('breakthrough-chance').textContent = ((gameState.breakthroughChance + (currentGlobalEvent && currentGlobalEvent.breakthroughChanceBonus ? currentGlobalEvent.breakthroughChanceBonus : 0) + gameState.paradigms.scientificMethod.level * gameState.paradigms.scientificMethod.effectPerLevel.breakthroughChance) * 100).toFixed(1);
+            document.getElementById('breakthrough-chance').textContent = ((gameState.breakthroughChance + (currentGlobalEvent?.breakthroughChanceBonus || 0) + (gameState.paradigms.scientificMethod.level * gameState.paradigms.scientificMethod.effectPerLevel.breakthroughChance)) * 100).toFixed(1);
             document.getElementById('breakthrough-impact-bonus').textContent = (gameState.breakthroughImpactBonus * 100).toFixed(0);
-            document.getElementById('epochs-completed').textContent = gameState.epochsCompleted;
+            document.getElementById('eras-completed-this-shift').textContent = gameState.erasCompletedThisShift;
             document.getElementById('global-knowledge-bonus-display').textContent = ((gameState.epochShiftUpgrades.globalKnowledgeBonus + gameState.knowledgeAffinityBonus) * 100).toFixed(1);
             document.getElementById('global-influence-bonus-display').textContent = ((gameState.epochShiftUpgrades.globalInfluenceBonus + gameState.influenceSpreadBonus) * 100).toFixed(1);
             document.getElementById('global-progress-bonus-display').textContent = (gameState.epochShiftUpgrades.globalProgressBonus * 100).toFixed(1);
             document.getElementById('current-temporal-shards-display').textContent = gameState.temporalShards;
         }
 
-        function updateEpochUI() {
-            if (gameState.currentEpoch) {
-                document.getElementById('epoch-name').textContent = gameState.currentEpoch.name + (gameState.currentEpoch.isMajorTurningPoint ? " (MAJOR)" : "");
-                document.getElementById('epoch-description').textContent = gameState.currentEpoch.description;
-                document.getElementById('epoch-current-progress').textContent = Math.max(0, Math.ceil(gameState.currentEpochProgress));
-                document.getElementById('epoch-max-progress').textContent = gameState.currentEpoch.effortRequired;
-                const progressPercentage = (Math.max(0, gameState.currentEpochProgress) / gameState.currentEpoch.effortRequired) * 100;
-                document.getElementById('epoch-progress-bar').style.width = progressPercentage + '%';
-                document.getElementById('epoch-progress-bar').style.backgroundColor = progressPercentage > 60 ? 'var(--epoch-progress-color)' : progressPercentage > 30 ? 'var(--influence-color)' : 'var(--error-color)';
+        function updateDevelopmentUI() {
+            const development = getCurrentDevelopmentDefinition();
+            const era = getCurrentEraDefinition();
+            if (development && era) {
+                document.getElementById('development-name').textContent = development.name + (development.isKeyDevelopment ? " (Key!)" : "");
+                document.getElementById('development-description').textContent = development.description;
+                document.getElementById('development-current-progress').textContent = Math.max(0, Math.ceil(gameState.currentDevelopmentProgress));
+                document.getElementById('development-max-progress').textContent = development.effortRequired;
+                const progressPercentage = (Math.max(0, gameState.currentDevelopmentProgress) / development.effortRequired) * 100;
+                document.getElementById('development-progress-bar').style.width = progressPercentage + '%';
+                document.getElementById('development-progress-bar').style.backgroundColor = progressPercentage > 60 ? 'var(--development-progress-color)' : progressPercentage > 30 ? 'var(--influence-color)' : 'var(--error-color)';
+                document.getElementById('current-development-display').classList.toggle('major-milestone', !!development.isKeyDevelopment || !!era.isMajorTurningPointEra);
+
+            } else if (era) { // Era might be completed or no developments left
+                 document.getElementById('development-name').textContent = "Era Complete";
+                 document.getElementById('development-description').textContent = `All developments for ${era.name} finished. Awaiting next Era or Epoch Shift.`;
+                 document.getElementById('development-progress-bar').style.width = '100%';
             }
         }
         
         function updateAdvancementsUI() {
-            const eraIdx = gameState.currentEraIndex;
             const pLvl = gameState.advancementLevels.progressPerClick;
             const kLvl = gameState.advancementLevels.knowledgePerClick;
             const srLvl = gameState.advancementLevels.passiveProgressRate;
@@ -1169,8 +1275,8 @@
             const kaLvl = gameState.advancementLevels.knowledgeAffinity;
             const isLvl = gameState.advancementLevels.influenceSpread;
 
-            document.getElementById('adv-progress-per-click').innerHTML = `🖱️ Enhance Focus Lvl ${pLvl} <small>(Cost: ${gameState.advancementCosts.progressPerClick}💡 | Current: ${Math.ceil(gameState.progressPerClick)})</small>`;
-            document.getElementById('adv-knowledge-per-click').innerHTML = `💡 Refine Observation Lvl ${kLvl} <small>(Cost: ${gameState.advancementCosts.knowledgePerClick}🌍 | Current: ${Math.ceil(gameState.knowledgePerClick)})</small>`;
+            document.getElementById('adv-progress-per-click').innerHTML = `🖱️ Enhance Focus Lvl ${pLvl} <small>(Cost: ${gameState.advancementCosts.progressPerClick}💡 | Current: ${Math.ceil(gameState.progressPerClick + gameState.temporaryBonuses.progressPerClick)})</small>`;
+            document.getElementById('adv-knowledge-per-click').innerHTML = `💡 Refine Observation Lvl ${kLvl} <small>(Cost: ${gameState.advancementCosts.knowledgePerClick}🌍 | Current: ${Math.ceil(gameState.knowledgePerClick + gameState.temporaryBonuses.knowledgePerClick)})</small>`;
             document.getElementById('adv-passive-progress').innerHTML = `📈 Improve Organization Lvl ${srLvl} <small>(Cost: ${gameState.advancementCosts.passiveProgressRate}💡 | Current: ${Math.ceil(gameState.passiveProgressRate)})</small>`;
             document.getElementById('adv-breakthrough-chance').innerHTML = `✨ Foster Innovation Lvl ${bcLvl} <small>(Cost: ${gameState.advancementCosts.breakthroughChance}💡 | +${(gameState.breakthroughChance*100).toFixed(1)}%)</small>`;
             document.getElementById('adv-breakthrough-impact').innerHTML = `💥 Amplify Discoveries Lvl ${biLvl} <small>(Cost: ${gameState.advancementCosts.breakthroughImpact}💡 | +${(gameState.breakthroughImpactBonus*100).toFixed(0)}%)</small>`;
@@ -1189,9 +1295,8 @@
 
                 if(button && cooldownBar && cooldownDisplay && breakthroughState) { 
                     cooldownDisplay.textContent = Math.ceil(breakthroughState.currentCooldown);
-                    const currentEraInfo = gameState.currentEra;
-                    const unlocked = EPOCH_DEFINITIONS.findIndex(e=>e.eraName === breakthroughDef.unlockedAtEraName) <= EPOCH_DEFINITIONS.findIndex(e=>e.eraName === currentEraInfo.eraName);
-                    button.disabled = !(unlocked && breakthroughState.currentCooldown <= 0);
+                    // Unlock logic is handled in checkUnlocksAndAvailability now
+                    button.disabled = breakthroughState.currentCooldown > 0 || button.disabled; // Preserve disabled state if unlocked=false
                     
                     if (breakthroughState.currentCooldown > 0) {
                         cooldownBar.style.width = ((breakthroughDef.cooldown - breakthroughState.currentCooldown) / breakthroughDef.cooldown) * 100 + '%';
@@ -1202,11 +1307,6 @@
             }
         }
 
-        function updateMajorEventTimerUI() {
-            if (gameState.currentEpoch && !gameState.currentEpoch.isMajorTurningPoint && document.getElementById('major-event-timer').style.display === 'block') {
-                document.getElementById('major-event-countdown').textContent = gameState.epochsUntilMajorEvent;
-            }
-        }
 
         function displayMessage(message, color = "var(--success-color)", duration = 3000) {
             const messagesArea = document.getElementById('messages-area');
@@ -1311,11 +1411,22 @@
 
 
         function updateEpochShiftUI() {
-            const eraIndexForShift = EPOCH_DEFINITIONS.findIndex(e => e.eraName === EPOCH_SHIFT_REQUIRED_ERA_NAME);
-            const pointsToGain = Math.floor(Math.pow(gameState.currentEraIndex / (eraIndexForShift > 0 ? eraIndexForShift/2 : 2) , 1.3) * (1 + gameState.epochShiftUpgrades.shardMultiplierLevel * 0.1)); 
+            const currentEra = getCurrentEraDefinition();
+            if (!currentEra) return;
+            const shiftRequiredEra = ERA_DEFINITIONS.find(e => e.epochShiftRequirementOrder === EPOCH_SHIFT_REQUIRED_ERA_ORDER);
+            
+            let pointsToGain = 0;
+            if (shiftRequiredEra && currentEra.epochShiftRequirementOrder >= shiftRequiredEra.epochShiftRequirementOrder) {
+                const erasBeyondRequirement = currentEra.epochShiftRequirementOrder - shiftRequiredEra.epochShiftRequirementOrder + 1;
+                 pointsToGain = Math.floor(Math.pow(erasBeyondRequirement * 1.5 + gameState.completedEraIds.length * 0.1, 1.3) * (1 + gameState.epochShiftUpgrades.shardMultiplierLevel * 0.1));
+            }
+
             document.getElementById('temporal-shards-to-gain').textContent = pointsToGain;
             document.getElementById('current-temporal-shards').textContent = gameState.temporalShards;
-            document.getElementById('epoch-shift-required-era').textContent = EPOCH_SHIFT_REQUIRED_ERA_NAME;
+            if (shiftRequiredEra) {
+                 document.getElementById('epoch-shift-required-era-name-display').textContent = shiftRequiredEra.name;
+            }
+
 
             document.getElementById('eshift-global-knowledge').innerHTML = `💡 Global Knowledge Lvl ${Math.floor(gameState.epochShiftUpgrades.globalKnowledgeBonus * 100)} <small>(+${(gameState.epochShiftUpgrades.globalKnowledgeBonus*100).toFixed(0)}% | Cost: ${gameState.epochShiftUpgradeCosts.globalKnowledgeBonus}🌀)</small>`;
             document.getElementById('eshift-global-influence').innerHTML = `🌍 Global Influence Lvl ${Math.floor(gameState.epochShiftUpgrades.globalInfluenceBonus * 100)} <small>(+${(gameState.epochShiftUpgrades.globalInfluenceBonus*100).toFixed(0)}% | Cost: ${gameState.epochShiftUpgradeCosts.globalInfluenceBonus}🌀)</small>`;
@@ -1325,32 +1436,63 @@
         }
 
         function handleEpochShift() {
-            const currentEraInfo = gameState.currentEra;
-            const requiredEraIndex = EPOCH_DEFINITIONS.findIndex(e=>e.eraName === EPOCH_SHIFT_REQUIRED_ERA_NAME);
-            if (EPOCH_DEFINITIONS.findIndex(e=>e.eraName === currentEraInfo.eraName) < requiredEraIndex) {
-                displayMessage(`You need to reach the ${EPOCH_SHIFT_REQUIRED_ERA_NAME} to perform an Epoch Shift. ⏳`, "var(--error-color)");
+            const currentEra = getCurrentEraDefinition();
+            const shiftRequiredEraDef = ERA_DEFINITIONS.find(e => e.epochShiftRequirementOrder === EPOCH_SHIFT_REQUIRED_ERA_ORDER);
+
+            if (!currentEra || !shiftRequiredEraDef || currentEra.epochShiftRequirementOrder < shiftRequiredEraDef.epochShiftRequirementOrder) {
+                displayMessage(`You need to reach the ${shiftRequiredEraDef?.name || 'designated Era'} to perform an Epoch Shift. ⏳`, "var(--error-color)");
                 return;
             }
             if (confirm("🌀 Are you sure you want to perform an Epoch Shift? This will reset your current timeline progress for powerful Temporal Shards and permanent bonuses! 🌀")) {
-                const pointsGained = Math.floor(Math.pow(gameState.currentEraIndex / (requiredEraIndex > 0 ? requiredEraIndex/2 : 2) , 1.3) * (1 + gameState.epochShiftUpgrades.shardMultiplierLevel * 0.1));
+                const erasBeyondRequirement = currentEra.epochShiftRequirementOrder - shiftRequiredEraDef.epochShiftRequirementOrder + 1;
+                const pointsGained = Math.floor(Math.pow(erasBeyondRequirement * 1.5 + gameState.completedEraIds.length * 0.1, 1.3) * (1 + gameState.epochShiftUpgrades.shardMultiplierLevel * 0.1));
+                
                 gameState.temporalShards += pointsGained;
-                gameState.epochShifts++;
+                gameState.epochShiftsPerformedTotal++;
 
                 const esUpgrades = JSON.parse(JSON.stringify(gameState.epochShiftUpgrades));
                 const tShards = gameState.temporalShards;
-                const esCount = gameState.epochShifts;
+                const esCount = gameState.epochShiftsPerformedTotal;
                 const claimedMilestonePermBonuses = gameState.milestones
                     .filter(m => m.claimed && m.permanentBonus)
                     .map(m => ({ ...m.permanentBonus })); 
                 const oldMilestonesState = gameState.milestones.map(m => ({id: m.id, claimed: m.claimed }));
                 const oldParadigms = JSON.parse(JSON.stringify(gameState.paradigms)); 
 
-                gameState = getDefaultGameState(); 
+                let defaultGS = getDefaultGameState(); 
+                gameState.currentEraId = defaultGS.currentEraId;
+                gameState.currentDevelopmentIndex = defaultGS.currentDevelopmentIndex;
+                gameState.currentDevelopmentProgress = defaultGS.currentDevelopmentProgress;
+                gameState.knowledge = defaultGS.knowledge;
+                gameState.influence = defaultGS.influence;
+                gameState.progressPerClick = defaultGS.progressPerClick; // Permanent bonuses from milestones re-applied below
+                gameState.knowledgePerClick = defaultGS.knowledgePerClick;
+                gameState.passiveProgressRate = defaultGS.passiveProgressRate;
+                gameState.breakthroughChance = defaultGS.breakthroughChance;
+                gameState.breakthroughImpactBonus = defaultGS.breakthroughImpactBonus;
+                gameState.erasCompletedThisShift = 0;
+                gameState.advancementCosts = JSON.parse(JSON.stringify(defaultGS.advancementCosts));
+                gameState.advancementLevels = JSON.parse(JSON.stringify(defaultGS.advancementLevels));
+                gameState.knowledgeAffinityBonus = defaultGS.knowledgeAffinityBonus;
+                gameState.influenceSpreadBonus = defaultGS.influenceSpreadBonus;
+                gameState.breakthroughs = JSON.parse(JSON.stringify(defaultGS.breakthroughs));
+                gameState.completedDevelopmentIds = [];
+                gameState.completedEraIds = [];
+                gameState.knowledgeEarnedThisShift = 0;
+                gameState.influenceEarnedThisShift = 0;
+                // totalClicks and totalBreakthroughsUsed are NOT reset by default
+                gameState.temporaryBonuses = { progressPerClick: 0, knowledgePerClick: 0, durationTicks: 0};
+
+
                 gameState.epochShiftUpgrades = esUpgrades;
                 gameState.temporalShards = tShards;
-                gameState.epochShifts = esCount;
+                gameState.epochShiftsPerformedTotal = esCount;
                 gameState.knowledge += gameState.epochShiftUpgrades.startingKnowledgeLevel * 100; 
-                gameState.paradigms = oldParadigms; 
+                
+                // Restore paradigm levels, but their costs will be recalculated based on new era
+                Object.keys(gameState.paradigms).forEach(pKey => {
+                    if(oldParadigms[pKey]) gameState.paradigms[pKey].level = oldParadigms[pKey].level;
+                });
                 
                 gameState.milestones = MILESTONES_TEMPLATE.map(templateMilestone => {
                     const oldMilestoneData = oldMilestonesState.find(om => om.id === templateMilestone.id);
@@ -1363,10 +1505,9 @@
                     };
                 });
                 
-                claimedMilestonePermBonuses.forEach(bonus => applyMilestonePermanentBonus(bonus));
+                claimedMilestonePermBonuses.forEach(bonus => applyMilestonePermanentBonus(bonus)); // Re-apply permanent bonuses
 
-                setNextMajorEventInterval(); 
-                startNewEpoch(EPOCH_DEFINITIONS[0].id);
+                startNewEra(ERA_DEFINITIONS[0].id); // Start from the very beginning era
                 checkUnlocksAndAvailability();
                 updateAllUI();
                 renderMilestones();
@@ -1400,48 +1541,64 @@
         function renderEpochShiftUpgrades() { updateEpochShiftUI(); }
 
         function renderParadigms() {
-            for (const key in gameState.paradigms) {
-                const paradigm = gameState.paradigms[key];
-                const button = document.getElementById(paradigm.id);
-                if(button) {
-                    const currentEraInfo = gameState.currentEra;
-                    button.style.display = EPOCH_DEFINITIONS.findIndex(e=>e.eraName === paradigm.unlockedAtEraName) <= EPOCH_DEFINITIONS.findIndex(e=>e.eraName === currentEraInfo.eraName) ? 'block' : 'none';
+            const paradigmsList = document.getElementById('paradigms-list');
+            paradigmsList.innerHTML = ''; // Clear existing
+            const currentEra = getCurrentEraDefinition();
+            if (!currentEra) return;
+
+            Object.keys(PARADIGMS_TEMPLATE).forEach(key => {
+                const paradigm = PARADIGMS_TEMPLATE[key];
+                 const paradigmState = gameState.paradigms[key]; // Get current level from gameState
+                 if (!paradigmState) return;
+
+
+                const unlockEraId = paradigm.unlockedAtEraId || ERA_DEFINITIONS.find(e => e.unlocksParadigms && e.unlocksParadigms.includes(paradigm.id))?.id;
+                const requiredEraOrder = ERA_DEFINITIONS.find(e => e.id === unlockEraId)?.epochShiftRequirementOrder || 999;
+                
+                if (currentEra.epochShiftRequirementOrder >= requiredEraOrder) {
+                    const button = document.createElement('button');
+                    button.id = paradigm.id;
+                    button.classList.add('paradigm-button');
                     
                     let effectText = "";
-                    if(key === 'scientificMethod') effectText = `+${(paradigm.level * paradigm.effectPerLevel.knowledgeBonus * 100).toFixed(0)}% 💡, +${(paradigm.level * paradigm.effectPerLevel.breakthroughChance * 100).toFixed(1)}% ✨ Chance`;
-                    else if(key === 'industrialization') effectText = `+${(paradigm.level * paradigm.effectPerLevel.passiveProgressRateBonus * 100).toFixed(0)}% 📈, +${(paradigm.level * paradigm.effectPerLevel.knowledgeFromEpochs * 100).toFixed(0)}% 💡 from Epochs`;
-                    else if(key === 'informationAge' && paradigm.effectPerLevel) effectText = `+${(paradigm.level * paradigm.effectPerLevel.allResourceBonus * 100).toFixed(0)}% All Resources`;
+                    if(key === 'scientificMethod') effectText = `+${(paradigmState.level * paradigm.effectPerLevel.knowledgeBonus * 100).toFixed(0)}% 💡, +${(paradigmState.level * paradigm.effectPerLevel.breakthroughChance * 100).toFixed(2)}% ✨ Chance`;
+                    else if(key === 'industrialization') effectText = `+${(paradigmState.level * paradigm.effectPerLevel.passiveProgressRateBonus * 100).toFixed(0)}% 📈 Mom., +${(paradigmState.level * paradigm.effectPerLevel.knowledgeFromDevelopments * 100).toFixed(0)}% 💡 from Dev.`;
+                    else if(key === 'informationAge' && paradigm.effectPerLevel) effectText = `+${(paradigmState.level * paradigm.effectPerLevel.allResourceBonus * 100).toFixed(0)}% All Gains`;
 
 
                     const costResource = paradigm.baseCostResource === "knowledge" ? "💡" : "🌍";
-                    const cost = Math.ceil(paradigm.baseCost * Math.pow(paradigm.costMultiplier, paradigm.level));
-                    button.innerHTML = `${paradigm.name} Lvl ${paradigm.level}/${paradigm.maxLevel} <small>(Cost: ${cost}${costResource} | ${effectText})</small>`;
-                    button.disabled = paradigm.level >= paradigm.maxLevel;
+                    const cost = Math.ceil(paradigm.baseCost * Math.pow(paradigm.costMultiplier, paradigmState.level) * (1 + (getCurrentEraDefinition()?.epochShiftRequirementOrder || 0) * 0.2));
+                    button.innerHTML = `${paradigm.name} Lvl ${paradigmState.level}/${paradigm.maxLevel} <small>(Cost: ${cost}${costResource} | ${effectText})</small>`;
+                    button.disabled = paradigmState.level >= paradigm.maxLevel;
+                    button.addEventListener('click', () => buyParadigm(key));
+                    paradigmsList.appendChild(button);
                 }
-            }
+            });
         }
         function buyParadigm(key) {
-            const paradigm = gameState.paradigms[key];
-            if (paradigm.level >= paradigm.maxLevel) {
-                displayMessage(`${paradigm.name} is at maximum development! 🚀`, "var(--info-color)"); return;
+            const paradigmDef = PARADIGMS_TEMPLATE[key];
+            const paradigmState = gameState.paradigms[key];
+
+            if (paradigmState.level >= paradigmDef.maxLevel) {
+                displayMessage(`${paradigmDef.name} is at maximum development! 🚀`, "var(--info-color)"); return;
             }
-            const cost = Math.ceil(paradigm.baseCost * Math.pow(paradigm.costMultiplier, paradigm.level));
+            const cost = Math.ceil(paradigmDef.baseCost * Math.pow(paradigmDef.costMultiplier, paradigmState.level) * (1 + (getCurrentEraDefinition()?.epochShiftRequirementOrder || 0) * 0.2));
             let canAfford = false;
-            if (paradigm.baseCostResource === "knowledge" && gameState.knowledge >= cost) {
+            if (paradigmDef.baseCostResource === "knowledge" && gameState.knowledge >= cost) {
                 gameState.knowledge -= cost;
                 canAfford = true;
-            } else if (paradigm.baseCostResource === "influence" && gameState.influence >= cost) {
+            } else if (paradigmDef.baseCostResource === "influence" && gameState.influence >= cost) {
                 gameState.influence -= cost;
                 canAfford = true;
             }
 
             if (canAfford) {
-                paradigm.level++;
-                displayMessage(`${paradigm.name} advanced to Lvl ${paradigm.level}! ✨`, "var(--success-color)");
+                paradigmState.level++;
+                displayMessage(`${paradigmDef.name} advanced to Lvl ${paradigmState.level}! ✨`, "var(--success-color)");
                 playSound('upgradeSound');
-                updateAllUI();
+                updateAllUI(); // This will re-render paradigms
             } else {
-                displayMessage(`Not enough ${paradigm.baseCostResource === "knowledge" ? "Knowledge 💡" : "Influence 🌍"} for ${paradigm.name}! 😥`, "var(--error-color)");
+                displayMessage(`Not enough ${paradigmDef.baseCostResource === "knowledge" ? "Knowledge 💡" : "Influence 🌍"} for ${paradigmDef.name}! 😥`, "var(--error-color)");
             }
         }
 
@@ -1451,15 +1608,17 @@
             const twentyFourHours = 24 * 60 * 60 * 1000;
             if (now - gameState.lastDailyRewardClaimed > twentyFourHours) {
                 document.getElementById('daily-reward-popup').classList.add('visible');
-                const rewardKnowledge = 100 + gameState.currentEraIndex * 50 + gameState.epochShifts * 200 + gameState.epochShiftUpgrades.startingKnowledgeLevel * 50;
-                const rewardInfluence = 50 + gameState.currentEraIndex * 20 + gameState.epochShifts * 100;
+                const currentEraOrder = getCurrentEraDefinition()?.epochShiftRequirementOrder || 0;
+                const rewardKnowledge = 100 + currentEraOrder * 50 + gameState.epochShiftsPerformedTotal * 200 + gameState.epochShiftUpgrades.startingKnowledgeLevel * 50;
+                const rewardInfluence = 50 + currentEraOrder * 20 + gameState.epochShiftsPerformedTotal * 100;
                 document.getElementById('daily-reward-text').innerHTML = `Claim 💡${rewardKnowledge} Knowledge and 🌍${rewardInfluence} Influence!`;
                 playSound('popupOpen');
             }
         }
         function claimDailyReward() {
-            const rewardKnowledge = 100 + gameState.currentEraIndex * 50 + gameState.epochShifts * 200 + gameState.epochShiftUpgrades.startingKnowledgeLevel * 50;
-            const rewardInfluence = 50 + gameState.currentEraIndex * 20 + gameState.epochShifts * 100;
+            const currentEraOrder = getCurrentEraDefinition()?.epochShiftRequirementOrder || 0;
+            const rewardKnowledge = 100 + currentEraOrder * 50 + gameState.epochShiftsPerformedTotal * 200 + gameState.epochShiftUpgrades.startingKnowledgeLevel * 50;
+            const rewardInfluence = 50 + currentEraOrder * 20 + gameState.epochShiftsPerformedTotal * 100;
             earnKnowledge(rewardKnowledge);
             earnInfluence(rewardInfluence); 
             gameState.lastDailyRewardClaimed = Date.now();
@@ -1478,9 +1637,9 @@
 
             if (offlineSeconds > 60) { 
                 const baseKnowledgePerSec = (gameState.passiveProgressRate * 0.03 + gameState.knowledgePerClick * 0.1); 
-                const offlineKnowledgeRate = baseKnowledgePerSec * (1 + gameState.epochShiftUpgrades.globalKnowledgeBonus + gameState.knowledgeAffinityBonus) * (1 + gameState.paradigms.scientificMethod.level * gameState.paradigms.scientificMethod.effectPerLevel.knowledgeBonus);
+                const offlineKnowledgeRate = baseKnowledgePerSec * (1 + gameState.epochShiftUpgrades.globalKnowledgeBonus + gameState.knowledgeAffinityBonus + (gameState.paradigms.scientificMethod.level * gameState.paradigms.scientificMethod.effectPerLevel.knowledgeBonus)) * (1 + (gameState.paradigms.informationAge.level * (gameState.paradigms.informationAge.effectPerLevel?.allResourceBonus || 0)));
                 const baseInfluencePerSec = (gameState.passiveProgressRate * 0.02); 
-                const offlineInfluenceRate = baseInfluencePerSec * (1 + gameState.epochShiftUpgrades.globalInfluenceBonus + gameState.influenceSpreadBonus);   
+                const offlineInfluenceRate = baseInfluencePerSec * (1 + gameState.epochShiftUpgrades.globalInfluenceBonus + gameState.influenceSpreadBonus) * (1 + (gameState.paradigms.informationAge.level * (gameState.paradigms.informationAge.effectPerLevel?.allResourceBonus || 0)));   
 
                 const knowledgeGained = Math.floor(offlineKnowledgeRate * offlineSeconds * 0.25); 
                 const influenceGained = Math.floor(offlineInfluenceRate * offlineSeconds * 0.25);
@@ -1531,13 +1690,12 @@
         function passiveSave() {
             if (Date.now() - gameState.lastSaveTime > 28000) { 
                 saveGame();
-                gameState.lastSaveTime = Date.now();
             }
         }
         function saveGame() {
             try {
                 gameState.lastActiveTime = Date.now(); 
-                localStorage.setItem('timelineClickerSave_v1', JSON.stringify(gameState)); 
+                localStorage.setItem('timelineClickerSave_v2', JSON.stringify(gameState)); 
                 gameState.lastSaveTime = Date.now();
             } catch (e) {
                 displayMessage("Error saving chronicle 😥 (localStorage full/disabled).", "var(--error-color)");
@@ -1546,94 +1704,57 @@
 
         function loadGame() {
             let loadedStateJSON = null;
-            const savedGame = localStorage.getItem('timelineClickerSave_v1'); 
+            const savedGame = localStorage.getItem('timelineClickerSave_v2'); 
             if (savedGame) {
                 try {
                     loadedStateJSON = JSON.parse(savedGame);
                 } catch (e) {
-                    localStorage.removeItem('timelineClickerSave_v1'); 
+                    localStorage.removeItem('timelineClickerSave_v2'); 
+                    console.error("Error parsing saved game: ", e);
                 }
             }
             
             const defaultState = getDefaultGameState(); 
             let finalState = JSON.parse(JSON.stringify(defaultState)); 
 
-            finalState.milestones = MILESTONES_TEMPLATE.map(templateMilestone => {
-                const loadedMilestoneData = loadedStateJSON?.milestones?.find(lm => lm.id === templateMilestone.id);
-                return {
-                    ...templateMilestone,
-                    condition: templateMilestone.condition,
-                    reward: templateMilestone.reward ? JSON.parse(JSON.stringify(templateMilestone.reward)) : undefined,
-                    permanentBonus: templateMilestone.permanentBonus ? JSON.parse(JSON.stringify(templateMilestone.permanentBonus)) : undefined,
-                    claimed: loadedMilestoneData ? loadedMilestoneData.claimed : false 
-                };
-            });
-            finalState.breakthroughs = {}; 
-            for (const btKey in BREAKTHROUGHS_TEMPLATE) { 
-                finalState.breakthroughs[btKey] = {
-                    ...BREAKTHROUGHS_TEMPLATE[btKey], 
-                    ...(loadedStateJSON?.breakthroughs?.[btKey] || {}) 
-                };
-                 if(loadedStateJSON?.breakthroughs && typeof loadedStateJSON.breakthroughs[btKey]?.currentCooldown !== 'number') {
-                    finalState.breakthroughs[btKey].currentCooldown = BREAKTHROUGHS_TEMPLATE[btKey].currentCooldown;
-                }
-                finalState.breakthroughs[btKey].isActive = BREAKTHROUGHS_TEMPLATE[btKey].isActive;
-            }
-            finalState.paradigms = {};
-            for (const pKey in PARADIGMS_TEMPLATE) {
-                 finalState.paradigms[pKey] = {
-                    ...PARADIGMS_TEMPLATE[pKey],
-                     ...(loadedStateJSON?.paradigms?.[pKey] || {})
-                };
-                 if(loadedStateJSON?.paradigms && typeof loadedStateJSON.paradigms[pKey]?.level !== 'number') {
-                    finalState.paradigms[pKey].level = PARADIGMS_TEMPLATE[pKey].level;
-                }
-            }
-
-
             if (loadedStateJSON) {
+                 // Merge top-level properties
                 for (const key in defaultState) {
-                    if (loadedStateJSON.hasOwnProperty(key) && !['milestones', 'breakthroughs', 'paradigms'].includes(key)) {
+                    if (loadedStateJSON.hasOwnProperty(key)) {
                         if (typeof defaultState[key] === 'object' && defaultState[key] !== null && !Array.isArray(defaultState[key])) {
+                            // Deep merge for objects like advancements, breakthroughs, paradigms etc.
                             finalState[key] = { ...defaultState[key], ...loadedStateJSON[key] };
-                        } else if (typeof loadedStateJSON[key] !== 'undefined') { 
+                            // Ensure nested structures within these objects also get defaults if missing in save
+                            if (key === "breakthroughs" || key === "paradigms") {
+                                for (const subKey in defaultState[key]) {
+                                    if (loadedStateJSON[key] && loadedStateJSON[key][subKey]) {
+                                        finalState[key][subKey] = {...defaultState[key][subKey], ...loadedStateJSON[key][subKey]};
+                                    } else {
+                                        finalState[key][subKey] = {...defaultState[key][subKey]}; // ensure it exists
+                                    }
+                                }
+                            }
+                        } else {
                             finalState[key] = loadedStateJSON[key];
                         }
                     }
                 }
-                 if (!finalState.currentEpoch || typeof finalState.currentEpoch.effortRequired === 'undefined' || finalState.currentEpochProgress >= finalState.currentEpoch.effortRequired) {
-                     finalState.currentEpochId = finalState.currentEpochId || EPOCH_DEFINITIONS[0].id;
-                     const epochDefForLoad = EPOCH_DEFINITIONS.find(e => e.id === finalState.currentEpochId) || EPOCH_DEFINITIONS[0];
-                     finalState.currentEpoch = { ...epochDefForLoad }; 
-                     finalState.currentEpochProgress = 0;
-                 } else {
-                     const currentEpochDef = EPOCH_DEFINITIONS.find(e => e.id === finalState.currentEpochId);
-                     if (currentEpochDef) {
-                        finalState.currentEpoch = {
-                            ...currentEpochDef, 
-                            effortRequired: loadedStateJSON.currentEpoch?.effortRequired || currentEpochDef.effortRequired,
-                            rewards: loadedStateJSON.currentEpoch?.rewards || currentEpochDef.rewards,
-                            isMajorTurningPoint: loadedStateJSON.currentEpoch?.isMajorTurningPoint || false,
-                            currentBackgroundColor: currentEpochDef.backgroundColor,
-                            currentBorderColor: currentEpochDef.borderColor
-                        };
-                     }
-                 }
-                 finalState.currentEra = EPOCH_DEFINITIONS.find(e => e.id === finalState.currentEpochId) || EPOCH_DEFINITIONS[0];
 
-
-                 ['advancementCosts', 'advancementLevels', 'epochShiftUpgrades', 'epochShiftUpgradeCosts', 'completedEpochIds'].forEach(objKey => {
-                    if(!finalState[objKey]) finalState[objKey] = {...defaultState[objKey]};
-                    else if(typeof finalState[objKey] === 'object' && !Array.isArray(finalState[objKey])) { // Ensure all keys from default exist
-                        finalState[objKey] = {...defaultState[objKey], ...finalState[objKey]};
-                    }
+                // Specific handling for milestones (preserving functions)
+                finalState.milestones = MILESTONES_TEMPLATE.map(templateMs => {
+                    const loadedMsData = loadedStateJSON.milestones?.find(lm => lm.id === templateMs.id);
+                    return {
+                        ...templateMs, // Includes condition function
+                        reward: templateMs.reward ? JSON.parse(JSON.stringify(templateMs.reward)) : undefined,
+                        permanentBonus: templateMs.permanentBonus ? JSON.parse(JSON.stringify(templateMs.permanentBonus)) : undefined,
+                        claimed: loadedMsData ? loadedMsData.claimed : false 
+                    };
                 });
-                 finalState.currentEraIndex = EPOCH_DEFINITIONS.findIndex(e => e.eraName === finalState.currentEra.eraName);
-                 if (finalState.currentEraIndex === -1) finalState.currentEraIndex = 0;
-
-                 if(!finalState.knowledgeToNextEra || finalState.knowledgeToNextEra <=0) {
-                    finalState.knowledgeToNextEra = finalState.currentEra.eraName === "The Void" ? 1000 : EPOCH_DEFINITIONS.find(e => e.eraName !== finalState.currentEra.eraName && EPOCH_DEFINITIONS.indexOf(e) > finalState.currentEraIndex)?.effortRequired * 10 || 1000000;
-                 }
+                
+                // Ensure essential arrays exist
+                finalState.completedDevelopmentIds = finalState.completedDevelopmentIds || [];
+                finalState.completedEraIds = finalState.completedEraIds || [];
+                finalState.temporaryBonuses = finalState.temporaryBonuses || { progressPerClick: 0, knowledgePerClick: 0, durationTicks: 0};
 
 
                  displayMessage("💾 Chronicle Loaded Successfully! 🎉", "var(--success-color)");
@@ -1646,27 +1767,27 @@
 
         function resetGame() {
             if (confirm("🛑 ARE YOU SURE you want to shatter this timeline? ALL progress, including Epoch Shifts and Milestones, will be lost! This is permanent! 🛑")) {
-                localStorage.removeItem('timelineClickerSave_v1');
+                localStorage.removeItem('timelineClickerSave_v2');
                 gameState = getDefaultGameState();
                 
                 ['shift-knowledge-affinity', 'shift-influence-spread', 'epoch-shift-tab-button'].forEach(id => {
                     const el = document.getElementById(id);
                     if(el) el.style.display = 'none';
                 });
-                for(const key in PARADIGMS_TEMPLATE) {
-                    const paradigmButton = document.getElementById(PARADIGMS_TEMPLATE[key].id);
+                 Object.keys(PARADIGMS_TEMPLATE).forEach(pKey => {
+                    const paradigmButton = document.getElementById(PARADIGMS_TEMPLATE[pKey].id);
                     if (paradigmButton) paradigmButton.style.display = 'none';
-                }
+                });
                  const esButton = document.getElementById('epoch-shift-button');
                  if(esButton) esButton.disabled = true;
 
                 openTab('gameTab'); 
                 
-                startNewEpoch(EPOCH_DEFINITIONS[0].id); 
+                startNewEra(ERA_DEFINITIONS[0].id); 
                 updateAllUI();
                 renderMilestones();
                 renderEpochShiftUpgrades();
-                renderParadigms();
+                renderParadigms(); // Ensure paradigms are also cleared/hidden
                 displayMessage("🔄 Timeline Shattered! A fresh reality awaits! ✨", "var(--error-color)", 5000);
                 playSound('resetSound');
             }
