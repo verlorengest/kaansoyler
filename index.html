@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Epic Web Games Hub</title>
+  <title>Boring Games Hub</title>
   <style>
     * {
       box-sizing: border-box;
@@ -11,10 +11,10 @@
       padding: 0;
     }
     body {
-      font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-      background: linear-gradient(135deg, #1f1c2c 0%, #928dab 100%);
-      color: #f0f0f0;
-      line-height: 1.7;
+      font-family: monospace, 'Courier New';
+      background: #0a0a1f;
+      color: #c0c0c0;
+      line-height: 1.6;
       overflow-x: hidden;
     }
     .container {
@@ -23,170 +23,185 @@
       padding: 0 20px;
     }
     header {
-      background: rgba(22, 22, 37, 0.8);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      color: #fff;
-      padding: 25px 0;
+      background: #10102a;
+      color: #e0e0e0;
+      padding: 20px 0;
       text-align: center;
-      border-bottom: 4px solid #6c5ce7;
+      border-bottom: 3px solid #00ffff;
       position: sticky;
       top: 0;
       z-index: 1000;
     }
     header h1 {
-      font-size: 2.8em;
-      font-weight: 700;
-      letter-spacing: 1px;
+      font-size: 2.5em;
+      font-weight: normal;
+      letter-spacing: 2px;
       text-transform: uppercase;
-      background: linear-gradient(45deg, #a29bfe, #6c5ce7, #fd79a8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      text-fill-color: transparent;
+      color: #00ffff;
+      text-shadow: 2px 2px #ff00ff;
+      background: none;
+      -webkit-background-clip: unset;
+      -webkit-text-fill-color: unset;
+      background-clip: unset;
+      text-fill-color: unset;
     }
     header p {
-      font-size: 1em;
-      color: #d1d1d1;
-      margin-top: 5px;
+      font-size: 0.9em;
+      color: #a0a0a0;
+      margin-top: 8px;
     }
     main {
-      padding: 40px 0;
+      padding: 30px 0;
     }
     .game-list {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 35px;
+      gap: 30px;
       list-style: none;
     }
     .game-item {
-      background: rgba(44, 44, 68, 0.7);
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
-      border-radius: 15px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+      background: #181830;
+      border: 2px solid #303050;
+      border-radius: 5px;
+      box-shadow: 5px 5px 0px #000000;
       overflow: hidden;
-      transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, border-color 0.2s ease-out;
       display: flex;
       flex-direction: column;
       position: relative;
     }
     .game-item:hover {
-      transform: translateY(-12px) scale(1.02);
-      box-shadow: 0 15px 35px rgba(108, 92, 231, 0.5);
+      transform: translate(-3px, -3px);
+      box-shadow: 8px 8px 0px #00ffff;
+      border-color: #00ffff;
     }
     .game-item-badge {
       position: absolute;
-      top: 15px;
-      right: 15px;
-      background-color: #fd79a8;
-      color: #fff;
-      padding: 5px 10px;
-      font-size: 0.8em;
+      top: 10px;
+      right: -2px;
+      background-color: #ff00ff;
+      color: #000000;
+      padding: 3px 8px;
+      font-size: 0.75em;
       font-weight: bold;
-      border-radius: 5px;
+      border-radius: 0px;
+      border-left: 2px solid #000;
+      border-bottom: 2px solid #000;
       z-index: 1;
+      text-transform: uppercase;
     }
     .game-item-badge.popular {
-      background-color: #00cec9;
+      background-color: #00ff00;
+      color: #000000;
     }
     .game-item-thumbnail {
       width: 100%;
-      height: 200px;
-      background-color: #333;
+      height: 180px;
+      background-color: #000;
       overflow: hidden;
+      border-bottom: 2px solid #303050;
     }
     .game-item-thumbnail img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
-      transition: transform 0.4s ease;
+      transition: transform 0.3s ease;
+      image-rendering: pixelated;
+      -ms-interpolation-mode: nearest-neighbor;
     }
     .game-item:hover .game-item-thumbnail img {
-      transform: scale(1.1);
+      transform: scale(1.05);
     }
     .game-item-content {
-      padding: 25px;
+      padding: 20px;
       flex-grow: 1;
       display: flex;
       flex-direction: column;
     }
     .game-item-title {
-      font-size: 1.6em;
-      color: #fff;
-      margin-bottom: 12px;
-      font-weight: 600;
+      font-size: 1.4em;
+      color: #00ffff;
+      margin-bottom: 10px;
+      font-weight: normal;
+      text-transform: uppercase;
     }
     .game-item-description {
-      font-size: 0.95em;
-      color: #c0c0c0;
-      margin-bottom: 20px;
+      font-size: 0.9em;
+      color: #b0b0b0;
+      margin-bottom: 15px;
       flex-grow: 1;
-      min-height: 70px;
+      min-height: 60px;
     }
     .play-button {
       display: inline-block;
-      background: linear-gradient(45deg, #6c5ce7, #a29bfe);
-      color: #fff;
-      padding: 12px 25px;
+      background: #00ffff;
+      color: #000000;
+      padding: 10px 20px;
       text-decoration: none;
-      border-radius: 8px;
+      border-radius: 3px;
       font-weight: bold;
       text-align: center;
-      transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      transition: background 0.2s ease, color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
       align-self: flex-start;
       margin-top: auto;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      box-shadow: 3px 3px 0px #000000;
+      border: 1px solid #000000;
+      text-transform: uppercase;
     }
     .play-button:hover,
     .play-button:focus {
-      background: linear-gradient(45deg, #a29bfe, #6c5ce7);
-      transform: translateY(-3px);
-      box-shadow: 0 6px 15px rgba(108, 92, 231, 0.6);
+      background: #ff00ff;
+      color: #ffffff;
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0px #000000;
       text-decoration: none;
       outline: none;
     }
     footer {
       text-align: center;
-      padding: 30px 20px;
-      background: rgba(22, 22, 37, 0.8);
-      margin-top: 50px;
-      color: #a0a0a0;
-      border-top: 2px solid #6c5ce7;
+      padding: 25px 20px;
+      background: #10102a;
+      margin-top: 40px;
+      color: #808080;
+      border-top: 3px solid #00ffff;
     }
     footer p {
       margin: 0;
-      font-size: 0.9em;
+      font-size: 0.85em;
     }
     @media (max-width: 768px) {
       header h1 {
-        font-size: 2.2em;
+        font-size: 2em;
       }
       .game-list {
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         gap: 25px;
       }
       .game-item-title {
-        font-size: 1.4em;
+        font-size: 1.3em;
       }
       .game-item-description {
-        font-size: 0.9em;
-        min-height: 60px;
+        font-size: 0.85em;
+        min-height: 50px;
       }
       .play-button {
-        padding: 10px 20px;
+        padding: 8px 18px;
+        font-size: 0.9em;
       }
     }
     @media (max-width: 480px) {
       header h1 {
-        font-size: 1.8em;
+        font-size: 1.7em;
       }
       header p {
-        font-size: 0.9em;
+        font-size: 0.8em;
       }
       .game-list {
         gap: 20px;
+      }
+      .game-item-thumbnail {
+        height: 160px;
       }
     }
   </style>
@@ -205,13 +220,13 @@
     <section class="game-list">
 
       <div class="game-item">
-        <div class="game-item-badge">Popular</div>
+        <div class="game-item-badge popular">Popular</div>
         <div class="game-item-thumbnail">
-          <img src="https://placehold.co/600x400/6c5ce7/FFF?text=Age+of+Empires+Tycoon&font=roboto" alt="Age of Empires Tycoon Thumbnail">
+          <img src="https://placehold.co/600x400/00ffff/000?text=Age+of+Empires+Tycoon&font=monospace" alt="Age of Empires Tycoon Thumbnail">
         </div>
         <div class="game-item-content">
           <h3 class="game-item-title">Age of Empires Tycoon</h3>
-          <p class="game-item-description">Build your empire, manage resources, and dominate the lands in this classic strategy game adaptation. Hours of engaging gameplay await!</p>
+          <p class="game-item-description">Build your empire, manage resources. Hours of engaging gameplay await!</p>
           <a href="games/AOET6/AoETycoon.html" class="play-button">Play Now</a>
         </div>
       </div>
@@ -219,18 +234,18 @@
       <div class="game-item">
         <div class="game-item-badge">New</div>
         <div class="game-item-thumbnail">
-          <img src="https://placehold.co/600x400/fd79a8/FFF?text=Space+Invaders+Infinity&font=montserrat" alt="Space Invaders Infinity Thumbnail">
+          <img src="https://placehold.co/600x400/ff00ff/000?text=Space+Invaders+Infinity&font=monospace" alt="Space Invaders Infinity Thumbnail">
         </div>
         <div class="game-item-content">
-          <h3 class="game-item-title">Space Invaders Infinity</h3>
-          <p class="game-item-description">Defend the galaxy from endless waves of alien attackers. Featuring power-ups and challenging bosses in a retro-modern style.</p>
+          <h3 class="game-item-title">Epic Clicker Saga</h3>
+          <p class="game-item-description">Click until world ends..</p>
           <a href="#" class="play-button">Play Now</a>
         </div>
       </div>
 
       <div class="game-item">
         <div class="game-item-thumbnail">
-          <img src="https://placehold.co/600x400/00cec9/333?text=Puzzle+Master+Pro&font=lato" alt="Puzzle Master Pro Thumbnail">
+          <img src="https://placehold.co/600x400/00ff00/000?text=Puzzle+Master+Pro&font=monospace" alt="Puzzle Master Pro Thumbnail">
         </div>
         <div class="game-item-content">
           <h3 class="game-item-title">Puzzle Master Pro</h3>
@@ -242,7 +257,7 @@
       <div class="game-item">
         <div class="game-item-badge">Hot</div>
         <div class="game-item-thumbnail">
-          <img src="https://placehold.co/600x400/fab1a0/333?text=Speed+Racers+Ultimate&font=oswald" alt="Speed Racers Ultimate Thumbnail">
+          <img src="https://placehold.co/600x400/ffff00/000?text=Speed+Racers+Ultimate&font=monospace" alt="Speed Racers Ultimate Thumbnail">
         </div>
         <div class="game-item-content">
           <h3 class="game-item-title">Speed Racers Ultimate</h3>
@@ -253,7 +268,7 @@
 
       <div class="game-item">
         <div class="game-item-thumbnail">
-          <img src="https://placehold.co/600x400/ffeaa7/333?text=Mystic+Adventure+RPG&font=playfairdisplay" alt="Mystic Adventure RPG Thumbnail">
+          <img src="https://placehold.co/600x400/ff7f00/000?text=Mystic+Adventure+RPG&font=monospace" alt="Mystic Adventure RPG Thumbnail">
         </div>
         <div class="game-item-content">
           <h3 class="game-item-title">Mystic Adventure RPG</h3>
@@ -264,7 +279,7 @@
 
       <div class="game-item">
         <div class="game-item-thumbnail">
-          <img src="https://placehold.co/600x400/55efc4/333?text=Strategy+Card+Clash&font=raleway" alt="Strategy Card Clash Thumbnail">
+          <img src="https://placehold.co/600x400/007fff/000?text=Strategy+Card+Clash&font=monospace" alt="Strategy Card Clash Thumbnail">
         </div>
         <div class="game-item-content">
           <h3 class="game-item-title">Strategy Card Clash</h3>
@@ -276,7 +291,7 @@
       <div class="game-item">
         <div class="game-item-badge">Featured</div>
         <div class="game-item-thumbnail">
-          <img src="https://placehold.co/600x400/81ecec/333?text=Pixel+Platformer+Fun&font=pacifico" alt="Pixel Platformer Fun Thumbnail">
+          <img src="https://placehold.co/600x400/bf00ff/000?text=Pixel+Platformer+Fun&font=monospace" alt="Pixel Platformer Fun Thumbnail">
         </div>
         <div class="game-item-content">
           <h3 class="game-item-title">Pixel Platformer Fun</h3>
@@ -287,7 +302,7 @@
 
       <div class="game-item">
         <div class="game-item-thumbnail">
-          <img src="https://placehold.co/600x400/74b9ff/FFF?text=Cosmic+Explorer&font=bebasneue" alt="Cosmic Explorer Thumbnail">
+          <img src="https://placehold.co/600x400/ff007f/000?text=Cosmic+Explorer&font=monospace" alt="Cosmic Explorer Thumbnail">
         </div>
         <div class="game-item-content">
           <h3 class="game-item-title">Cosmic Explorer</h3>
@@ -302,7 +317,7 @@
 
 <footer>
   <div class="container">
-    <p>© 2024 Epic Web Games Hub. All rights reserved. Created with passion for gaming.</p>
+    <p>© 2024 Boring-Games Hub. All rights reserved. Created with boredom for gaming.</p>
   </div>
 </footer>
 
