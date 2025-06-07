@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMixer+ Comprehensive Documentation</title>
+    <style>
+        :root {
+            --bg-color: #1e1e1e;
+            --primary-bg-alt: #2c2c2c;
+            --secondary-bg-alt: #3a3a3a;
+            --text-color: #e0e0e0;
+            --primary-accent: #00acc1;
+            --secondary-accent: #64ffda;
+            --border-color: #444;
+            --header-font: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            --body-font: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 70px; /* Adjust based on nav height */
+        }
+
+        body {
+            font-family: var(--body-font);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 960px; /* Slightly wider for more content */
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--primary-bg-alt);
+            padding: 25px 0; /* More padding */
+            border-bottom: 3px solid var(--primary-accent);
+            display: flex;
+            align-items: center;
+        }
+
+        header .logo-container {
+            margin-left: 20px;
+            margin-right: 25px;
+        }
+
+        header .logo-container img {
+            width: 600px;
+            height: 300px;
+            object-fit: contain;
+            background-color: #4a4a4a; /* Darker placeholder */
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        header .title-container {
+            flex-grow: 1;
+        }
+
+        header h1 {
+            font-family: var(--header-font);
+            color: var(--primary-accent);
+            margin: 0 0 8px 0;
+            font-size: 2.8em;
+            font-weight: 300;
+            letter-spacing: 1.5px;
+        }
+        header .tagline {
+            color: #b0b0b0; /* Lighter tagline */
+            font-size: 1.2em;
+            font-style: italic;
+        }
+
+        nav {
+            background-color: var(--secondary-bg-alt);
+            padding: 12px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: center;
+        }
+
+        nav ul li {
+            display: inline-block;
+            margin: 0 12px; /* Slightly less margin */
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 4px;
+            transition: background-color 0.2s, color 0.2s;
+            font-size: 0.95em;
+        }
+
+        nav ul li a:hover, nav ul li a.active {
+            background-color: var(--primary-accent);
+            color: var(--bg-color);
+        }
+
+        section {
+            padding: 50px 0; /* More padding */
+            border-bottom: 1px solid var(--border-color);
+        }
+        section:last-child {
+            border-bottom: none;
+        }
+
+        h2 {
+            font-family: var(--header-font);
+            color: var(--primary-accent);
+            font-size: 2em;
+            margin-top: 0;
+            margin-bottom: 30px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--secondary-bg-alt);
+            font-weight: 400;
+        }
+
+        h3 {
+            font-family: var(--header-font);
+            color: var(--secondary-accent);
+            font-size: 1.6em;
+            margin-top: 35px;
+            margin-bottom: 20px;
+            font-weight: 400;
+        }
+        h4 {
+            font-family: var(--header-font);
+            color: #ccc; /* Lighter h4 */
+            font-size: 1.25em;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+         h5 {
+            font-family: var(--header-font);
+            color: var(--text-color);
+            font-size: 1.1em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #bbb;
+        }
+
+        p, li {
+            margin-bottom: 1.1em;
+            font-size: 1.05em; /* Slightly larger base text */
+        }
+
+        a {
+            color: var(--secondary-accent);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        a:hover {
+            text-decoration: underline;
+            color: var(--primary-accent);
+        }
+
+        code, .code-block {
+            background-color: #111; /* Darker code bg */
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9em;
+            border: 1px solid #333; /* Darker border */
+            color: #d0d0d0;
+        }
+
+        .code-block {
+            display: block;
+            padding: 18px;
+            margin: 20px 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.5;
+        }
+
+        .note, .tip, .warning {
+            padding: 18px;
+            margin: 25px 0;
+            border-left: 5px solid;
+            background-color: var(--primary-bg-alt);
+            border-radius: 0 5px 5px 0;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+        }
+        .note { border-left-color: #f0ad4e; }
+        .tip { border-left-color: #5cb85c; }
+        .warning { border-left-color: #d9534f; /* Red for warnings */ }
+        .note p:last-child, .tip p:last-child, .warning p:last-child { margin-bottom: 0; }
+        .note strong, .tip strong, .warning strong { color: var(--secondary-accent); }
+
+        ul, ol {
+            padding-left: 25px;
+        }
+        ul.feature-list li {
+            margin-bottom: 0.7em;
+        }
+        .feature-list li::marker {
+            color: var(--primary-accent);
+        }
+
+        .feature-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: rgba(255,255,255,0.02);
+            border-radius: 4px;
+        }
+        .feature-item strong {
+            color: var(--secondary-accent);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .img-placeholder {
+            background-color: #333;
+            border: 1px dashed var(--border-color);
+            padding: 30px;
+            text-align: center;
+            margin: 20px auto; /* Centered */
+            color: #aaa;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            max-width: 70%; /* Control width */
+        }
+
+        /* Video Section Styles */
+        #video-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        .video-item {
+            background-color: var(--primary-bg-alt);
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: transform 0.2s ease-in-out;
+        }
+        .video-item:hover {
+            transform: translateY(-5px);
+        }
+        .video-thumbnail-container {
+            position: relative;
+            cursor: pointer;
+            background-color: #000; /* Fallback for image loading */
+        }
+        .video-thumbnail-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+            aspect-ratio: 16 / 9; /* Maintain aspect ratio */
+            object-fit: cover;
+        }
+        .play-button-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 40px; /* Larger play button */
+            color: rgba(255, 255, 255, 0.9);
+            background-color: rgba(0, 0, 0, 0.5);
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none; /* So it doesn't interfere with click */
+            transition: background-color 0.2s;
+        }
+        .video-thumbnail-container:hover .play-button-overlay {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        .video-title {
+            padding: 12px 15px;
+            margin: 0;
+            font-size: 1.1em;
+            font-weight: 500;
+            color: var(--text-color);
+            background-color: var(--secondary-bg-alt);
+            border-top: 1px solid var(--border-color);
+        }
+        .video-player-container {
+            width: 100%;
+            aspect-ratio: 16 / 9; /* For responsive iframe */
+            background-color: #000;
+        }
+        .video-player-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        footer {
+            text-align: center;
+            padding: 35px 0;
+            margin-top: 50px;
+            color: #999;
+            font-size: 0.95em;
+            border-top: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container" style="display: flex; align-items: center;">
+            <div class="logo-container">
+                <img src="bmixer.png" alt="BMixer+ Logo">
+            </div>
+            <div class="title-container">
+                <h1>BMixer+</h1>
+                <p class="tagline">Ultimate Material Mixer & Painter Addon for Blender</p>
+            </div>
+        </div>
+    </header>
+
+    <nav id="navbar">
+        <div class="container">
+            <ul>
+                <li><a href="#introduction">Introduction</a></li>
+                <li><a href="#installation">Installation</a></li>
+                <li><a href="#getting-started">Getting Started</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#videos">Video Tutorials</a></li>
+                <li><a href="#best-results">Best Results</a></li>
+                <li><a href="#troubleshooting">Troubleshooting</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <section id="introduction">
+            <h2>Welcome to BMixer+</h2>
+            <p>BMixer+ is a powerful and intuitive addon for Blender (version 4.0 and newer) designed to revolutionize your material creation and texturing workflow. It provides a layer-based system for advanced triplanar material mixing, seamless PBR texture integration, procedural masking, anti-tiling solutions, and direct 3D brush-based painting capabilities.</p>
+            <p>Whether you're texturing complex models without traditional UVs, quickly iterating on material ideas, or adding detailed painted effects, BMixer+ aims to be your go-to tool. This comprehensive document will guide you through its installation, core concepts, features, and best practices to help you unlock its full potential.</p>
+        </section>
+
+        <section id="installation">
+            <h2>Installation</h2>
+            <p>Installing BMixer+ is a standard Blender addon installation process. You will need the <code>BMixer+.zip</code> file (ensure you do not unzip this file beforehand).</p>
+            <ol>
+                <li>Launch Blender (version 4.0 or newer is required).</li>
+                <li>Navigate to <code>Edit > Preferences...</code> from the top menu bar.
+                    <div class="/images/preferences.png"></div>
+                </li>
+                <li>In the Blender Preferences window, select the <code>Add-ons</code> tab from the left sidebar.</li>
+                <li>Click the <code>Install...</code> button, typically located at the top right of the Add-ons section.
+                    <div class="/images/install.png"></div>
+                </li>
+                <li>
+                    A file browser will open. Navigate to the directory where you saved the <code>BMixer+.zip</code> file. Select the <code>.zip</code> file itself and click the <code>Install Add-on</code> button.
+                    <div class="warning">
+                        <p><strong>Crucial:</strong> You must select the <code>.zip</code> file directly. Do NOT extract the contents of the .zip file and try to install individual <code>.py</code> files.</p>
+                    </div>
+                </li>
+                <li>After successful installation, BMixer+ will appear in the add-on list. You might need to type "BMixer" into the search bar to find it quickly.</li>
+                <li>Enable the addon by checking the box next to its name: "Material: BMixer+".
+                </li>
+                <li>The BMixer+ panel should now be available. You can close the Preferences window.</li>
+            </ol>
+            <p>To access the BMixer+ panel, go to the 3D Viewport, press the <code>N</code> key to toggle the Sidebar (if it's not already visible), and look for a tab labeled "BMixer".</p>
+             <div class="note">
+                <p>If the addon does not appear after installation, or if you encounter issues, check the Blender System Console for error messages (Window > Toggle System Console). This can provide clues to what went wrong.</p>
+            </div>
+        </section>
+
+        <section id="getting-started">
+            <h2>Getting Started: Your First BMixer+ Material</h2>
+            <p>Let's walk through creating a basic material using BMixer+:</p>
+            <ol>
+                <li>
+                    <strong>Select Your Target:</strong> In the 3D Viewport, select the mesh object you wish to texture. BMixer+ works best with mesh objects.
+                </li>
+                <li>
+                    <strong>Access the Panel:</strong> Press <code>N</code> to open the Sidebar (if hidden) and click on the "BMixer" tab.
+                </li>
+                <li>
+                    <strong>Initialize BMixer+:</strong>
+                    <ul>
+                        <li>If your selected object has no existing material, the panel will prompt you. Click <code>Create BMixer Material</code>. This adds a new material to your object and sets up the BMixer+ node tree.</li>
+                        <li>If an active material exists but isn't a BMixer+ material, click <code>Initialize BMixer</code>. This will adapt the current material for BMixer+.</li>
+                    </ul>
+                     <div class="tip"><p>It's generally recommended to start with a fresh BMixer+ material for clarity, especially when learning.</p></div>
+                </li>
+                <li>
+                    <strong>Add Your First Layer:</strong>
+                    <ul>
+                        <li>In the "Texture Layers" section of the panel, click the <code>+</code> (Add Layer) button. A new layer (e.g., "Layer 1") will be created and automatically selected. This first layer often serves as the base material.</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Load Textures for the Layer:</strong>
+                    <ul>
+                        <li>With the new layer selected, its properties will appear below the layer list. Expand the "Texture Maps" section.</li>
+                        <li>For "Base Color," click the folder icon next to the path field and browse to select your base color (albedo/diffuse) texture image.</li>
+                        <li>To add a normal map, check the <code>Use Normal Map</code> box, then click the folder icon for "Normal Map Path" to load your normal map texture.
+                            <div class="note"><p>BMixer+ expects standard PBR texture maps. Ensure your Normal Map is in the correct format (e.g., Tangent Space).</p></div>
+                        </li>
+                        <li>Similarly, enable and load textures for "Roughness Map," "Metallic Map," etc., as needed.</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Adjust Layer Transform (Optional):</strong>
+                    <ul>
+                        <li>Expand the "Transform" section. Here you can adjust the <code>Scale</code>, <code>Location</code> (offset), and <code>Rotation</code> of the triplanar projection for this layer to control how the textures map onto your object.</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Observe Real-time Updates:</strong>
+                    <ul>
+                        <li>Ensure your 3D Viewport is in "Material Preview" or "Rendered" mode to see the material.</li>
+                        <li>By default, <code>Sync Real Time</code> (at the top of the BMixer+ panel) is enabled. This means changes you make should update the material in the viewport almost instantly. If you experience performance issues with very complex materials, you can uncheck this and click the <code>Apply Changes</code> button manually.</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Stack More Layers:</strong>
+                    <ul>
+                        <li>Click the <code>+</code> button again to add another layer on top. This new layer can have its own set of textures and transform properties.</li>
+                        <li>You can then use features like <code>Layer Alpha</code>, <code>Layer Mask</code>, <code>Selective Blending</code>, or <code>Brush Mode</code> to control how this top layer blends with the layer(s) beneath it. For example, add a "Rust" layer on top of a "Metal" base layer and use a Layer Mask to reveal the rust in specific areas.</li>
+                    </ul>
+                </li>
+            </ol>
+            <p>This covers the fundamental workflow. BMixer+ offers many more controls, which are detailed in the "Features" section. Experimentation is key to mastering the tool!</p>
+        </section>
+
+        <section id="features">
+            <h2>Features Deep Dive</h2>
+            <p>BMixer+ is packed with features to give you fine-grained control over your materials. These are primarily accessed via the BMixer+ panel in the N-Sidebar.</p>
+
+            <h3>Global Settings (Top of Panel)</h3>
+            <div class="feature-item">
+                <strong>Sync Real Time:</strong>
+                <p>When checked, any change made in the panel immediately updates the material node tree and viewport display. This is great for instant feedback.
+                <em>Why use it?</em> For quick iterations and immediate visual confirmation.
+                <em>When to disable?</em> On very complex materials with many layers or high-res textures, real-time updates might cause slight lag. Disable it and use "Apply Changes" for smoother editing in such cases.</p>
+            </div>
+            <div class="feature-item">
+                <strong>Apply Changes:</strong>
+                <p>If "Sync Real Time" is off, this button manually rebuilds the material with all current settings.
+                <em>Why use it?</em> To update the material after making several changes when real-time sync is disabled.</p>
+            </div>
+            <div class="feature-item">
+                <strong>Rebuild Material:</strong>
+                <p>This button forcefully reconstructs the entire BMixer+ node tree from scratch based on current panel settings.
+                <em>Why use it?</em> Useful for troubleshooting if the material seems broken, or to re-initialize a material if its internal BMixer+ data was somehow corrupted. Also used to convert an existing non-BMixer material to use BMixer+.</p>
+            </div>
+
+            <h4>Global Settings Section</h4>
+            <h5>Engine & Projection</h5>
+            <ul class="feature-list">
+                <li><strong>Advanced Engine:</strong> Toggles between a simpler triplanar projection (faster, good for basic needs) and a more advanced algorithm (higher quality blending, more robust for complex surfaces and normal spaces).
+                    <em>Why use Advanced?</em> For smoother transitions between projection axes and more accurate results, especially with detailed normal maps or when using Local Normal Space.
+                </li>
+                <li><strong>Normal Space:</strong>
+                    <ul>
+                        <li><code>World Space</code>: Projection blending is based on world-axis-aligned normals. Textures might "swim" if the object rotates relative to the world.</li>
+                        <li><code>Local Space</code>: Projection blending uses the object's local geometry normals. Textures will generally "stick" better to the object's surface as it rotates or deforms.
+                        <em>Why choose?</em> "Local" is often preferred for animated/deforming objects. "World" can be simpler for static scenes or specific effects.
+                        </li>
+                    </ul>
+                </li>
+                <li><strong>Triplanar Noise Mapping:</strong> If enabled, procedural noise textures (used for Layer Masks, Anti-Tiling features, Projection Blend Noise) are also triplanar projected.
+                    <em>Why use it?</em> Prevents stretching and distortion of these noise patterns on complex or non-uniformly scaled objects, leading to more natural-looking procedural effects.
+                </li>
+                <li><strong>Blend Noise (Projection Blend Noise):</strong> Adds a noise pattern to the transition zones between the X, Y, and Z triplanar projections.
+                    <em>Why use it?</em> Helps to break up the sometimes-sharp, linear blend lines that can occur with basic triplanar mapping, making the overall texture feel more organic.
+                    <ul>
+                        <li><code>Noise Scale</code>: Controls the size/frequency of this blend noise. Larger values = larger noise patterns.</li>
+                        <li><code>Noise Strength</code>: Controls the intensity/visibility of the blend noise effect.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h5>Global Displacement</h5>
+            <ul class="feature-list">
+                <li><strong>Displacement Scale:</strong> A master multiplier for the overall strength of the displacement effect for the entire material. This is applied *after* individual layer displacement contributions are summed.
+                    <em>Why use it?</em> To quickly scale the entire displacement effect up or down without changing individual layer settings.
+                </li>
+                <li><strong>Displacement Midlevel:</strong> Defines the value in the displacement map(s) that corresponds to no displacement (zero height). For typical greyscale displacement maps, this is 0.5 (mid-grey).
+                    <em>Why use it?</em> Ensures that areas of your displacement map intended to be neutral (no push or pull) are correctly interpreted.
+                </li>
+            </ul>
+
+            <h3>Texture Layers Section</h3>
+            <div class="feature-item">
+                <strong>Layer List & Management:</strong>
+                <p>Displays all layers in a stack. The order is crucial: layers higher in the list are rendered on top of (and can mask or blend with) layers lower in the list.
+                Use the <code>+</code> button to add a new layer, <code>-</code> to remove the selected layer, and <code>▲</code>/<code>▼</code> to move the selected layer up or down in the stack.</p>
+            </div>
+
+            <h4>Active Layer Settings (Properties for the selected layer)</h4>
+            <div class="feature-item">
+                <strong>Visibility (Eye Icon):</strong> Toggles the visual contribution of this layer. Hidden layers are not processed or rendered.
+            </div>
+            <div class="feature-item">
+                <strong>Layer Name:</strong> Allows you to give a descriptive name to the layer (e.g., "Base Metal," "Painted Surface," "Rust Details"). Good naming is essential for managing complex materials.
+            </div>
+
+            <h5>Selective Blending (Only available for layers above the first/base layer)</h5>
+            <ul class="feature-list">
+                <li><strong>Use Selective Blending:</strong> When enabled, this layer will only attempt to blend with the specific underlying layers that you explicitly check in the list that appears below ("Blend only with selected layers below:").
+                    <em>Why use it?</em> For complex material interactions. Example: You have a "Metal Base," then a "Paint" layer, then a "Scratches" layer. You want the "Scratches" to reveal the "Metal Base" but not the "Paint" layer directly below it if paint was also scratched. You would make "Scratches" selectively blend *only* with "Metal Base." If disabled, the layer blends with the composite result of all layers beneath it.
+                </li>
+            </ul>
+
+            <h5>Texture Maps</h5>
+            <p>This is where you define the core PBR (Physically Based Rendering) properties for the layer using image textures or plain values.</p>
+            <ul class="feature-list">
+                <li><strong>PBR Maps (Base Color, Normal, Roughness, Metallic, AO, Displacement):</strong>
+                    <ul>
+                        <li>For each map type, click the folder icon to browse and select an image texture.</li>
+                        <li><code>Use [Map Name]</code> (checkbox, for non-BaseColor maps): This must be checked for the respective map to be active and used by the layer. If unchecked, a default value is used.</li>
+                        <li><code>[Map Name] Strength/Scale Factor</code>: Fine-tunes the influence of the map for this specific layer.
+                            <ul>
+                                <li><strong>Base Color Strength:</strong> Mixes between black (0.0) and the full texture color (1.0). Useful for fading a texture.</li>
+                                <li><strong>Normal Strength:</strong> Controls the perceived depth/intensity of the normal map.</li>
+                                <li><strong>Roughness/Metallic Strength:</strong> Multiplies the map's value, allowing you to make a surface generally more or less rough/metallic than the texture dictates.</li>
+                                <li><strong>AO Strength:</strong> Mixes between white (no Ambient Occlusion effect) and the full AO map, controlling how much shadowing the AO map contributes.</li>
+                                <li><strong>Displacement Layer Scale:</strong> Controls this layer's individual contribution to the overall displacement. Useful for balancing displacement effects from multiple layers.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><strong>Plain Color (specific to Base Color map):</strong>
+                    <ul>
+                        <li><code>Use Plain Color</code>: If checked, the layer's Base Color will be a solid color defined below, ignoring any texture in the "Base Color Path."</li>
+                        <li><code>Plain Color</code>: A color picker to choose the solid color.</li>
+                    </ul>
+                </li>
+                 <li><strong>Color Tint (specific to Base Color, only if 'Use Plain Color' is OFF):</strong>
+                    <ul>
+                        <li><code>Use Color Tint</code>: Enables tinting of the Base Color texture image.</li>
+                        <li><code>Tint Color</code>: The color used to tint the texture. The tinting is usually a multiply operation.</li>
+                        <li><code>Tint Strength</code>: Controls how strongly the tint color affects the original texture (0 = no tint, 1 = full tint effect).</li>
+                    </ul>
+                </li>
+                <li><strong>Layer Alpha (for layers above the first/base layer):</strong> Controls the overall opacity of this layer when it blends over the layers below it. A value of 1.0 is fully opaque, 0.0 is fully transparent. This is a simple, uniform opacity. For more complex masking, use Layer Mask or Brush Mode.</li>
+                <li><strong>IOR (Index of Refraction):</strong> Sets the IOR value for this specific layer. BMixer+ blends IOR values from layers down the stack based on their masks/alpha. This affects how light bends when passing through or reflecting off the material, important for dielectrics like glass, water, or plastics.</li>
+                <li><strong>Emission:</strong>
+                    <ul>
+                        <li><code>Has Emission</code>: Check to enable emissive (light-emitting) properties for this layer.</li>
+                        <li><code>Emission Map</code>: Path to an image texture defining emissive areas and colors. White areas in the map emit strongly, black areas emit nothing. Colors in the map define the emission hue.</li>
+                        <li><code>Emission Strength</code>: A multiplier for the brightness of the emission.</li>
+                        <li><code>Emission Color</code>: A solid color used if no Emission Map is provided, or it can be used to tint the Emission Map.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h5>Transform</h5>
+            <p>Controls the triplanar projection mapping for this layer's textures.</p>
+            <ul class="feature-list">
+                <li><strong>Scale:</strong> Uniformly scales the projected textures. Smaller values = larger texture appearance (less tiling), larger values = smaller texture appearance (more tiling).</li>
+                <li><strong>Location:</strong> Offsets the texture projection along the X and Y axes (relative to the projection planes). Useful for shifting texture placement.</li>
+                <li><strong>Rotation:</strong> Rotates the texture projection around the Z-axis (relative to the projection planes).</li>
+            </ul>
+
+            <h5>Face Blending</h5>
+            <p>Determines the sharpness or softness of transitions between textures projected from the X, Y, and Z axes.</p>
+            <ul class="feature-list">
+                <li><strong>Advanced Face Blend (checkbox):</strong> Toggles between simple and detailed power controls.
+                    <ul>
+                        <li><em>Simple Mode (checkbox OFF):</em> Uses one global power value:
+                            <ul>
+                                <li><code>Face Blend Power</code> (if Global "Simple Engine" is active): Controls blend sharpness for X/Y/Z.</li>
+                                <li><code>Global Power</code> (if Global "Advanced Engine" is active): Controls blend sharpness for X/Y/Z.</li>
+                            </ul>
+                        </li>
+                        <li><em>Detailed Mode (checkbox ON):</em> Allows individual power control for each axis:
+                            <ul>
+                                <li>If Global "Simple Engine" is active: <code>X-Axis Power</code>, <code>Y-Axis Power</code>.</li>
+                                <li>If Global "Advanced Engine" is active: <code>X-Axis Power</code>, <code>Y-Axis Power</code>, <code>Z-Axis Power</code>.</li>
+                            </ul>
+                             Higher power values create sharper, more defined transitions; lower values create softer, more blended transitions.
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h5>Layer Mask (for layers above the first/base layer)</h5>
+            <p>This powerful feature uses a procedural noise texture to control the visibility of the current layer, effectively masking it to reveal layers below. It's excellent for creating natural wear, grunge, or patterned blending.</p>
+            <ul class="feature-list">
+                <li><strong>Enable Layer Mask:</strong> Toggles the procedural noise mask on/off for this layer.</li>
+                <li><strong>Seed:</strong> Changes the random pattern of the noise. Experiment to find a pattern you like.</li>
+                <li><strong>Scale, Detail, Roughness, Distortion:</strong> Standard Blender noise texture parameters that control the appearance of the mask.
+                    <ul>
+                        <li><code>Scale</code>: Size of the noise features.</li>
+                        <li><code>Detail</code>: Adds finer details to the noise.</li>
+                        <li><code>Roughness</code>: Controls the jaggedness or smoothness of the noise.</li>
+                        <li><code>Distortion</code>: Warps or swirls the noise pattern.</li>
+                    </ul>
+                </li>
+                <li><strong>Threshold:</strong> The cutoff point for the mask. Values in the noise below the threshold become transparent, above become opaque (or vice-versa if inverted).</li>
+                <li><strong>Smoothness:</strong> Controls the softness of the transition around the threshold. Higher values create a more gradual, feathered edge.</li>
+                <li><strong>Invert Mask:</strong> Swaps the opaque and transparent areas of the generated noise mask.</li>
+            </ul>
+
+            <h5>Anti-Tiling</h5>
+            <p>Provides techniques to reduce the noticeable repetition (tiling) that can occur when using seamless textures over large surfaces.</p>
+            <ul class="feature-list">
+                <li><strong>Voronoi Rotation:</strong>
+                    <ul>
+                        <li><code>Use Voronoi Rotation</code>: Applies a random rotation to "cells" of the texture based on an underlying Voronoi pattern.
+                        <em>How it helps:</em> By rotating patches of the texture differently, it breaks up the straight lines and obvious repetition of a standard tiled texture.
+                        </li>
+                        <li><code>Scale</code> (Voronoi): Size of the Voronoi cells. Larger scale = larger rotated patches.</li>
+                        <li><code>Randomness</code> (Voronoi): Randomness factor of the Voronoi pattern.</li>
+                        <li><code>Strength</code> (Rotation): How much maximum rotation is applied to each cell.</li>
+                    </ul>
+                </li>
+                <li><strong>Color Variation (Noise):</strong>
+                    <ul>
+                        <li><code>Use Color Variation</code>: Blends the layer's Base Color with a specified <code>Dark Color</code> using a procedural noise pattern.
+                        <em>How it helps:</em> Adds subtle (or strong) color variations across the surface, making the texture feel less uniform and hiding tiling by introducing unique color splotches or gradients.
+                        </li>
+                        <li><code>Scale, Detail, Roughness</code> (Noise): Control the appearance of the color variation noise pattern.</li>
+                        <li><code>Strength</code> (Darkening): How strongly the <code>Dark Color</code> is blended with the original Base Color.</li>
+                        <li><code>Dark Color</code>: The color to blend with (typically a darker shade related to the base texture, or a complementary color for specific effects).</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h5>Brush Mode (for layers above the first/base layer)</h5>
+            <p>Enables direct 3D painting on the model to create a custom mask for the layer. This is ideal for artistic control and adding specific details where procedural masks are insufficient.</p>
+            <ul class="feature-list">
+                <li><strong>Enable Brush Mode:</strong> Activates brush painting for this layer. The layer will only be visible where you paint (white on the mask).
+                    <ul>
+                        <li><code>Smart UV Project on Paint Start</code>: If checked, BMixer+ will automatically perform a Smart UV Project operation onto a dedicated UV map (default: <code>_bmx_brush_uvs</code>) when you click "Start Painting."
+                        <em>Why use it?</em> Excellent for quick setups on models without existing UVs suitable for painting, or if you want a fresh UV layout just for the painted mask.
+                        </li>
+                        <li><code>Brush Power</code>: A multiplier for the opacity/strength of your brush strokes as they are applied to the mask. Does not affect Blender's brush settings, but scales the result.</li>
+                        <li><code>Start Painting / Stop Painting</code> button:
+                            <ul>
+                                <li>Clicking "Start Painting" switches Blender to Texture Paint mode, automatically sets up the active layer's brush mask image as the paint target, and selects the correct brush UV map.</li>
+                                <li>Clicking "Stop Painting" (when active) returns you to Object Mode.</li>
+                            </ul>
+                            <em>Workflow:</em> Enable Brush Mode, click Start Painting. Blender enters Texture Paint mode. Use Blender's standard paint tools (Brush, Eraser, Smear, etc.) to paint your mask. White paint makes the layer visible, black paint makes it transparent.
+                        </li>
+                        <li><code>Clear (X button)</code>: Completely clears the current layer's brush mask, filling it with black (making the layer fully transparent via this mask).</li>
+                        <li><em>Info:</em> Displays the name of the internally managed brush mask image (e.g., <code>_bmx_brush_ObjectName_LayerName</code>) and the UV map used for painting (<code>_bmx_brush_uvs</code>).</li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+
+        <section id="videos">
+            <h2>Videos</h2>
+            <div id="video-gallery">
+                <!-- Videos will be injected here by JavaScript -->
+            </div>
+
+        </section>
+
+        <section id="best-results">
+            <h2>Tips for Best Results & Workflow Efficiency</h2>
+            <ul class="feature-list">
+                <li><strong>PBR Texture Quality is Key:</strong> Start with high-quality, well-authored PBR textures (Albedo, Normal, Roughness, Metallic, AO, Height/Displacement). BMixer+ enhances their application but cannot magically fix inherently flawed textures. Aim for consistent texel density if mixing textures from different sources.</li>
+                <li><strong>Iterative Layering:</strong> Build your materials layer by layer. Start with a base material (e.g., metal, wood, plastic), then add layers for paint, dirt, wear, decals, etc. This makes complex materials manageable.</li>
+                <li><strong>Leverage Procedural Masks:</strong> The "Layer Mask" feature is incredibly powerful for creating natural-looking wear and tear, dust accumulation, or blending different material types (e.g., moss growing on stone). Experiment with noise settings and the threshold/smoothness.</li>
+                <li><strong>Combine Procedural and Painted Masks:</strong> Use a procedural "Layer Mask" for broad effects, then switch to "Brush Mode" on a layer above (or the same layer if you modify its mask setup) to paint in specific details or refine the procedural mask's edges.</li>
+                <li><strong>Subtlety in Anti-Tiling:</strong> Anti-tiling features (Voronoi Rotation, Color Variation) are best used subtly. Their goal is to gently break obvious repetition, not to be a visually dominant feature. Overuse can look artificial.</li>
+                <li><strong>Understand Displacement:</strong>
+                    <ul>
+                        <li>BMixer+ supports per-layer displacement contribution. Ensure your mesh has sufficient geometry (subdivisions) if you're using actual displacement (Material Settings > Settings > Surface > Displacement: Displacement Only or Displacement and Bump). For lower-poly meshes, relying on Normal maps and Bump is often more performant.</li>
+                        <li>Use the "Global Displacement Scale" for overall control and individual layer "Displacement Scale Factor" for fine-tuning contributions. Midlevel should typically be 0.5.</li>
+                    </ul>
+                </li>
+                <li><strong>World vs. Local Normal Space:</strong> For static objects or architectural visualizations, "World Space" projection blending is often sufficient. For animated characters or objects that rotate/deform where textures need to "stick" to the local surface orientation, "Local Space" (using Object Normals) generally provides superior results.</li>
+                <li><strong>Performance Considerations:</strong>
+                    <ul>
+                        <li>For very complex materials (many layers, high-res textures, advanced features enabled), temporarily disable <code>Sync Real Time</code> and use the <code>Apply Changes</code> button to avoid slowdowns during intensive editing.</li>
+                        <li>The "Simple Engine" (Global Settings) is generally faster than the "Advanced Engine." Use Simple for quick mockups or less critical surfaces.</li>
+                    </ul>
+                </li>
+                <li><strong>UVs for Brush Mode:</strong> While <code>Smart UV Project on Paint Start</code> provides a quick solution for brush mask UVs, for optimal painting results without distortion (especially on complex organic shapes), creating a well-unwrapped UV map named <code>_bmx_brush_uvs</code> (or whatever you set in layer properties) beforehand can be beneficial.</li>
+                <li><strong>Naming Conventions:</strong> Keep your layers well-named (e.g., "Steel Base," "Red Paint," "Edge Wear," "Dust Top"). This becomes invaluable when working with materials that have many layers.</li>
+                <li><strong>Save Incrementally:</strong> When working on complex materials, save your Blender file incrementally (e.g., `MyProject_v01.blend`, `MyProject_v02.blend`). This is good practice in general.</li>
+                <li><strong>Reference Images:</strong> Always work from reference images when trying to replicate real-world materials. This will guide your texture choices and layering decisions.</li>
+            </ul>
+        </section>
+
+        <section id="troubleshooting">
+            <h2>Troubleshooting Common Issues</h2>
+            <dl>
+                <dt>Addon doesn't appear after installation / Panel is missing:</dt>
+                <dd>
+                    <ul>
+                        <li>Ensure you installed the <code>.zip</code> file directly, without unzipping it first.</li>
+                        <li>Verify you are using a compatible Blender version (4.0+).</li>
+                        <li>Check the Blender System Console (Window > Toggle System Console) for any error messages during addon registration or enabling. These messages often provide clues.</li>
+                        <li>Try restarting Blender after installation.</li>
+                        <li>Ensure no other addon is conflicting (try disabling other recently installed addons temporarily).</li>
+                    </ul>
+                </dd>
+
+                <dt>Material appears black or pink (missing textures):</dt>
+                <dd>
+                    <ul>
+                        <li>Double-check all texture paths in the BMixer+ panel for each layer. Ensure the image files exist at those locations.</li>
+                        <li>If you moved your Blender file or texture files, paths might be broken. Use Blender's File > External Data > Find Missing Files, or re-link textures manually in BMixer+.</li>
+                        <li>Pink usually indicates Blender cannot find the image file specified.</li>
+                    </ul>
+                </dd>
+
+                <dt>Changes in the panel are not updating in the viewport:</dt>
+                <dd>
+                    <ul>
+                        <li>Make sure <code>Sync Real Time</code> is checked at the top of the BMixer+ panel.</li>
+                        <li>If <code>Sync Real Time</code> is unchecked, you must click <code>Apply Changes</code> to see updates.</li>
+                        <li>Ensure your 3D Viewport is in "Material Preview" or "Rendered" shading mode. Solid mode will not show material changes.</li>
+                        <li>Very rarely, a full <code>Rebuild Material</code> might be needed if the node tree got into an inconsistent state.</li>
+                    </ul>
+                </dd>
+
+                <dt>Textures look stretched or incorrectly mapped:</dt>
+                <dd>
+                    <ul>
+                        <li>Adjust the <code>Scale</code>, <code>Location</code>, and <code>Rotation</code> in the "Transform" section for the affected layer(s).</li>
+                        <li>For procedural noises (Layer Mask, Anti-Tiling), enable <code>Triplanar Noise Mapping</code> in Global Settings if they appear stretched.</li>
+                        <li>Experiment with "World Space" vs. "Local Space" in Global "Normal Space" settings, especially if the object is animated or deformed.</li>
+                    </ul>
+                </dd>
+
+                <dt>Brush painting isn't working or appears on the wrong UV map:</dt>
+                <dd>
+                    <ul>
+                        <li>Ensure "Enable Brush Mode" is checked for the layer you want to paint.</li>
+                        <li>Click "Start Painting" for the specific layer. This sets up the correct paint slot and UV map.</li>
+                        <li>Verify the correct UV map (usually <code>_bmx_brush_uvs</code>) is active in the UV Editor and selected in Blender's Texture Paint mode slots if you are manually checking. BMixer+ tries to handle this automatically when you click "Start Painting".</li>
+                        <li>If <code>Smart UV Project on Paint Start</code> is used, ensure the projection created reasonable UVs. You can inspect the <code>_bmx_brush_uvs</code> map in the UV Editor.</li>
+                    </ul>
+                </dd>
+                <dt>Displacement isn't visible or is too strong/weak:</dt>
+                <dd>
+                    <ul>
+                        <li>Ensure the material's displacement method is set correctly in Blender's material settings: Properties Panel > Material Tab > Settings > Surface > Displacement (set to "Displacement Only" or "Displacement and Bump").</li>
+                        <li>Your mesh needs enough subdivisions for actual displacement to be visible. Add a Subdivision Surface modifier or use adaptive subdivision (Cycles experimental feature).</li>
+                        <li>Adjust the <code>Global Displacement Scale</code> and the individual layer's <code>Displacement Scale Factor</code>.</li>
+                        <li>Verify the <code>Displacement Midlevel</code> (Global Settings) is appropriate for your displacement maps (usually 0.5).</li>
+                    </ul>
+                </dd>
+            </dl>
+        </section>
+
+
+        <section id="contact">
+            <h2>Support, Feedback & Contact</h2>
+            <p>Your feedback is valuable for improving BMixer+! For support, bug reports, feature requests, or to share your creations:</p>
+            <ul>
+                <li><strong>Blender Market:</strong> <a href="https://superhivemarket.com/creators/kaansoyler" target="_blank">Blender Market</a> (Use the support/contact options there)</li>
+                <li><strong>Gumroad:</strong> <a href="kaansoyler.gumroad.com/l/bmixer" target="_blank">Gumroad</a> (Reply to your purchase email or use Gumroad's contact features)</li>
+            </ul>
+            <p>You can also find my other projects and general contact information here:</p>
+            <ul>
+                <li><strong>Personal Website:</strong> <a href="https://verlorengest.github.io/kaansoyler/index" target="_blank">Click</a></li>
+                <li><strong>GitHub Profile:</strong> <a href="https://github.com/verlorengest/" target="_blank">Click</a></li>
+            </ul>
+        </section>
+    </div>
+
+    <footer>
+        <p>© <span id="currentYear"></span> Kaan Soyler. BMixer+ Documentation. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // --- Navbar Active Link Highlighting ---
+        const sections = document.querySelectorAll("section");
+        const navLiAnchors = document.querySelectorAll("nav ul li a");
+        const navBar = document.querySelector("nav");
+
+        window.addEventListener("scroll", () => {
+            let current = "";
+            sections.forEach((section) => {
+                const sectionTop = section.offsetTop;
+                // Adjust for navbar height for more accurate highlighting
+                if (pageYOffset >= (sectionTop - navBar.offsetHeight - 20)) {
+                    current = section.getAttribute("id");
+                }
+            });
+
+            navLiAnchors.forEach((a) => {
+                a.classList.remove("active");
+                if (a.getAttribute("href") === "#" + current) {
+                    a.classList.add("active");
+                }
+            });
+        });
+
+        // --- Dynamic Year for Footer ---
+        document.getElementById("currentYear").textContent = new Date().getFullYear();
+
+        // --- Video Tutorials Section ---
+        const videoTutorials = [
+            // TO ADD VIDEOS:
+            // Add objects here in the format: { url: "FULL_YOUTUBE_WATCH_URL_OR_SHARE_URL", title: "Your Video Title" }
+            // Example:
+            // { url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ", title: "BMixer+ Introduction" },
+            // { url: "https://youtu.be/L_jWHffIx5E", title: "Advanced Layer Masking Techniques" },
+            // { url: "https://www.youtube.com/embed/IEDEtZ4UVtI", title: "PBR Workflow with BMixer+"}
+            { url: "https://www.youtube.com/watch?v=iZi5c0x7ZJo", title: "Texturing an Axe with BMixer+" },
+        ];
+
+        function extractYouTubeID(url) {
+            let videoID = '';
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            if (match && match[2].length === 11) {
+                videoID = match[2];
+            }
+            return videoID;
+        }
+
+        function createVideoItem(videoInfo) {
+            const videoID = extractYouTubeID(videoInfo.url);
+            if (!videoID) {
+                console.warn("Could not extract YouTube ID from URL:", videoInfo.url);
+                return null;
+            }
+
+            const thumbnailUrl = `https://img.youtube.com/vi/${videoID}/hqdefault.jpg`;
+
+            const videoItem = document.createElement('div');
+            videoItem.className = 'video-item';
+
+            const thumbnailContainer = document.createElement('div');
+            thumbnailContainer.className = 'video-thumbnail-container';
+            
+            const thumbnailImg = document.createElement('img');
+            thumbnailImg.src = thumbnailUrl;
+            thumbnailImg.alt = videoInfo.title + " Thumbnail";
+            thumbnailImg.loading = "lazy"; // Lazy load thumbnails
+
+            const playOverlay = document.createElement('div');
+            playOverlay.className = 'play-button-overlay';
+            playOverlay.innerHTML = '►'; // Play symbol
+
+            thumbnailContainer.appendChild(thumbnailImg);
+            thumbnailContainer.appendChild(playOverlay);
+
+            const videoTitle = document.createElement('h4');
+            videoTitle.className = 'video-title';
+            videoTitle.textContent = videoInfo.title;
+
+            const playerContainer = document.createElement('div');
+            playerContainer.className = 'video-player-container';
+            playerContainer.style.display = 'none'; // Initially hidden
+
+            thumbnailContainer.addEventListener('click', () => {
+                thumbnailContainer.style.display = 'none';
+                videoTitle.style.display = 'none'; // Also hide title when player is active for more space
+                playerContainer.style.display = 'block';
+                const iframe = document.createElement('iframe');
+                iframe.src = `https://www.youtube.com/embed/${videoID}?autoplay=1&rel=0`;
+                iframe.setAttribute('frameborder', '0');
+                iframe.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+                iframe.setAttribute('allowfullscreen', '');
+                playerContainer.innerHTML = ''; // Clear previous if any (though not strictly needed here)
+                playerContainer.appendChild(iframe);
+            });
+
+            videoItem.appendChild(thumbnailContainer);
+            videoItem.appendChild(videoTitle);
+            videoItem.appendChild(playerContainer);
+            
+            return videoItem;
+        }
+
+        function populateVideoGallery() {
+            const gallery = document.getElementById('video-gallery');
+            if (!gallery) return;
+
+            if (videoTutorials.length === 0) {
+                gallery.innerHTML = "<p>No video tutorials available at the moment. Check back soon!</p>";
+                return;
+            }
+
+            videoTutorials.forEach(videoInfo => {
+                const videoElement = createVideoItem(videoInfo);
+                if (videoElement) {
+                    gallery.appendChild(videoElement);
+                }
+            });
+        }
+
+        // Initialize video gallery on page load
+        document.addEventListener('DOMContentLoaded', populateVideoGallery);
+
+    </script>
+
+</body>
+</html>
