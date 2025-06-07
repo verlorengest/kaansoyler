@@ -1,325 +1,288 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Boring Games Hub</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      font-family: monospace, 'Courier New';
-      background: #0a0a1f;
-      color: #c0c0c0;
-      line-height: 1.6;
-      overflow-x: hidden;
-    }
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 0 20px;
-    }
-    header {
-      background: #10102a;
-      color: #e0e0e0;
-      padding: 20px 0;
-      text-align: center;
-      border-bottom: 3px solid #00ffff;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-    }
-    header h1 {
-      font-size: 2.5em;
-      font-weight: normal;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: #00ffff;
-      text-shadow: 2px 2px #ff00ff;
-      background: none;
-      -webkit-background-clip: unset;
-      -webkit-text-fill-color: unset;
-      background-clip: unset;
-      text-fill-color: unset;
-    }
-    header p {
-      font-size: 0.9em;
-      color: #a0a0a0;
-      margin-top: 8px;
-    }
-    main {
-      padding: 30px 0;
-    }
-    .game-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 30px;
-      list-style: none;
-    }
-    .game-item {
-      background: #181830;
-      border: 2px solid #303050;
-      border-radius: 5px;
-      box-shadow: 5px 5px 0px #000000;
-      overflow: hidden;
-      transition: transform 0.2s ease-out, box-shadow 0.2s ease-out, border-color 0.2s ease-out;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-    }
-    .game-item:hover {
-      transform: translate(-3px, -3px);
-      box-shadow: 8px 8px 0px #00ffff;
-      border-color: #00ffff;
-    }
-    .game-item-badge {
-      position: absolute;
-      top: 10px;
-      right: -2px;
-      background-color: #ff00ff;
-      color: #000000;
-      padding: 3px 8px;
-      font-size: 0.75em;
-      font-weight: bold;
-      border-radius: 0px;
-      border-left: 2px solid #000;
-      border-bottom: 2px solid #000;
-      z-index: 1;
-      text-transform: uppercase;
-    }
-    .game-item-badge.popular {
-      background-color: #00ff00;
-      color: #000000;
-    }
-    .game-item-thumbnail {
-      width: 100%;
-      height: 180px;
-      background-color: #000;
-      overflow: hidden;
-      border-bottom: 2px solid #303050;
-    }
-    .game-item-thumbnail img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.3s ease;
-      image-rendering: pixelated;
-      -ms-interpolation-mode: nearest-neighbor;
-    }
-    .game-item:hover .game-item-thumbnail img {
-      transform: scale(1.05);
-    }
-    .game-item-content {
-      padding: 20px;
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-    }
-    .game-item-title {
-      font-size: 1.4em;
-      color: #00ffff;
-      margin-bottom: 10px;
-      font-weight: normal;
-      text-transform: uppercase;
-    }
-    .game-item-description {
-      font-size: 0.9em;
-      color: #b0b0b0;
-      margin-bottom: 15px;
-      flex-grow: 1;
-      min-height: 60px;
-    }
-    .play-button {
-      display: inline-block;
-      background: #00ffff;
-      color: #000000;
-      padding: 10px 20px;
-      text-decoration: none;
-      border-radius: 3px;
-      font-weight: bold;
-      text-align: center;
-      transition: background 0.2s ease, color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
-      align-self: flex-start;
-      margin-top: auto;
-      box-shadow: 3px 3px 0px #000000;
-      border: 1px solid #000000;
-      text-transform: uppercase;
-    }
-    .play-button:hover,
-    .play-button:focus {
-      background: #ff00ff;
-      color: #ffffff;
-      transform: translate(-1px, -1px);
-      box-shadow: 4px 4px 0px #000000;
-      text-decoration: none;
-      outline: none;
-    }
-    footer {
-      text-align: center;
-      padding: 25px 20px;
-      background: #10102a;
-      margin-top: 40px;
-      color: #808080;
-      border-top: 3px solid #00ffff;
-    }
-    footer p {
-      margin: 0;
-      font-size: 0.85em;
-    }
-    @media (max-width: 768px) {
-      header h1 {
-        font-size: 2em;
-      }
-      .game-list {
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 25px;
-      }
-      .game-item-title {
-        font-size: 1.3em;
-      }
-      .game-item-description {
-        font-size: 0.85em;
-        min-height: 50px;
-      }
-      .play-button {
-        padding: 8px 18px;
-        font-size: 0.9em;
-      }
-    }
-    @media (max-width: 480px) {
-      header h1 {
-        font-size: 1.7em;
-      }
-      header p {
-        font-size: 0.8em;
-      }
-      .game-list {
-        gap: 20px;
-      }
-      .game-item-thumbnail {
-        height: 160px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>-- Kaan Soyler -- CONNECTION ESTABLISHED --</title>
+    <style>
+        body {
+            background-color: #1a1a2e; /* Deep, dark blue/purple */
+            color: #e0e0e0; /* Off-white/light grey text */
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        table.main-layout {
+            width: 800px; /* Fixed width for that old-school feel */
+            margin: 20px auto;
+            border: 1px solid #4a4e69; /* Muted border color */
+            border-collapse: collapse;
+        }
+
+        td {
+            border: 1px solid #4a4e69;
+            padding: 10px;
+            vertical-align: top;
+        }
+
+        #header {
+            background-color: #2a2a3e;
+            text-align: center;
+            padding: 15px;
+            font-size: 1.5em;
+            letter-spacing: 3px;
+            border-bottom: 2px dashed #6a6e89;
+        }
+        #header h1 {
+            margin: 0;
+            color: #9a8c98; /* Muted purple/pink */
+        }
+
+        #navigation {
+            width: 180px;
+            background-color: #232333;
+        }
+
+        #navigation ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #navigation ul li a {
+            display: block;
+            padding: 8px 10px;
+            text-decoration: none;
+            color: #c3b8c5;
+            border-bottom: 1px dotted #4a4e69;
+        }
+
+        #navigation ul li a:hover {
+            background-color: #4a4e69;
+            color: #ffffff;
+        }
+
+        #content {
+            background-color: #1e1e2f;
+        }
+
+        .content-section {
+            display: none; /* Hidden by default, shown by JS */
+            padding: 15px;
+        }
+        .content-section.active {
+            display: block;
+        }
+
+        h2, h3 {
+            color: #9a8c98; /* Muted purple/pink headers */
+            border-bottom: 1px solid #4a4e69;
+            padding-bottom: 5px;
+            margin-top: 0;
+        }
+        h2 { font-size: 1.3em; }
+        h3 { font-size: 1.1em; margin-top: 20px;}
+
+        a {
+            color: #8ebf42; /* A slightly unsettling green for links */
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .product-item {
+            border: 1px dashed #4a4e69;
+            padding: 10px;
+            margin-bottom: 15px;
+            background-color: #232333;
+        }
+        .product-item p {
+            margin-top: 0;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: #4a4e69;
+            color: #e0e0e0;
+            padding: 5px 10px;
+            border: 1px solid #6a6e89;
+            text-decoration: none;
+            margin-right: 5px;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+        .button:hover {
+            background-color: #6a6e89;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        #footer {
+            text-align: center;
+            font-size: 0.8em;
+            padding: 10px;
+            border-top: 2px dashed #6a6e89;
+            color: #9a8c98;
+        }
+
+        /* Simple blinking cursor effect */
+        .cursor {
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+    </style>
 </head>
 <body>
 
-<header>
-  <div class="container">
-    <h1>Boring-Games.com !</h1>
-    <p>Your portal to countless hours of boring!</p>
-  </div>
-</header>
+    <table class="main-layout">
+        <tr>
+            <td colspan="2" id="header">
+                <h1>Kaan Soyler PRESENCE</h1>
+            </td>
+        </tr>
+        <tr>
+            <td id="navigation">
+                <ul>
+                    <li><a href="#" onclick="showSection('home'); return false;">> _HOME_</a></li>
+                    <li><a href="#" onclick="showSection('products'); return false;">> _PRODUCTS_</a></li>
+                    <li><a href="#" onclick="showSection('links'); return false;">> _LINKS_</a></li>
+                    <li><a href="#" onclick="showSection('contact'); return false;">> _CONTACT_</a></li>
+                </ul>
+            </td>
+            <td id="content">
+                <div id="home" class="content-section active">
+                    <h2>// WELCOME_</h2>
+                    <p>System online. Navigating the wired... <span class="cursor">_</span></p>
+                    <p>This is the personal node of Kaan Soyler. Explore the available data streams.</p>
+                    <p>Last Update: <span id="last-update"></span></p>
+                </div>
 
-<main>
-  <div class="container">
-    <section class="game-list">
+                <div id="products" class="content-section">
+                    <h2>// PRODUCTS_</h2>
 
-      <div class="game-item">
-        <div class="game-item-badge popular">Popular</div>
-        <div class="game-item-thumbnail">
-          <img src="https://placehold.co/600x400/00ffff/000?text=Age+of+Empires+Tycoon&font=monospace" alt="Age of Empires Tycoon Thumbnail">
-        </div>
-        <div class="game-item-content">
-          <h3 class="game-item-title">Age of Empires Tycoon</h3>
-          <p class="game-item-description">Build your empire, manage resources. Hours of engaging gameplay await!</p>
-          <a href="games/AOET6/AoETycoon.html" class="play-button">Play Now</a>
-        </div>
-      </div>
+                    <h3>>> Blender Addons</h3>
+                    <div class="product-item">
+                        <h4>BMixer — Ultimate Material Painter & Mixer</h4>
+                        <p>BMixer+ for Blender: The ultimate material painter and mixer! Layer, enhance with anti-tiling, color variation & pro controls. Create stunning PBR textures easily.</p>
+                        <a href="your-addon1-docs-link" target="_blank" class="button">[DOCUMENTATION]</a>
+                        <a href="https://kaansoyler.gumroad.com/l/bmixer" target="_blank" class="button">[GUMROAD]</a>
+                        <a href="https://superhivemarket.com/products/bmixer" target="_blank" class="button">[BLENDER MARKET]</a>
+                    </div>
+                    <div class="product-item">
+                        <h4>Bref — Minimalistic Reference Addon For Blender</h4>
+                        <p>Minimalistic, Featured Build-in Reference Addon For Blender.</p>
+                        <a href="https://superhivemarket.com/products/bref--minimalistic-reference-addon-for-blender" target="_blank" class="button">[DOCUMENTATION]</a>
+                        <a href="https://kaansoyler.gumroad.com/l/BRef" target="_blank" class="button">[GUMROAD]</a>
+                        <a href="https://superhivemarket.com/products/bref--minimalistic-reference-addon-for-blender" target="_blank" class="button">[BLENDER MARKET]</a>
+                    </div>
+                    <div class="product-item">
+                        <h4>Minecraft World Builder For Blender</h4>
+                        <p>Best Minecraft World Builder for Films and Animations on the Market.</p>
+                        <a href="https://superhivemarket.com/products/minecraft-generator" target="_blank" class="button">[DOCUMENTATION]</a>
+                        <a href="kaansoyler.gumroad.com/l/voxelbuilder" target="_blank" class="button">[GUMROAD]</a>
+                        <a href="https://superhivemarket.com/products/minecraft-generator" target="_blank" class="button">[BLENDER MARKET]</a>
+                    </div>
+                    <!-- Add more addon items as needed -->
 
-      <div class="game-item">
-        <div class="game-item-badge">New</div>
-        <div class="game-item-thumbnail">
-          <img src="https://placehold.co/600x400/ff00ff/000?text=Space+Invaders+Infinity&font=monospace" alt="TimelineClicker Thumbnail">
-        </div>
-        <div class="game-item-content">
-          <h3 class="game-item-title">Time Clicker Saga</h3>
-          <p class="game-item-description">Click until world ends...</p>
-          <a href="games/TimelineClicker/timeline_clicker.html" class="play-button">Play Now</a>
-        </div>
-      </div>
+                    <h3>>> Tools</h3>
+                    <div class="product-item">
+                        <h4>YScraper Pro+ | Youtube Comment Scraper</h4>
+                        <p>Unlock the YScraper Pro Version and gain lifetime, unlimited access to YouTube comment scraping!</p>
+                        <a href="kaansoyler.gumroad.com/l/YScraper" target="_blank" class="button">[DOCUMENTATION]</a>
+                        <a href="kaansoyler.gumroad.com/l/YScraper" target="_blank" class="button">[GUMROAD]</a>
+                    </div>
+                    <div class="product-item">
+                        <h4>Blender Manager – Streamlined Control for Your Blender Workflow</h4>
+                        <p>Blender Manager is a premium tool designed to simplify and centralize the way you work with Blender.</p>
+                        <a href="your-tool2-docs-link" target="_blank" class="button">[DOCUMENTATION]</a>
+                        <a href="your-gumroad-tool2-link" target="_blank" class="button">[GUMROAD]</a>
+                    </div>
+                    <!-- Add more tool items as needed -->
 
-      <div class="game-item">
-        <div class="game-item-thumbnail">
-          <img src="https://placehold.co/600x400/00ff00/000?text=Puzzle+Master+Pro&font=monospace" alt="Puzzle Master Pro Thumbnail">
-        </div>
-        <div class="game-item-content">
-          <h3 class="game-item-title">Puzzle Master Pro</h3>
-          <p class="game-item-description">Challenge your mind with hundreds of intricate puzzles, brain teasers, and logic games. Are you smart enough?</p>
-          <a href="#" class="play-button">Play Now</a>
-        </div>
-      </div>
+                    <!--
+                    <h3>>> Games</h3>
+                    <div class="product-item">
+                        <h4>Game Title 1</h4>
+                        <p>Description of your game. Genre, platform, a brief synopsis.</p>
+                        <p><a href="your-game1-link-or-store-page" target="_blank">Link to Game Page / Download >></a></p>
+                    </div>
+                    <div class="product-item">
+                        <h4>Game Title 2</h4>
+                        <p>Information about another game project.</p>
+                        <p><a href="your-game2-link-or-store-page" target="_blank">Access Project Files / Play >></a></p>
+                    </div>
+                    -->
+                    <!-- Add more game items as needed IF YOU UNCOMMENT THE SECTION ABOVE -->
+                    <!-- Add more game items as needed -->
 
-      <div class="game-item">
-        <div class="game-item-badge">Hot</div>
-        <div class="game-item-thumbnail">
-          <img src="https://placehold.co/600x400/ffff00/000?text=Speed+Racers+Ultimate&font=monospace" alt="Speed Racers Ultimate Thumbnail">
-        </div>
-        <div class="game-item-content">
-          <h3 class="game-item-title">Speed Racers Ultimate</h3>
-          <p class="game-item-description">Experience high-octane racing action on diverse global tracks. Customize your car and burn rubber to victory!</p>
-          <a href="#" class="play-button">Play Now</a>
-        </div>
-      </div>
+                </div>
 
-      <div class="game-item">
-        <div class="game-item-thumbnail">
-          <img src="https://placehold.co/600x400/ff7f00/000?text=Mystic+Adventure+RPG&font=monospace" alt="Mystic Adventure RPG Thumbnail">
-        </div>
-        <div class="game-item-content">
-          <h3 class="game-item-title">Mystic Adventure RPG</h3>
-          <p class="game-item-description">Embark on an epic journey in a vast fantasy world. Fight mythical monsters, discover hidden treasures, and forge your legend.</p>
-          <a href="#" class="play-button">Play Now</a>
-        </div>
-      </div>
+                <div id="links" class="content-section">
+                    <h2>// EXTERNAL_NODES_</h2>
+                    <p>Connection points to other parts of the wired:</p>
+                    <ul>
+                        <li><a href="https://www.kaansoyler.gumroad.com" target="_blank">GUMROAD_PROFILE >></a></li>
+                        <li><a href="https://www.github.com/verlorengest" target="_blank">GITHUB_REPOSITORY >></a></li>
+                        <li><a href="https://www.superhivemarket.com/creators/kaansoyler" target="_blank">BLENDER_MARKET_STOREFRONT >></a></li>
+                        <li><a href="https://www.youtube.com/@verlorengest" target="_blank">YOUTUBE_PROFILE >></a></li>
+                        <!-- Add any other relevant links -->
+                    </ul>
+                </div>
 
-      <div class="game-item">
-        <div class="game-item-thumbnail">
-          <img src="https://placehold.co/600x400/007fff/000?text=Strategy+Card+Clash&font=monospace" alt="Strategy Card Clash Thumbnail">
-        </div>
-        <div class="game-item-content">
-          <h3 class="game-item-title">Strategy Card Clash</h3>
-          <p class="game-item-description">Collect powerful cards, build unique decks, and battle opponents in this highly strategic and addictive card game.</p>
-          <a href="#" class="play-button">Play Now</a>
-        </div>
-      </div>
+                <div id="contact" class="content-section">
+                    <h2>// ESTABLISH_CONTACT_</h2>
+                    <p>To send a signal:</p>
+                    <p>EMAIL: kaansoyler [at] proton.me</p>
+                    <p>No direct PHS lines available at this node.</p>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" id="footer">
+                © 0-2025 Kaan Soyler. All data packets transmitted under protocol (&*(.
+            </td>
+        </tr>
+    </table>
 
-      <div class="game-item">
-        <div class="game-item-badge">Featured</div>
-        <div class="game-item-thumbnail">
-          <img src="https://placehold.co/600x400/bf00ff/000?text=Pixel+Platformer+Fun&font=monospace" alt="Pixel Platformer Fun Thumbnail">
-        </div>
-        <div class="game-item-content">
-          <h3 class="game-item-title">Pixel Platformer Fun</h3>
-          <p class="game-item-description">Jump, dash, and explore vibrant pixel art worlds in this delightful platformer. Full of secrets and challenges.</p>
-          <a href="#" class="play-button">Play Now</a>
-        </div>
-      </div>
+    <script>
+        function showSection(sectionId) {
+            // Hide all content sections
+            var sections = document.querySelectorAll('.content-section');
+            sections.forEach(function(section) {
+                section.classList.remove('active');
+            });
 
-      <div class="game-item">
-        <div class="game-item-thumbnail">
-          <img src="https://placehold.co/600x400/ff007f/000?text=Cosmic+Explorer&font=monospace" alt="Cosmic Explorer Thumbnail">
-        </div>
-        <div class="game-item-content">
-          <h3 class="game-item-title">Cosmic Explorer</h3>
-          <p class="game-item-description">Pilot your starship through unknown galaxies, discover new planets, trade resources, and encounter alien civilizations.</p>
-          <a href="#" class="play-button">Play Now</a>
-        </div>
-      </div>
+            // Show the selected section
+            var activeSection = document.getElementById(sectionId);
+            if (activeSection) {
+                activeSection.classList.add('active');
+            }
+        }
 
-    </section>
-  </div>
-</main>
+        // Set "Last Update" dynamically for a bit of retro-futuristic feel
+        function setLastUpdate() {
+            const date = new Date();
+            const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            const formattedDate = date.toLocaleString('en-GB', options).replace(',', ' //'); // Use a Lain-esque separator
+            document.getElementById('last-update').textContent = formattedDate;
+        }
 
-<footer>
-  <div class="container">
-    <p>© 2024 Boring-Games Hub. All rights reserved. Created with boredom for gaming.</p>
-  </div>
-</footer>
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            showSection('home'); // Show home section by default
+            setLastUpdate(); // Set the last update time
+
+            // Update time every few seconds (optional, for dynamic feel)
+            setInterval(setLastUpdate, 5000);
+        });
+    </script>
 
 </body>
 </html>
