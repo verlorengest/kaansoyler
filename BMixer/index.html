@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMixer+ Documentation</title>
+    <style>
+        :root {
+            --bg-color: #2c2c2c;
+            --container-bg: #3a3a3a;
+            --text-color: #e0e0e0;
+            --header-color: #ffffff;
+            --link-color: #4a90e2;
+            --link-hover: #7bb5ff;
+            --accent-color: #e89f4c;
+            --code-bg: #222222;
+            --border-color: #555555;
+            --note-border: #4a90e2;
+            --warning-border: #e24a4a;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            line-height: 1.6;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 2rem auto;
+            padding: 1rem 2rem;
+            background-color: var(--container-bg);
+            border-radius: 8px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--header-color);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        h1 {
+            font-size: 2.8em;
+            margin: 0;
+            color: var(--accent-color);
+        }
+
+        h2 {
+            font-size: 2em;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+        }
+        
+        h3 {
+            font-size: 1.5em;
+        }
+
+        a {
+            color: var(--link-color);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        a:hover {
+            color: var(--link-hover);
+            text-decoration: underline;
+        }
+
+        p {
+            margin-bottom: 1em;
+        }
+
+        code {
+            background-color: var(--code-bg);
+            padding: 0.2em 0.4em;
+            border-radius: 4px;
+            font-family: "Fira Code", "Courier New", Courier, monospace;
+            font-size: 0.9em;
+            border: 1px solid var(--border-color);
+        }
+
+        ul, ol {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 0.5em;
+        }
+
+        .quick-links {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--code-bg);
+            border-radius: 6px;
+        }
+        
+        .quick-links a {
+            margin: 0 15px;
+        }
+        
+        .video-placeholder {
+            background-color: #000;
+            border: 2px dashed var(--border-color);
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+            border-radius: 8px;
+        }
+        
+        .video-placeholder p {
+            font-size: 1.2em;
+            color: #aaa;
+            margin: 0;
+        }
+
+        blockquote {
+            margin: 1.5em 0;
+            padding: 1em 1.5em;
+            border-left: 5px solid var(--note-border);
+            background-color: rgba(74, 144, 226, 0.1);
+            border-radius: 0 4px 4px 0;
+        }
+        
+        blockquote.warning {
+            border-left-color: var(--warning-border);
+            background-color: rgba(226, 74, 74, 0.1);
+        }
+
+        blockquote p:last-child {
+            margin-bottom: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+
+        th, td {
+            padding: 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--code-bg);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid var(--border-color);
+            font-size: 0.9em;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>BMixer+</h1>
+            <p>Advanced Material Mixer & Painter Addon for Blender</p>
+            <p>Version 1.8.0 for Blender 4.0+</p>
+            <div class="quick-links">
+                <a href="https://kaansoyler.gumroad.com/l/bmixer" target="_blank">Gumroad</a> |
+                <a href="https://superhivemarket.com/products/bmixer" target="_blank">SuperHive Market</a> |
+                <a href="mailto:kaansoyler@proton.me">Contact Support</a>
+            </div>
+        </header>
+
+        <main>
+            <div class="video-placeholder">
+                <p>Official Tutorial Video Coming Soon</p>
+            </div>
+
+            <h2>Introduction</h2>
+            <p>
+                Welcome to BMixer+! This addon is a complete, non-destructive, layer-based texturing system that brings a workflow similar to Substance Painter or Quixel Mixer directly into Blender's Shader Editor. It allows you to build complex, realistic materials by stacking layers, blending them with procedural masks, and even painting details by hand—all without needing perfect UVs for most tasks.
+            </p>
+            <p>
+                The core of BMixer+ is its powerful triplanar mapping engine, which projects textures onto your model from all three axes. This eliminates stretching and seams on complex objects. On top of this foundation, BMixer+ adds a rich set of features for artists to create, manage, and finalize production-ready materials.
+            </p>
+
+            <h2>Getting Started</h2>
+            <h3>Installation</h3>
+            <ol>
+                <li>Open Blender and go to <code>Edit > Preferences</code>.</li>
+                <li>Navigate to the <code>Add-ons</code> tab.</li>
+                <li>Click <code>Install...</code> and locate the <code>BMixer+.py</code> file you downloaded.</li>
+                <li>Enable the addon by checking the box next to "Material: BMixer+".</li>
+            </ol>
+
+            <h3>The BMixer+ Panel</h3>
+            <p>
+                Once installed, select a MESH object in the 3D Viewport. Press the <code>'N'</code> key to open the Sidebar, and you will find a new tab labeled <strong>BMixer</strong>. This is the main control center for the addon.
+            </p>
+
+            <h3>Creating Your First Material</h3>
+            <p>If your selected object has no material, or a non-BMixer material, the panel will show a button:</p>
+            <p>
+                <center><code>Create BMixer Material</code></center>
+            </p>
+            <p>
+                Clicking this button will create a new material, assign it to the object, and set up the necessary node structure and default "Base Layer" for you to begin working.
+            </p>
+            
+            <blockquote>
+                <p><strong>Core Concept:</strong> Everything you do in the BMixer+ panel manipulates a complex node group behind the scenes. You work in the simple UI, and the addon handles the complex node logic for you.</p>
+            </blockquote>
+
+            <h2>The User Interface Explained</h2>
+
+            <h3>Main Controls</h3>
+            <p>At the top of the panel, you'll find the most important global controls.</p>
+            <ul>
+                <li><strong>Sync Real Time:</strong> When enabled (default), every change you make in the UI is instantly applied to the material. This is great for fast iteration. However, on very complex materials with many layers, it can cause a slight lag.
+                <br>
+                <em>Tip: If you experience slowness, disable this option. You will then need to press the <code>Apply Changes</code> button to see your updates.</em></li>
+                <li><strong>Apply Changes:</strong> Appears when <code>Sync Real Time</code> is off. Click this to manually update the material with all your pending changes.</li>
+                <li><strong>Rebuild Material:</strong> This is a powerful refresh button. It completely deletes and reconstructs the BMixer node tree based on your current settings. Use this if the material appears broken or you want to ensure a clean state.</li>
+            </ul>
+
+            <h3>Global Settings</h3>
+            <p>These settings affect the entire material and how all layers are projected and blended.</p>
+            <ul>
+                <li><strong>Engine & Projection:</strong>
+                    <ul>
+                        <li><code>Advanced Engine</code>: Toggles between two triplanar projection methods. The advanced engine provides higher quality blending between projection axes, preventing "blurry" transitions, at a small performance cost.</li>
+                        <li><code>Normal Space</code>: Determines which normals are used for blending projections. <strong>World Space</strong> is standard, while <strong>Local Space</strong> can be useful for animated or rotating objects where you want the texture projection to stick to the object's orientation.</li>
+                        <li><code>Triplanar Noise Mapping</code>: Applies triplanar projection to the procedural noise textures used in masks and anti-tiling effects. This prevents noise patterns from stretching on the sides of your object.</li>
+                        <li><code>Blend Noise</code>: Adds procedural noise to the seams where the X, Y, and Z projections meet, helping to break up the clean transition lines for a more organic look.</li>
+                    </ul>
+                </li>
+                <li><strong>Global Displacement:</strong>
+                    <ul>
+                        <li><code>Displacement Scale</code>: A master control for the final strength of the displacement effect on the material output.</li>
+                        <li><code>Displacement Midlevel</code>: Sets the value that is considered "no displacement" (0.5 is standard for maps where gray is neutral).</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>Layer Management</h3>
+            <p>This is the heart of BMixer+. Here you can manage your stack of texture layers.</p>
+            <ul>
+                <li><strong>The Layer List:</strong> Shows all layers in your material. The bottom layer is the base, and layers are blended from the bottom up.</li>
+                <li><strong>Visibility (Eye Icon):</strong> Toggles the visibility of a layer.</li>
+                <li><strong>Add Layer (+):</strong> Adds a new, empty layer on top of the stack.</li>
+                <li><strong>Remove Layer (-):</strong> Deletes the currently selected layer.</li>
+                <li><strong>Move Layer Up/Down (Arrows):</strong> Re-orders the selected layer in the stack.</li>
+            </ul>
+
+            <h3>Active Layer Settings</h3>
+            <p>When you select a layer from the list, its properties appear below. These are organized into collapsible sections.</p>
+
+            <h4>Texture Maps</h4>
+            <p>This is where you load your PBR textures for the selected layer.</p>
+            <ul>
+                <li><strong>Auto-Assign PBRs:</strong> A huge time-saver! Click this to open a file browser. Select multiple PBR textures (e.g., color, normal, roughness), and BMixer+ will automatically assign them to the correct slots based on keywords in their filenames (like 'color', 'nrm', 'rough').</li>
+                <li><strong>Texture Slots:</strong> For each PBR map type (Base Color, Normal, etc.), you can load an image file. For all maps except Base Color, you must first enable them with the checkbox.</li>
+                <li><strong>Plain Color:</strong> Overrides the Base Color texture with a simple solid color.</li>
+                <li><strong>Color Tint:</strong> If not using Plain Color, this allows you to tint your Base Color texture. Great for creating color variations.</li>
+                <li><strong>IOR:</strong> Sets the Index of Refraction for this layer, which is crucial for realistic glass, plastic, and liquid materials.</li>
+                <li><strong>Emission:</strong> Allows the layer to emit light. You can use an emission map or a solid color, and control its strength.</li>
+                <li><strong>Layer Alpha:</strong> Controls the overall opacity of the layer when it blends with the layers below it.</li>
+            </ul>
+
+            <h4>Selective Blending</h4>
+            <p>A powerful feature for advanced control. By default, a layer blends with the accumulated result of all layers below it. Selective Blending allows you to make a layer blend <strong>only</strong> with specific layers you choose from the stack below.</p>
+            <blockquote><strong>Example:</strong> Imagine a "Rust" layer over a "Bare Metal" layer and a "Paint" layer. You could use Selective Blending to make a "Scratches" layer affect *only* the "Paint" layer, revealing the "Bare Metal" underneath without affecting the "Rust".</blockquote>
+
+            <h4>Transform</h4>
+            <p>Controls the projection mapping for the layer.</p>
+            <ul>
+                <li><code>Scale</code>: Adjusts the size of the projected textures. Smaller values make the texture larger, larger values make it smaller (tiling more).</li>
+                <li><code>Location</code>: Shifts the texture projection along the X/Y axes.</li>
+                <li><code>Rotation</code>: Rotates the texture projection on the Z-axis.</li>
+            </ul>
+            
+            <h4>Face Blending</h4>
+            <p>Controls the sharpness of the transition between the three projection axes (top, front, side). Higher values create a sharper, more defined blend.</p>
+
+            <h4>Layer Mask</h4>
+            <p>This is the primary way to blend layers. It uses a procedural noise pattern to control where the current layer appears over the layers below it. This is perfect for creating wear, dirt, moss, etc.</p>
+            <ul>
+                <li><code>Enable Mask</code>: Toggles the procedural mask on or off.</li>
+                <li><code>Threshold & Smoothness</code>: These are the most important controls. <code>Threshold</code> defines the cutoff point for the noise, while <code>Smoothness</code> controls the softness of the mask's edge.</li>
+                <li><code>Scale, Detail, Roughness, Distortion</code>: These control the look of the noise pattern itself. Experiment to get different effects!</li>
+                <li><code>Seed</code>: Changes the random pattern of the noise.</li>
+                <li><code>Invert Mask</code>: Flips the black and white areas of the mask.</li>
+            </ul>
+
+            <h4>Anti-Tiling</h4>
+            <p>These features help break up the repetitive look of tiling textures, adding significant realism.</p>
+            <ul>
+                <li><strong>Voronoi Rotation:</strong> This breaks the texture into invisible, random cells and applies a slight random rotation to each one. It's incredibly effective at hiding tiling on large, flat surfaces.</li>
+                <li><strong>Color Variation (Noise):</strong> This overlays a procedural noise pattern, blending a "Dark Color" with your Base Color map. This adds subtle, large-scale value variations that mimic natural dirt and aging.</li>
+            </ul>
+
+            <h4>Brush Mode</h4>
+            <p>For when you need artistic control. Brush Mode lets you paint the layer's visibility directly onto the model.</p>
+            <ol>
+                <li>Enable <code>Use Brush Mode</code> on a layer.</li>
+                <li>Click the <strong>Start Painting</strong> button.</li>
+                <li>BMixer+ will automatically create a dedicated UV map and a black image mask. It will then switch you into Texture Paint mode.</li>
+                <li>Paint with <strong>white</strong> to reveal the layer and <strong>black</strong> to hide it.</li>
+                <li>When finished, click the same button (now labeled <strong>Stop Painting</strong>) to return to Object Mode.</li>
+            </ol>
+            <blockquote>
+                <p><strong>Note:</strong> The <code>Smart UV Project on Paint Start</code> option will automatically re-unwrap your model to the brush's UV map each time you start painting, ensuring an optimal layout for painting.</p>
+            </blockquote>
+
+            <h2>The PBR Library Workflow</h2>
+            <p>BMixer+ includes a built-in material library for quickly applying PBR texture sets to any layer.</p>
+
+            <h3>Setting up the Library</h3>
+            <ol>
+                <li>In Blender's Add-on Preferences for BMixer+, you'll find the <strong>PBR Library Settings</strong>.</li>
+                <li>You can add multiple folders to be used as libraries using the <code>+</code> button. The addon ships with a default "PBRlib" folder inside its own directory, which you can use to start.</li>
+                <li>Use the dropdown menu to select your active library.</li>
+            </ol>
+            
+            <h3>Using the Library</h3>
+            <ul>
+                <li>Back in the BMixer+ N-Panel, you'll see a thumbnail grid of all the PBR materials found in your active library folder.</li>
+                <li>Simply select a layer in your layer stack and click on a thumbnail. The PBR textures from that set will be automatically loaded into the active layer's texture slots.</li>
+            </ul>
+            
+            <h3>Adding Materials to the Library</h3>
+            <p>The easiest way to add new materials is with the <strong>Add PBR Folder(s) to Library</strong> operator. Click it, navigate to a folder containing one or more PBR sets, and the addon will intelligently find and copy them into your active library path. After it's done, click the refresh icon next to the library selector to update the thumbnails.</p>
+            
+            <h3>Creating Your Own PBR Sets from Layers</h3>
+            <p>This is a powerful, creative feature. After you've created a cool effect on a layer (e.g., a complex procedural rust), you can export it as a new PBR set in your library.</p>
+            <ol>
+                <li>Select the layer you want to export.</li>
+                <li>Click the small "Export" icon (a box with an arrow) in the layer's header row.</li>
+                <li>Give your new PBR set a name and click OK.</li>
+                <li>BMixer+ will bake all the channels of that single layer into a new set of image textures and save them in a new folder within your active library.</li>
+            </ol>
+            <p>This allows you to build up your own library of custom-made materials for reuse in any project!</p>
+
+
+            <h2>The Intelligent Bake Workflow</h2>
+            <p>While the procedural setup is powerful for iteration, it can be heavy for final renders or game engines. The baking system converts your entire complex BMixer+ layer stack into a standard, high-performance set of PBR textures.</p>
+            
+            <blockquote class="warning">
+                <strong>Warning:</strong> Baking is a computationally intensive process. Blender may become unresponsive for a period of time, especially at high resolutions. <strong>Always save your .blend file before baking!</strong>
+            </blockquote>
+
+            <h3>Bake Settings</h3>
+            <ul>
+                <li><strong>Resolution:</strong> The size of the output textures (e.g., 1024x1024, 2048x2048).</li>
+                <li><strong>Export Path:</strong> The directory where the baked textures will be saved.</li>
+                <li><strong>PBR Maps to Bake:</strong> Check which channels you want to export (Base Color, Normal, etc.).</li>
+                <li><strong>Create New Object with Baked Textures:</strong> If enabled, after baking, the addon will create a duplicate of your object with a new, simple material that uses the freshly baked textures. This is highly recommended for verifying the result.</li>
+            </ul>
+
+            <h3>The Process</h3>
+            <p>Simply click the <strong>Bake BMixer Material</strong> button and wait for the process to complete. The addon will handle creating a dedicated baking UV map, setting up the bake scene in Cycles, and saving all the files.</p>
+            
+            <h2>Troubleshooting / FAQ</h2>
+            <dl>
+                <dt><strong>My material is solid pink.</strong></dt>
+                <dd>This means Blender can't find a texture. Check the file paths in the Texture Maps section for any missing files. If you've moved your project, you may need to re-link them.</dd>
+
+                <dt><strong>The addon is slow when I change a setting.</strong></dt>
+                <dd>Your material is likely very complex. Turn off <code>Sync Real Time</code> at the top of the panel and use the <code>Apply Changes</code> button to update the material manually.</dd>
+                
+                <dt><strong>The node tree in the Shader Editor is a huge mess!</strong></dt>
+                <dd>This is normal! The addon generates the node tree procedurally. You are not meant to edit it by hand. All control should be done through the BMixer+ panel in the sidebar.</dd>
+                
+                <dt><strong>Baking failed or produced a black texture.</strong></dt>
+                <dd>Ensure you have saved your .blend file first, as baking often relies on relative paths. Also, check that the object is properly selectable and visible. Very complex layers can sometimes cause issues with Cycles baking; try hiding layers one by one to isolate the problem.</dd>
+            </dl>
+        </main>
+
+        <footer>
+            <p>BMixer+ by Kaan Soyler</p>
+            <p>For support, please email: <a href="mailto:kaansoyler@proton.me">kaansoyler@proton.me</a></p>
+            <p>
+                <a href="https://kaansoyler.gumroad.com/l/bmixer" target="_blank">Gumroad Store</a> | 
+                <a href="https://superhivemarket.com/products/bmixer" target="_blank">SuperHive Market</a>
+            </p>
+        </footer>
+    </div>
+
+</body>
+</html>
