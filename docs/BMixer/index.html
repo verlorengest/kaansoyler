@@ -82,13 +82,18 @@
             margin-bottom: 1em;
         }
 
-        code {
+        code, pre {
             background-color: var(--code-bg);
             padding: 0.2em 0.4em;
             border-radius: 4px;
             font-family: "Fira Code", "Courier New", Courier, monospace;
             font-size: 0.9em;
             border: 1px solid var(--border-color);
+        }
+
+        pre {
+            padding: 1em;
+            overflow-x: auto;
         }
 
         ul, ol {
@@ -174,7 +179,7 @@
         <header>
             <h1>BMixer+</h1>
             <p>Advanced Material Mixer & Painter Addon for Blender</p>
-            <p>Version 1.8.0 for Blender 4.0+</p>
+            <p>Version 1.9.0 for Blender 4.0+</p>
             <div class="quick-links">
                 <a href="https://kaansoyler.gumroad.com/l/bmixer" target="_blank">Gumroad</a> |
                 <a href="https://superhivemarket.com/products/bmixer" target="_blank">SuperHive Market</a> |
@@ -323,35 +328,66 @@
                 <p><strong>Note:</strong> The <code>Smart UV Project on Paint Start</code> option will automatically re-unwrap your model to the brush's UV map each time you start painting, ensuring an optimal layout for painting.</p>
             </blockquote>
 
+            <!-- NEW SECTION START -->
             <h2>The PBR Library Workflow</h2>
-            <p>BMixer+ includes a built-in material library for quickly applying PBR texture sets to any layer.</p>
+            <p>BMixer+ includes a built-in material library for quickly finding, managing, and applying PBR texture sets to any layer. This workflow allows you to build a personal, reusable asset library directly within Blender.</p>
 
             <h3>Setting up the Library</h3>
+            <p>First, you need to tell BMixer+ where your PBR texture folders are located. This is done once in the addon preferences.</p>
             <ol>
-                <li>In Blender's Add-on Preferences for BMixer+, you'll find the <strong>PBR Library Settings</strong>.</li>
-                <li>You can add multiple folders to be used as libraries using the <code>+</code> button. The addon ships with a default "PBRlib" folder inside its own directory, which you can use to start.</li>
-                <li>Use the dropdown menu to select your active library.</li>
+                <li>Go to <code>Edit > Preferences > Add-ons</code> and find <strong>BMixer+</strong>.</li>
+                <li>In the preferences, you will find the <strong>PBR Library Settings</strong> panel.</li>
+                <li>Use the <code>+</code> (Add Library) button to add a folder from your computer. You can add as many different library folders as you like (e.g., one for sci-fi textures, one for nature textures).</li>
+                <li>The addon ships with a default "PBRlib" folder inside its own installation directory, which you can use as a starting point. The <code>Reset Library Path</code> button will restore this default.</li>
+                <li>Use the dropdown menu in the main N-Panel to switch between your configured libraries at any time.</li>
             </ol>
             
             <h3>Using the Library</h3>
+            <p>Once your libraries are set up, using them is simple:</p>
             <ul>
-                <li>Back in the BMixer+ N-Panel, you'll see a thumbnail grid of all the PBR materials found in your active library folder.</li>
-                <li>Simply select a layer in your layer stack and click on a thumbnail. The PBR textures from that set will be automatically loaded into the active layer's texture slots.</li>
+                <li>In the main BMixer+ N-Panel, the <strong>PBR Library</strong> section will show a thumbnail grid of all the PBR materials found in your currently active library folder.</li>
+                <li>To apply a material, simply select a layer in your layer stack and then click on a thumbnail.</li>
+                <li>The PBR textures from that set will be automatically loaded into the active layer's texture slots.</li>
             </ul>
-            
-            <h3>Adding Materials to the Library</h3>
-            <p>The easiest way to add new materials is with the <strong>Add PBR Folder(s) to Library</strong> operator. Click it, navigate to a folder containing one or more PBR sets, and the addon will intelligently find and copy them into your active library path. After it's done, click the refresh icon next to the library selector to update the thumbnails.</p>
-            
-            <h3>Creating Your Own PBR Sets from Layers</h3>
-            <p>This is a powerful, creative feature. After you've created a cool effect on a layer (e.g., a complex procedural rust), you can export it as a new PBR set in your library.</p>
-            <ol>
-                <li>Select the layer you want to export.</li>
-                <li>Click the small "Export" icon (a box with an arrow) in the layer's header row.</li>
-                <li>Give your new PBR set a name and click OK.</li>
-                <li>BMixer+ will bake all the channels of that single layer into a new set of image textures and save them in a new folder within your active library.</li>
-            </ol>
-            <p>This allows you to build up your own library of custom-made materials for reuse in any project!</p>
 
+            <h3>Adding Materials to the Library (The Correct Folder Structure)</h3>
+            <p>The easiest way to add new materials is with the <strong>Add PBR Folder(s) to Library</strong> operator. This button is a smart importer that copies PBR sets into your active library.</p>
+            <p>For this to work correctly, your folders must be organized so that <strong>each PBR material has its own dedicated subfolder.</strong></p>
+            
+            <blockquote>
+                <p><strong>Example of a CORRECT folder structure:</strong> You have a main folder containing subfolders for each material.</p>
+                <pre><code>My_PBR_Downloads/
+    ├── Cobblestone_Path/
+    │   ├── Cobblestone_Path_albedo.png
+    │   └── ... (other maps)
+    └── Brushed_Steel/
+        ├── Brushed_Steel_color.png
+        └── ... (other maps)</code></pre>
+                <p>In this case, you would click "Add PBR Folder(s)..." and select the <code>My_PBR_Downloads</code> folder. The addon will intelligently find and copy both `Cobblestone_Path` and `Brushed_Steel` into your library.</p>
+            </blockquote>
+
+            <blockquote>
+                <p><strong>Example of an INCORRECT folder structure:</strong> All texture maps are mixed together in one folder.</p>
+                <pre><code>My_Messy_Folder/
+    ├── Cobblestone_Path_albedo.png
+    ├── Cobblestone_Path_normal.png
+    ├── Brushed_Steel_color.png
+    └── Brushed_Steel_roughness.png</code></pre>
+                <p>This will not work as expected. The addon will see this as one single material named "My_Messy_Folder".</p>
+            </blockquote>
+            <p>After adding new folders, click the refresh icon <code style="font-size: 1.2em;">↻</code> next to the library selector to update the thumbnails.</p>
+
+            <h3>Creating Your Own PBR Sets from Layers</h3>
+            <p>This is a powerful, creative feature that allows you to turn any layer—no matter how complex its procedural masks and settings are—into a simple, reusable PBR material in your library.</p>
+            <ol>
+                <li>Create a layer with the exact look you want (e.g., a complex procedural rust effect).</li>
+                <li>Select the layer you want to export.</li>
+                <li>In the layer's header row (where the layer name is), click the small <strong>Export icon</strong> (a box with an arrow pointing out).</li>
+                <li>A dialog will appear asking you to name your new PBR set.</li>
+                <li>Click OK. BMixer+ will bake all the channels of that single layer (color, roughness, etc.) into a new set of image textures and save them in a new folder within your active library.</li>
+            </ol>
+            <p>This workflow is perfect for building up your own library of unique, custom-made materials for reuse in any project!</p>
+            <!-- NEW SECTION END -->
 
             <h2>The Intelligent Bake Workflow</h2>
             <p>While the procedural setup is powerful for iteration, it can be heavy for final renders or game engines. The baking system converts your entire complex BMixer+ layer stack into a standard, high-performance set of PBR textures.</p>
